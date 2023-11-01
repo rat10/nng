@@ -47,4 +47,4 @@ Discussions in the WG led to slight modifications that resulted in a proposal th
 [4] [RDF 1.1 Semantics](https://www.w3.org/TR/rdf11-mt/)  
 [5] [SPARQL 1.1](https://www.w3.org/TR/2013/REC-sparql11-overview/)  
 [6] [Dydra graphstore](https://dydra.com/home)  
-[7] [Use CAses](https://github.com/w3c/rdf-ucr/wiki)  
+[7] [Use Cases](https://github.com/w3c/rdf-ucr/wiki)  
