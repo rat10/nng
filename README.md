@@ -10,7 +10,7 @@ The proposal doesn't require any changes or additions to the abstract syntax of 
 
 
 ## Design Considerations
-Metamodelling in RDF - annotating, contextualizing, reifying simple statements to better deal with complex knowledge representation needs - has been the focus of work as long as RDF itself exists. For an extensive treatment of the topic check the 300+ pages "Between Facts and Knowledge - Issues of Representation on the Semantic Web" [Download](Between.pdf).
+Metamodelling in RDF - annotating, contextualizing, reifying simple statements to better deal with complex knowledge representation needs - has been the focus of work as long as RDF itself exists. For an extensive treatment of the topic check the 300+ pages "Between Facts and Knowledge - Issues of Representation on the Semantic Web" [[PDF]](Between.pdf).
 One thing we learned from this huge corpus of works is that that one magic trick to resolve all the problems around complex modelling tasks in RDF most probably doesn't exist: it has to be a combination of techniques. Consequently, we need to get creative and we need to break some rules:
 
 - *simplicity first* (inversion of control): maintain the focus on the simple statement. Keep annotations within easy reach, but don't let the complexity they encode cloud the overall view. Otherwise the cost in terms of usability will eclipse the increase in expressivity.
