@@ -1,0 +1,328 @@
+# CAVEAT
+# this is not legal TriG, but declaring it as such 
+# still can provide soem useful syntax highlighting
+# also this may contain pugs
+
++-+ 
+
+Nested Graphs 
+proposal
+
++-+
+
+DESIGN CONSIDERATIONS  
+
+The charter is the law, but every law needs interpretation.
+The charter asks for an annotation device that is easy to use. 
+Such device should provide :
+
+- TOKENS 
+  administration
+  qualification
+
+- ASSERTED 
+  otherwise the connection to the annotated statement is too brittle
+
+- GRAPHS 
+  grouping (even just for the sake of it) is an important KR pattern
+  and it is easier to represent singletons with a grouping device 
+      than the other way round
+
+- IDENTIFIERS 
+  essential for tokens, otherwise one more triple (see RDF-star :occurrenceOf) 
+
+- REFERENTIAL TRANSPARENCY 
+  mainstream 
+
+- NESTING
+  resilience to change
+  multiple dimensions
+      (instead of "but we use named graphs for X, so can't use it for anything else")
+
+- THE 20 in 80/20
+  literals for types, referential opacity, un-asserted assertions etc 
+  separation of concerns
+
++-+
+
+# the basic syntax
+
+# a nested graph, named by a blank node
+[]{:Alice :buys :Car}
+
+# a nested graph with a name
+[:X]{:Alice :buys :Car}
+
+# two nested graphs, named by different blank nodes
+[]{:Alice :buys :Car}
+[]{:Alice :buys :Car}
+
+# a nested graph nested within another nested graph
+# nested with a named graph
+
+:NG_1 {
+    []{
+        :Alice :buys :Car .
+        []{:Alice :buys :Car}
+        [:Y]{:Alice :buys :Car}
+    }
+}
+
++-+
+
+# every triple in every nested graph is asserted and referentially transparent
+# middle of the road RDF
+# this
+
+        [:Y]{:Alice :buys :Car} :says :Denis
+
+# is just syntactic sugar for this
+
+        [:Y]{:Alice :buys :Car}
+        :Y :says :Denis .
+
+
+# some proposals have done this to achieve the same goal
+
+        :Alice :buys :Car                   # :Z
+        :Z :says :Denis . 
+
++-+
+
+# a simplistic application of a nested graph
+# a bit like property graphs
+
+[]{:Alice :buys :Car} 
+    :age 20 ;                               # who is 20 years old ?
+    :color :black ;                         # who is black ?
+    :paymentMethod :Cash ;                  # seems clear
+    :purpose :JoyRiding ;                   # dito
+    :model :Coupe ;                         # dito
+    :source :Denis .                        # dito ... or did Denis sell the car
+
++-+
+
+# targeting fragments, verbosely
+
+[:X]{:Alice :buys :Car} .
+:X seg:subject [
+    :age 20
+]
+:X seg:predicate [
+    :paymentMethod :Cash ;
+    :purpose :JoyRiding                     # ambivalence, could also be object property
+]
+:X seg:object [
+    :color :black ;
+    :model :Coupe
+]
+:X seg:triple [
+    ex:void ex:void                         # forEach, not needed here
+]
+:X seg:graph [
+    :source :Denis
+]
+
++-+
+
+# a mapping to RDF a la singleton properties
+
+:Alice :buys_1 :Car .
+:buys_1 
+    rdfs:subPropertyOf :buys ;
+    :paymentMethod :Cash ;
+    :purpose :JoyRiding ;
+    :nestedIn :X ;
+    rdfs:domain [
+        :age 20
+    ];
+    rdfs:range [
+        :color :black ;
+        :model :Coupe
+    ];
+    rdfx:triple [
+        :source :Denis
+    ]
+.
+
+# two other mappings
+# - with rdf:value and lots of blank nodes, and with named graphs -
+# are provided in the long text
+
++-+
+
+# a compact version of the nested graph
+
+[:X]{
+    :Alice :buys :Car .
+    :X?s :age 20 .
+    :X?p :paymentMethod :Cash ;
+         :purpose :JoyRiding  .
+    :X?o :color :black ;
+         :model :Coupe .
+#   :X?g :source :Denis
+} :source :Denis .                          # doesn't provide an explicit ?g fragment identifier
+
++-+
+
+# the same as RDF-star 
+
+:Alice_1 :buys_1 :Car_1 .
+:Alice_1 rdf:type :Alice ;
+    :age 20 .
+<< :Alice_1 :buys :Car_1 >> :source Denis .
+<< :Alice_1 rdf:type :Alice >> :source Denis .
+<< :Alice_1 :age 20 >> :source Denis .
+:buys_1 rdfs:subPropertyOf :buys ;
+    :paymentMethod :Cash ;
+    :purpose :JoyRiding .
+<< :buys_1 rdfs:subPropertyOf :buys  >> :source Denis .
+<< :buys_1 :paymentMethod :Cash >> :source Denis .
+<< :buys_1 :purpose :JoyRiding  >> :source Denis .
+:Car_1 rdf:type :Car ;
+    :color :Black ;
+    :model :Coupe .
+<< :Car_1 rdf:type :Car >> :source Denis .
+<< :Car_1 :color :Black >> :source Denis .
+<< :Car_1 :model :Coupe >> :source Denis .
+
+
+
+# imagine what happens with a second level of nesting
+# or even TEP
+
++-+
+
+# embedded in Named Graphs as we know them
+
+:NG_1 :source :Laptop ;                     # application specific graph annotations
+      :status :Unredacted ;
+      :visibility :Private .
+
+:NG_1 {
+    [:Z]{
+        [:Y]{
+            [:X]{
+                :Alice :buys :Car .
+                :X?s :age 20 .
+                :X?p :paymentMethod :Cash ;
+                     :purpose :JoyRiding  .
+                :X?o :color :black ;
+                     :model :Coupe .
+            } :source :Denis . 
+        }
+    } :FirstCarEvent ;
+      :source :GreenDiary ;                 # imagine 2nd level nesting with RDF-star =:-|
+      :date :10_12_08 .
+}
+# add another level of nesting for different accounts of Alice buying her first car
+# eg her parents helping fund it
+# the insurance company having yet a dfifferent view
+
++-+
+
+# a second AliceBuysCar triple
+
+[:Y]{
+    [:X]{
+        :Alice :buys :Car .
+        :X?s :age 20 .
+        :X?p :paymentMethod :Cash ;
+             :purpose :JoyRiding  .
+        :X?o :color :black ;
+             :model :Coupe .
+    } :source :Denis .
+    [:W]{
+        [:V]{
+            :Alice :buys :Car .
+            :V?s :age 28 .
+        } :source :Eve .
+    } :todo :AddDetail .                    # add detail
+}                                           # then remove this level of nesting
+                                            # without changing the data topology
+
++-+
+
+# literals as un-asserted opaque types
+
+[:Y]{
+    [:X]{
+        :Alice :buys :Car .
+        :X?s :age 20 .
+        :X?p :paymentMethod :Cash ;
+             :purpose :JoyRiding  .
+        :X?o :color :black ;
+             :model :Coupe .
+    } :source :Denis ;
+      :asLiteral "[:X]{:Alice :buys :Car
+                  :X?s :age 20 .
+                  :X?p :paymentMethod :Cash ;
+                  :purpose :JoyRiding  .
+                  :X?o :color :black ;
+                  :model :Coupe ."^^rdfx:graph .
+
+
+# literals as un-asserted transparent types
+# (what RDF standard reifiaction is popularily misused to represent)
+
+:Bob :says {" :Moon :madeOf :Cheese . "}
+
+# { ... } indicate transparency
+# " ... " indicate un-assertedness
+
+:Bob :says [ seg:transcludesCitation ":Moon :madeOf :Cheese"^^rdfx:graph ]
+
++-+
+
+# resilience to updates
+
+[:Y]{
+    :Alice :buys :House .                   # <--- !
+    [:X]{
+        :Alice :buys :Car .
+        :X?s :age 20 .
+        :X?p :paymentMethod :Cash ;
+             :purpose :JoyRiding  .
+        :X?o :color :black ;
+             :model :Coupe ;
+             :maker :Pininfarina .           # <--- !!
+    }
+} :source :Denis .
+
+# --->
+
+[:Y]{
+    [:W]{
+        :Alice :buys :House . 
+        :W?s :age :40 .                     # <--- !!!
+    }
+    [:X]{
+        :Alice :buys :Car .
+        :X?s :age 20 .
+        :X?p :paymentMethod :Cash ;
+             :purpose :JoyRiding  .
+        :X?o :color :black ;
+             :model :Coupe ;
+             :maker :Pininfarina .
+} :source :Denis .
+
++-+
+
+# DnS shortcut relations
+
+[:T]{
+    :Alice :travelsTo :ISWC23 .
+    :T?p rdfs:seeAlso :U , :P.
+}
+[:U]{
+    :Schedule :startsAt :Hamburg ;
+                    :byMeans :Plane ;
+                    :date "05.11.2023" ;
+                    :gate ...
+    :Purpose :see :P .
+} a :Travel .
+[:P]{
+    :Purpose :present :Paper ;
+             :topic :Metavisualization ;
+             ...
+}

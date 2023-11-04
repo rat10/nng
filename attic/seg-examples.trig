@@ -1,0 +1,306 @@
+prefix : <http://ex.org/>
+prefix seg: <http://rat.io/seg/>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+
+:sg1 a :Problem .
+:sg1 seg:object [ :age 24 ] .
+
+
+:NG1 {
+    [:sg1]{:Alice :buys :Car} 
+    <http://example.org/sg1#s> :age 18 .
+#   :LoisLane :loves [QUOTE]":Superman" .
+#   [:sg2 QUOTE]{:Superman :loves :LoisLane} 
+
+}
+
+
+:NG2 {
+    :Alice :likes :Bob .
+    [:X]{ :Alice :likes :Bob } :says :Carol , :Denis .
+    [:Y]{ :Alice :buys :Car } :says :Carol .
+    [:Z]{ 
+    [:Z_1]{[:Z_2]{:Alice :loves :Skateboarding} 
+                        :Eve :thinks :Z_2
+                        }
+    } :in :Summer
+    } :says :Frida .
+
+:NG1 {
+	:Alice :likes :Bob .
+	[:X]{ 
+        :Alice :likes :Bob 
+    } :says :Carol , :Denis .
+	[:Y]{ 
+        :Alice :buys :Car 
+    } :says :Carol .
+	[:Z]{ 
+		[:Z_1]{
+            [:Z_2]{
+                :Alice :loves :Skateboarding
+            } 
+            
+        } :in :Summer .
+        :Eve :thinks :Z_2
+	} :says :Frida .
+} 
+
+#### NESTING DATA AND QUERY
+
+prefix : <http://example.org/>
+:NG2 {
+    :Alice :likes :Bob .
+    [:X]{ 
+        :Alice :likes :Bob 
+    } :says :Carol , :Denis .
+    [:Y]{ 
+        :Alice :buys :Car 
+    } :says :Carol .
+    [:Z]{ 
+        [:Z_1]{
+            [:Z_2]{
+                :Alice :loves :Skateboarding
+            } 
+            :One :more :Assertion .    
+        } :in :Summer .
+        :Eve :thinks :Z_2 .
+    } :says :Frida .
+} 
+
+prefix : <http://example.org/>
+SELECT ?does ?what ?who
+WHERE {
+ { graph ?g { :Alice ?does ?what } }
+ { graph ?x { ?g :says ?who } }
+}
+
+[
+  [
+    "does",
+    "what",
+    "who"
+  ],
+  [
+    "http://example.org/buys",
+    "http://example.org/Car",
+    "http://example.org/Carol"
+  ],
+  [
+    "http://example.org/likes",
+    "http://example.org/Bob",
+    "http://example.org/Denis"
+  ],
+  [
+    "http://example.org/likes",
+    "http://example.org/Bob",
+    "http://example.org/Carol"
+  ]
+] 
+
+#### examples
+
+[]{:Alice :buys :Car} 
+    :age 20 ;
+    :color :black ;
+    :paymentMethod :Cash ;
+    :purpose :JoyRiding ;
+    :model :Coupe ;
+    :source :Denis .
+
+
+[:X]{:Alice :buys :Car} .
+:X seg:subject [        # or rdfs:domain
+    :age 20
+]
+:X seg:predicate [      # or a tbd rdfs:relation
+    :paymentMethod :Cash ;
+    :purpose :JoyRiding # ambivalence, could also be object property
+]
+:X seg:object [         # or rdfs:range
+    :color :black ;
+    :model :Coupe
+]
+:X seg:triple [
+                        # forEach, not needed here
+]
+:X seg:graph [
+    :source :Denis      # imagine this with statement annotations (below)
+]
+
+:Alice_1 :buys_1 :Car_1 .
+:Alice_1 rdf:type :Alice ;
+    :age 20 .
+<< :Alice_1 :buys :Car_1 >> :source Denis .
+<< :Alice_1 rdf:type :Alice >> :source Denis .
+<< :Alice_1 :age 20 >> :source Denis .
+:buys_1 rdfs:subPropertyOf :buys ;
+    :paymentMethod :Cash ;
+    :purpose :JoyRiding .
+<< :buys_1 rdfs:subPropertyOf :buys  >> :source Denis .
+<< :buys_1 :paymentMethod :Cash >> :source Denis .
+<< :buys_1 :purpose :JoyRiding  >> :source Denis .
+:Car_1 rdf:type :Car ;
+    :color :Black ;
+    :model :Coupe .
+<< :Car_1 rdf:type :Car >> :source Denis .
+<< :Car_1 :color :Black >> :source Denis .
+<< :Car_1 :model :Coupe >> :source Denis .
+
+
+:NG_1 :source :Diary ;
+      :status :Unredacted ;
+      :visibility :Private .
+:NG_1 {
+    [:Z]{
+        [:Y]{
+            [:X]{
+                :Alice :buys :Car
+            } 
+            :X?s :age 20 .
+            :X?p :paymentMethod :Cash ;
+                 :purpose :JoyRiding  .
+            :X?o :color :black ;
+                 :model :Coupe .
+            :X?g :source :Denis .
+        }
+    } :source :GreenDiary ;          # 2nd level nesting with RDF-star =:-(
+      :date :10_12_08 .
+}
+# add another level of nesting for different accounts of Alice buying a car
+# eg her parents being against it
+# the insurance company having yet a dfifferent view
+
+
+
+# a more compact syntax
+
+[:Y]{
+    [:X]{
+        :Alice :buys :Car
+    } 
+    :X?s :age 20 .
+    :X?p :paymentMethod :Cash ;
+         :purpose :JoyRiding  .
+    :X?o :color :black ;
+         :model :Coupe .
+    :X?g :source :Denis .
+}  
+
+
+
+# don't provide a ?g identifier?
+
+[:Y]{
+    [:X]{
+        :Alice :buys :Car
+    } 
+    :X?s :age 20 .
+    :X?p :paymentMethod :Cash ;
+         :purpose :JoyRiding  .
+    :X?o :color :black ;
+         :model :Coupe .
+}  :source :Denis .                  
+
+
+# self-reference ?
+
+[:X]{
+    :Alice :buys :Car
+    :X?s :age 20 .
+    :X?p :paymentMethod :Cash ;
+         :purpose :JoyRiding  .
+    :X?o :color :black ;
+         :model :Coupe .
+} :source :Denis .
+
+
+# a second AliceBuysCar triple
+
+[:Y]{
+    [:X]{
+        :Alice :buys :Car
+    } :source :Denis .
+    :X?s :age 20 .
+    :X?p :paymentMethod :Cash ;
+            :purpose :JoyRiding  .
+    :X?o :color :black ;
+            :model :Coupe .
+    [:W]{
+        [:V]{
+            :Alice :buys :Car
+        } :source :Eve .
+        :V?s :age 28 .
+    } :todo :AddDetail .
+}  
+
+
+# literals as un-asserted opaque types
+
+[:Y]{
+    [:X]{
+        :Alice :buys :Car
+    } 
+    :X?s :age 20 .
+    :X?p :paymentMethod :Cash ;
+            :purpose :JoyRiding  .
+    :X?o :color :black ;
+            :model :Coupe .
+}  :source :Denis ;
+   :asLiteral "[:X]{:Alice :buys :Car} 
+               :X?s :age 20 .
+               :X?p :paymentMethod :Cash ;
+               :purpose :JoyRiding  .
+               :X?o :color :black ;
+               :model :Coupe ."^^rdfx:graph .
+
+
+# resilience to updates
+
+[:Y]{
+    :Alice :buys :House .         # <--- !
+    [:X]{
+        :Alice :buys :Car
+    } 
+    :X?s :age 20 .
+    :X?p :paymentMethod :Cash ;
+         :purpose :JoyRiding  .
+    :X?o :color :black ;
+         :model :Coupe ;
+         :maker :Pininfarina .    # <--- !!
+} :source :Denis .
+
+# --->
+
+[:Y]{
+    [:W]{
+        :Alice :buys :House . 
+    }
+    :W?s :age :40 .              # <--- !!!
+    [:X]{
+        :Alice :buys :Car
+    } 
+    :X?s :age 20 .
+    :X?p :paymentMethod :Cash ;
+         :purpose :JoyRiding  .
+    :X?o :color :black ;
+         :model :Coupe ;
+         :maker :Pininfarina .
+} :source :Denis .
+
+
+
+
+# frames / shortcut relations
+[:T]{
+    :Alice :travelsTo :Berlin
+}
+:T?p 
+
+
+
+
+
+
+
+# niklas' examples
