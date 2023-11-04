@@ -29,7 +29,7 @@ A thorough investigation of querying, snytax as well as result formats is still 
 A prototype implementation in the Dydra graphstore [6], including an appropriate extension to SPARQL, provides a public [notebook](https://observablehq.com/@datagenous/se-graph-workbook) that can be used to explore, test and play around with the proposal.
 
 
-## The story so far
+## Attic
 The proposal was presented to the RDF 1.2 WG by means of 
 - a [long text](https://gist.github.com/rat10/eaa109ab56b4d77d29e3a826291f8e72) from mid-October 23 presenting a first draft of the proposal in a bit too much detail
 - a [short text](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Oct/0041.html) from mid-October 23 presenting an introduction to the proposal
