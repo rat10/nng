@@ -28,11 +28,11 @@ is generally considered okay as it simple adds some provenance information, i.e.
 that is a questionable point of view as the distinction between data and metadata is always application specific. granted _most_ applications consider provenance as metadata but to some it is very important and practically core data (Hayden: "We kill people based on metadata")
 in fact that arrangement/consensus/common practice is only a flimsy compromise between those that want to keep the semantics clean and simple and those that want at least the most basic use cases supported
 
-what would actually make a statement _false_, except explicitly assigning it that value like in the example above? calling it a lie, not trustworthy, unproven, proven to be false
+what would actually make a statement _false_, except explicitly assigning it that value like in the example above? calling it a lie, not trustworthy, proven to be false
 then there's also the usual suspects from the realm of paradoxes:
     :Thomas a :Liar .
 suddenly the innocent source attribution above is not so innocent anymore [0]. 
-but isn't anything else just description, adding further detail, thereby narrowig down on the possible worlds that fit the description, ergo the whole point of this endeavour? 
+but isn't anything else just description, adding further detail, thereby narrowing down on the possible worlds that fit the description, ergo the whole point of this endeavour? 
 
 
 calling something a lie and stating provenance are rather worn-out examples at what i consider the fringes of the problem space. what i find much more interesting is qualification of statements, akin to n-ary relations with a primary player, or Property Graph style modelling, e.g.

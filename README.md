@@ -5,12 +5,12 @@
 ## Overview
 Semantic Graphs (SG) is a proposal to the RDF 1.2 Working Group [0]. It provides a simple facility to enable annotations on RDF in RDF. 
 
-The proposal doesn't require any changes or additions to the abstract syntax of RDF [1]. It aims for implementation in quad stores that support RDF 1.1 datasets [2]. It is realized by a combination of syntactic sugar added to the popular TriG syntax [3] and a vocabulary to ensure sound semantics [4]. It is accompanied by a prototype implementation with SPARQL [5] support.
+The proposal doesn't require any changes or additions to the abstract syntax of RDF [1] and can be deployed in quad stores that support RDF 1.1 datasets [2]. It is realized as a combination of syntactic sugar added to the popular TriG syntax [3] and a vocabulary to ensure sound semantics [4]. Mappings to triple-based approaches are provided. The proposal provides a publicly accessible prototype implementation with SPARQL [5] support.
 
 
 
 ## Design Considerations
-Metamodelling in RDF - annotating, contextualizing, reifying simple statements to better deal with complex knowledge representation needs - has been the focus of work as long as RDF itself exists. For an extensive treatment of the topic check the 300+ pages "Between Facts and Knowledge - Issues of Representation on the Semantic Web" ([PDF](Between.pdf)).
+Metamodelling in RDF - annotating, contextualizing, reifying simple statements to better deal with complex knowledge representation needs - has been the focus of work as long as RDF itself exists. For an extensive treatment of the topic check the 300+ pages "Between Facts and Knowledge - Issues of Representation on the Semantic Web" ([PDF](sources/Between.pdf)).
 One thing we learned from this huge corpus of works is that that one magic trick to resolve all the problems around complex modelling tasks in RDF most probably doesn't exist: it has to be a combination of techniques. Consequently, we need to get creative and we need to break some rules:
 
 - *simplicity first* (inversion of control): maintain the focus on the simple statement. Keep annotations within easy reach, but don't let the complexity they encode cloud the overall view. Otherwise the cost in terms of usability will eclipse the increase in expressivity.
@@ -23,26 +23,46 @@ One thing we learned from this huge corpus of works is that that one magic trick
 
 
 
+## Concept
+The design of semantic graphs aims for the least surprise. Annotated or not, they are always:
+- asserted (contrary to other approaches like RDF standard reification and RDF-star triple terms)
+- referentially transparent (contrary to other approaches like Notation3, Named Graphs Carroll et al 2005 and RDF-star triple terms)
+- tokens, as they are always named, either explicitly by the user or implicitly via blank nodes (similar to Named Graphs Carroll et al 2005, but contrary to other approaches like Notation3 and RDF-star triple terms)
+
+They provide a set of welcome features:
+- nesting of graphs allows for the addition of unforeseen aspects without a need to modify existing structures and queries.
+- an annotated nested graph is actually a supertype of the graph into which its annotations transform it. This becomes visible in the mapping to standard RDF. It guarantees that annotations don't cloud the view on the principal relation.
+- annotations are applied to the statements they annotate and no intermediary node subtly changes their semantics.
+- optional fragment identifiers allow to identify with great precision the target of an annotation. However their use is not mandatory, enabling loose semantics per default.
+- semantic graphs impose no artificial differentiation between singleton and multiple statements: a graph containing only one statement is a graph all the same.
+- as the name implies semantic graphs provide a means to solidly specify their semantics while remaining backwards compatible to any application of named graphs in the wild.
+- special needs like unasserted assertions and quotation semantics are implemented via an extra mechanism.
+
+
+
 ## Syntax
 The main component of the proposal is a [syntactic extension](serialization.md) to TriG that adds the ability to nest named graphs inside each other. 
 
 A complementary syntactic extension to JSON-LD is TBD. [Mappings](mappings.md) to triple- and quad based formats like Turtle, N-Triples and N-Quads are provided (or worked on). A mapping to RDF/XML so far isn't planned as RDF/XML doesn't even support named graphs. However it could be realized analogously to the approach taken with the Turtle mapping.
 
-See also an example of a [BNF](trig-sg.bnf) for the SG syntax - not exactly but close to the version actually deployed in the prototype notebook (see below).
+See also an example of a [BNF](sources/trig-sg.bnf) for the SG syntax - not exactly but close to the version actually deployed in the prototype notebook (see below).
 
 
 
 ## Semantics
 A small [vocabulary](vocabulary.md) provides the means to solidly define the semantics of named graphs - nested or not. 
 
-Non-standard semantics can be implemented via an additional mechanism that transcludes graph literal according to externally specified semantics. Syntax sugar is provided for the popular use cases of like un-asserted assertions and referentially opaque quotation, but the mechanism itself is extensible as desired and an example vocabulary is provided.
+Non-standard semantics can be implemented via an additional [transclusion](transclusion.md) mechanism that transcludes graph literals according to externally specified semantics. Syntactic sugar is provided for popular use cases like un-asserted assertions and referentially opaque quotation, but the mechanism itself is extensible as desired and an example vocabulary is provided.
 
 
 
 ## Querying
 TBD
+
 syntax
+
 result formats
+
 [querying](querying.md)
 
 
