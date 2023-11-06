@@ -37,24 +37,24 @@ A mapping to RDF triples is performed in two steps:
 - all statements that do not themselves contain nested graphs and all statements in un-annotated nested graphs are copied verbatim to a target RDF graph,
 - all statements containing nested graphs, i.e. annotated nested graphs, are mapped to n-ary relations, involving some special vocabulary.
 
-While the first step is trivial, the second step can lead to rather convoluted n-ary relations. We first present a mapping closely aligned to regular RDF, based on a variation to the `rdf:value` property, but then also explore another approach based on the singleton properties proposal. To that end we introduce two new properties, `sg:aspectOf` and `sg:inGraph`. The property `sg:aspectOf` is defined differently, depending on the chosen mapping, and will be introduced in the respective sections below.
-The property `sg:inGraph` records the nested graph that the statement occurs in. The graph identifier can be either a blank node or an IRI, faithfully reflecting the name of the nested graph.
+While the first step is trivial, the second step can lead to rather convoluted n-ary relations. We first present a mapping closely aligned to regular RDF, based on a variation to the `rdf:value` property, but then also explore another approach based on the singleton properties proposal. To that end we introduce two new properties, `nng:aspectOf` and `nng:inGraph`. The property `nng:aspectOf` is defined differently, depending on the chosen mapping, and will be introduced in the respective sections below.
+The property `nng:inGraph` records the nested graph that the statement occurs in. The graph identifier can be either a blank node or an IRI, faithfully reflecting the name of the nested graph.
 ```
 DEF
 
-sg:inGraph a rdfs:Property ;
-    rdfs:comment "The property `sg:inGraph` records the nested graph that the statement occurs in." .
+nng:inGraph a rdfs:Property ;
+    rdfs:comment "The property `nng:inGraph` records the nested graph that the statement occurs in." .
 ```
 
 #### rdf:value-based Mapping
 
-In this mapping the property `sg:aspectOf` is defined as a subproperty of `rdf:value`, and the modelling is oriented on the way `rdf:value` in standard RDF is designed to work: it doesn't engage with the property, as the singleton properties approach does, but with the object of a statement.
+In this mapping the property `nng:aspectOf` is defined as a subproperty of `rdf:value`, and the modelling is oriented on the way `rdf:value` in standard RDF is designed to work: it doesn't engage with the property, as the singleton properties approach does, but with the object of a statement.
 ```
 DEF
 
-sg:aspectOf a rdfs:Property ;
+nng:aspectOf a rdfs:Property ;
     rdfs:subPropertyOf rdf:value ;
-    rdfs:comment "The property `sg:aspectOf` is defined as a subproperty of `rdf:value`. Its `rdfs:range` is to be interpreted as the primary value of the annotated node." .
+    rdfs:comment "The property `nng:aspectOf` is defined as a subproperty of `rdf:value`. Its `rdfs:range` is to be interpreted as the primary value of the annotated node." .
 ```
 
 The nested graph construct
@@ -64,26 +64,26 @@ The nested graph construct
 is mapped to
 ```
 :a :b :c .
-:a :b [ sg:aspectOf :c ;
-        sg:inGraph _:ag2 ;
+:a :b [ nng:aspectOf :c ;
+        nng:inGraph _:ag2 ;
         :d :e ] .             # annotating the triple
-_:ag2 sg:inGraph _:ag1.
+_:ag2 nng:inGraph _:ag1.
 ```
-The modelling style is very close to regular RDF as we know it. In principle this mapping could without too much effort be implemented in standard RDF, if the well-known `rdf:value` property (or our more definitely defined `sg:aspectOf` property) was interpreted in a specific way, i.e. if every `rdf:value` relation would be automagically followed and returned as the default/main value to queries and follow-your-nose behaviours, and all other attributes to the originating blank node would be rendered as additional annotations on that main value. 
+The modelling style is very close to regular RDF as we know it. In principle this mapping could without too much effort be implemented in standard RDF, if the well-known `rdf:value` property (or our more definitely defined `nng:aspectOf` property) was interpreted in a specific way, i.e. if every `rdf:value` relation would be automagically followed and returned as the default/main value to queries and follow-your-nose behaviours, and all other attributes to the originating blank node would be rendered as additional annotations on that main value. 
 
-However, the intuitive semantics is a bit shaky, as an annotation on the object of a relation would by convention not be understood as referring to the whole relation, or even the enclosing graph: while application specific intuitions may interpret it as referring to the graph itself, it seems risky to make such an interpretation mandatory. Other intuitions may be implemented as extensions of this mapping: to annotate each node separately we could replace each term in the statement by a blank node (the property in generalized RDF, or otherwise create a singleton property term) and annotate them accordingly with an `sg:aspectOf` relation to refer to the primary topic of the term and further attributions as desired. However, it is obvious that such a mapping, while possible and actually quite faithfully representing the meaning of an annotated statement, would in practice be quite unbearable.
+However, the intuitive semantics is a bit shaky, as an annotation on the object of a relation would by convention not be understood as referring to the whole relation, or even the enclosing graph: while application specific intuitions may interpret it as referring to the graph itself, it seems risky to make such an interpretation mandatory. Other intuitions may be implemented as extensions of this mapping: to annotate each node separately we could replace each term in the statement by a blank node (the property in generalized RDF, or otherwise create a singleton property term) and annotate them accordingly with an `nng:aspectOf` relation to refer to the primary topic of the term and further attributions as desired. However, it is obvious that such a mapping, while possible and actually quite faithfully representing the meaning of an annotated statement, would in practice be quite unbearable.
 
 
 #### Singleton Properties-based Mapping
 
 In the singleton properties oriented mapping annotations are attributed to a newly defined property.
-The property `sg:aspectOf`, here defined as a subproperty of `rdfs:subPropertyOf`, points from the newly created property in the annotated statement to the original property that is getting annotated. The original property should be interpreted as the primary value of an existential represented by the singleton property, `:b_1` in the example below. In generalized RDF `:b_1` would be represented as a blank node, e.g. `_:b1`.
+The property `nng:aspectOf`, here defined as a subproperty of `rdfs:subPropertyOf`, points from the newly created property in the annotated statement to the original property that is getting annotated. The original property should be interpreted as the primary value of an existential represented by the singleton property, `:b_1` in the example below. In generalized RDF `:b_1` would be represented as a blank node, e.g. `_:b1`.
 ```
 DEF
 
-sg:aspectOf a rdfs:Property ;
+nng:aspectOf a rdfs:Property ;
     rdfs:subPropertyOf rdfs:subPropertyOf ;
-    rdfs:comment "The property `sg:aspectOf`, defined as a subproperty of `rdfs:subPropertyOf`, describes the relation type of the statement that is getting annotated. Its `rdfs:range` is to be interpreted as the primary value of the annotated property." .
+    rdfs:comment "The property `nng:aspectOf`, defined as a subproperty of `rdfs:subPropertyOf`, describes the relation type of the statement that is getting annotated. Its `rdfs:range` is to be interpreted as the primary value of the annotated property." .
 ```
 
 Using this approach, the nested graph construct
@@ -94,10 +94,10 @@ is mapped to
 ```
 :a :b :c .
 :a :b_1 :c .
-:b_1 sg:aspectOf :b ;
-     sg:inGraph _:ag2 ;
+:b_1 nng:aspectOf :b ;
+     nng:inGraph _:ag2 ;
      :d :e .                  # annotating the triple
-_:ag2 sg:inGraph _:ag1 . 
+_:ag2 nng:inGraph _:ag1 . 
 ```
 
 On first sight, both approaches don't differ too much syntactically and also their triple count is roughly the same. However, in our view the singleton properties based mapping seems to provide a semantically more approachable behaviour than the more bare bones `rdf:value` based approach. It is also easier to extend to fragment identifiers as we will see below.
@@ -120,14 +120,14 @@ Here the immediate intuition will in most cases be that the annotation annotates
 ```
 :a :b :c .
 :a :b_1 :c .
-:b_1 sg:aspectOf :b ;
-     sg:inGraph _:ag2 .
+:b_1 nng:aspectOf :b ;
+     nng:inGraph _:ag2 .
 :u :v :w  .
 :u :v_1 :w  .
-:v_1 sg:aspectOf :v ;
-     sg:inGraph _:ag2 .
+:v_1 nng:aspectOf :v ;
+     nng:inGraph _:ag2 .
 _:ag2 :d :e ;                 # annotating the graph
-      sg:inGraph _:ag1 . 
+      nng:inGraph _:ag1 . 
 ```
 
 To help usability we might have to decide which one of those mappings is the default one. 
@@ -167,7 +167,7 @@ The nested graph construct
 as standard RDF 1.1 named graphs maps to
 ```
 _:x {  :a :b :c  }
-_:y { _:x a sg:NestedGraph ;
+_:y { _:x a nng:NestedGraph ;
           :d :e
 }
 ```
@@ -183,26 +183,25 @@ again involving a two-step process, this time
 
 In general it shouldn't be necessary to explicitly specify that `_:x` and, for that matter, also `_:y` are nested graphs, as this can can be declared as a default arrangement for a whole dataset. This will be discussed in more detail in the next section. It also shouldn't be necessary to explicitly state the containment relation, i.e.
 ```
-_:x sg:inGraph _:y .
+_:x nng:inGraph _:y .
 ```
 This mapping assumes a uniform dataspace in which all named graphs can interact with each other. A more  fragmented intuition, that understands each named graph as its own "data island" could employ the `owl:imports` property to include nested graphs. 
-To that end we introduce a new `<.>` operator to allow a named graph to reference itself, mimicking the `<>` operator in SPARQL that addresses the enclosing dataset. 
-> [TODO] or is SPARQL using the `<.>` operator and we have to use `<>` ?
+To that end we introduce a new `THIS` operator to allow a named graph to reference itself, mimicking the `<>` operator in SPARQL that addresses the enclosing dataset. 
 ```
 DEF
 
-<.> a rdfs:Resource ;
+THIS a rdfs:Resource ;
     rdfs:comment "A self-reference from inside a named or nested graph to itself" .
 ```
 This results in the following mapping:
 ```
 _:x { :a :b :c  }
-_:z { <.> owl:imports _:x .
+_:z { THIS owl:imports _:x .
       _:x :d :e  }
 ```
 From a semantics perspective the resulting graph `_:z` represents the nested graph a bit more faithfully than the two separate graphs in the simpler mapping above. If this increase in fidelity is indeed worth the effort is an open question.
 
-To clarify: `<.> owl:imports _:x .` imports `_:x` into a graph, but doesn't give it a name. In the section on [Literals](#graph-literals) below we will see other ways to import/include statements into a graph.
+To clarify: `THIS owl:imports _:x .` imports `_:x` into a graph, but doesn't give it a name. In the section on [Literals](#graph-literals) below we will see other ways to import/include statements into a graph.
 
 > [NOTE] 
 >
@@ -240,18 +239,18 @@ DEF
 
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 
-sg:Graph a rdfs:Class ;
+nng:Graph a rdfs:Class ;
     owl:sameAs sd:Graph ;
     rdfs:comment "An RDF graph, defined as a set of RDF triples, see [RDF 1.1](https://www.w3.org/TR/rdf11-concepts/#dfn-rdf-graph)." .
 
-sg:NestedGraph a rdfs:Class ;
+nng:NestedGraph a rdfs:Class ;
     rdfs:comment "A nested graph, as defined in this proposal." .
 
-sg:NamedGraph a rdfs:Class ;
+nng:NamedGraph a rdfs:Class ;
     owl:sameAs sd:NamedGraph ;
     rdfs:comment "A named graph as specified in [RDF 1.1](https://www.w3.org/TR/rdf11-concepts/#dfn-named-graph)." .
 
-sg:IdentGraph a rdfs:Class ;
+nng:IdentGraph a rdfs:Class ;
     rdfs:comment "A graph understood as an abstract type, identified by its content, irrespective of any features like name, annotations, etc. This definition is supposed to support reasoning over graphs." .
 ```
 
@@ -261,13 +260,13 @@ sg:IdentGraph a rdfs:Class ;
 ```
 DEF
 
-sg:identifiedBy a rdf:Property ;
+nng:identifiedBy a rdf:Property ;
     rdfs:comment "Establishes what defines the identity of a graph." .
 
-sg:Identifier a rdfs:Class ;
+nng:Identifier a rdfs:Class ;
     rdfs:comment "The identity of a graph is established by the IRI under which it can be retrieved, i.e. two graphs with identical content but different names are different graphs. Two graphs with the same name must either be merged, named apart or removed." .
 
-sg:Content a rdfs:Class ;
+nng:Content a rdfs:Class ;
     rdfs:comment "The identity of a graph is established by its content, i.e. two graphs with the same content but different names can be entailed to be equal (vulgo to be owl:sameAs)." .
 ```
 
@@ -277,17 +276,17 @@ sg:Content a rdfs:Class ;
 ```
 DEF
 
-sg:naming a rdf:Property ;
+nng:naming a rdf:Property ;
     rdfs:comment "Establishes the naming semantics." .
 
-sg:Address a rdfs:Class ;
+nng:Address a rdfs:Class ;
     rdfs:comment "The graph name carries no meaning on its own but serves merely to address the graph as a network retrievable resource." .
 
-sg:Overloaded a rdfs:Class ;
-    rdfs:comment "The graph name carries meaning on its own, i.e. it denotes something else than the graph itself, in addition to serving as an `sg:Address`." .
+nng:Overloaded a rdfs:Class ;
+    rdfs:comment "The graph name carries meaning on its own, i.e. it denotes something else than the graph itself, in addition to serving as an `nng:Address`." .
 
-sg:overloading a rdf:Property ;
-    rdfs:comment "Describes the kind of meaning that the overloaded graph name conveys. A non-exclusive list of possible values is `sg:DateOfIngestion`, `sg:DateOfCreation`, `sg:DateOfLastUpdate`, `sg:Source`, `sg:Provenance`, `sg:AccessControl`, `sg:Version`, `sg:TopicOfGraph`, `sg:LocationDescribed`, `sg:TimeDescribed`" .
+nng:overloading a rdf:Property ;
+    rdfs:comment "Describes the kind of meaning that the overloaded graph name conveys. A non-exclusive list of possible values is `nng:DateOfIngestion`, `nng:DateOfCreation`, `nng:DateOfLastUpdate`, `nng:Source`, `nng:Provenance`, `nng:AccessControl`, `nng:Version`, `nng:TopicOfGraph`, `nng:LocationDescribed`, `nng:TimeDescribed`" .
 ```
 
 
@@ -296,13 +295,13 @@ sg:overloading a rdf:Property ;
 ```
 DEF
 
-sg:mutability a rdf:Property ;
+nng:mutability a rdf:Property ;
     rdfs:comment "Establishes if the graph is considered to represent an immutable abstract graph type or a mutable source of RDF data." .
 
-sg:GraphSource a rdfs:Class ;
+nng:GraphSource a rdfs:Class ;
     rdfs:comment "A mutable source of RDF data, see [RDF 1.1](https://www.w3.org/TR/rdf11-concepts/#dfn-rdf-source)." .
 
-sg:GraphType a rdfs:Class ;
+nng:GraphType a rdfs:Class ;
     rdfs:comment "An immutable graph, its type defined by its content." .
 ```
 
@@ -313,42 +312,42 @@ To flesh out the descriptions of the graph types defined above we need one last 
 ```
 DEF
 
-sg:Undefined a rdfs:Class ;
+nng:Undefined a rdfs:Class ;
     rdfs:comment "An utility class to describe that this property has no value for this class." .
 ```
 
 Putting the vocabulary just established to good use: 
 ```
-sg:NestedGraph 
-    a sg:Graph ;
-    sg:identifiedBy sg:Identifier ;
-    sg:naming sg:Address ;
-    sg:mutability sg:GraphSource .
+nng:NestedGraph 
+    a nng:Graph ;
+    nng:identifiedBy nng:Identifier ;
+    nng:naming nng:Address ;
+    nng:mutability nng:GraphSource .
 ```
 
 ```
 sd:NamedGraph 
-    a sg:Graph ;
-    sg:identifiedBy sg:Undefined ;
-    sg:naming sg:Undefined ;
-    sg:mutability sg:Undefined .
+    a nng:Graph ;
+    nng:identifiedBy nng:Undefined ;
+    nng:naming nng:Undefined ;
+    nng:mutability nng:Undefined .
 ```
 
 ```
-sg:IdentGraph 
-    a sg:Graph ;
-    sg:identifiedBy sg:Content ;
-    sg:naming sg:Address ;
-    sg:mutability sg:GraphType .
+nng:IdentGraph 
+    a nng:Graph ;
+    nng:identifiedBy nng:Content ;
+    nng:naming nng:Address ;
+    nng:mutability nng:GraphType .
 ```
 
 ```
 :MyGraph_1 
-    a sg:Graph ;
-    sg:identifiedBy sg:Identifier ;
-    sg:naming [ rdf:value sg:Overloaded ;
-	             sg:overloading sg:TopicOfGraph ] ;
-    sg:mutability sg:GraphSource .
+    a nng:Graph ;
+    nng:identifiedBy nng:Identifier ;
+    nng:naming [ rdf:value nng:Overloaded ;
+	             nng:overloading nng:TopicOfGraph ] ;
+    nng:mutability nng:GraphSource .
 ```
 
 
@@ -367,7 +366,7 @@ The [RDF 1.1 WG Note](https://www.w3.org/TR/2014/NOTE-rdf11-datasets-20140225/#d
     ] .
 ```
 
-In the following we use the `sg:` vocabulary to extend this example towards a mixed environment of named and nested graphs:
+In the following we use the `nng:` vocabulary to extend this example towards a mixed environment of named and nested graphs:
 ```
 @prefix er: <http://www.w3.org/ns/entailment> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
@@ -376,15 +375,15 @@ In the following we use the `sg:` vocabulary to extend this example towards a mi
     sd:namedGraph [
         sd:name http://example.com/NamedGraph1 ;
         sd:entailmentRegime er:RDFS ;
-        sg:graphType sg:NamedGraph 
+        nng:graphType nng:NamedGraph 
     ] ;
     sd:namedGraph [
         sd:name http://example.com/NestedGraph1 ;
         sd:entailmentRegime er:RDFS ;
-        sg:graphType sg:NestedGraph 
+        nng:graphType nng:NestedGraph 
     ] .
 ```
-Note that specifying a graph to be of type `sg:NamedGraph` effectively amounts to stating that we can't say anything definite about its naming semantics.
+Note that specifying a graph to be of type `nng:NamedGraph` effectively amounts to stating that we can't say anything definite about its naming semantics.
 
 
 Having to explicitly specify the semantics of each graph is cumbersome. The SD vocabulary provides a property to define the default entailment regime for all named graphs in a dataset. We extend the vocabulary analogously by a property to define a default type for all graphs in a dataset:
@@ -392,21 +391,21 @@ Having to explicitly specify the semantics of each graph is cumbersome. The SD v
 ```
 DEF
 
-sg:defaultGraphType a rdf:Property ;
+nng:defaultGraphType a rdf:Property ;
     rdfs:comment "Defines the graph type for all graphs in a dataset."
 ```
 
-The following example defines all named graphs to be of type `sg:NestedGraph`, but also adds an exception to that rule:
+The following example defines all named graphs to be of type `nng:NestedGraph`, but also adds an exception to that rule:
 ```
 @prefix er: <http://www.w3.org/ns/entailment> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 []  a sd:Dataset;
     sd:defaultEntailmentRegime er:RDF ;
-	sg:defaultGraphType sg:NestedGraph ;
+	nng:defaultGraphType nng:NestedGraph ;
     sd:namedGraph [
         sd:name http://example.com/NamedGraph1 ;
         sd:entailmentRegime er:RDFS ;
-		sg:graphType sg:NamedGraph
+		nng:graphType nng:NamedGraph
     ] .
 ```
 
@@ -438,33 +437,33 @@ which in Dydra's case is just the default graph, but other databases take a diff
 
 ### Mapping Fragment Identifiers to Standard RDF
 
-The singleton properties based mapping introduced [above](#singleton-properties-mapping) can be extended to annotate individual terms in a statement by using `rdfs:domain`, `rdfs:range` and a newly introduced `sg:relation` to annotate subject, object and predicate of the relation. Further properties `sg:term`, `sg:triple` and `sg:graph` allow to refer to all terms or all triples in a graph, or to the graph itself explicitly.
+The singleton properties based mapping introduced [above](#singleton-properties-mapping) can be extended to annotate individual terms in a statement by using `rdfs:domain`, `rdfs:range` and a newly introduced `nng:relation` to annotate subject, object and predicate of the relation. Further properties `nng:term`, `nng:triple` and `nng:graph` allow to refer to all terms or all triples in a graph, or to the graph itself explicitly.
 ```
 DEF
 
-sg:domain a rdf:Property ;
+nng:domain a rdf:Property ;
     rdfs:subPropertyOf rdfs:domain ;
     rdfs:label "s" ;
     rdfs:comment "Refers to all subjects in a graph, fragment identifier is `#s`" .
 
-sg:range a rdf:Property ;
+nng:range a rdf:Property ;
     rdfs:subPropertyOf rdfs:range ;
     rdfs:label "o" ;
     rdfs:comment "Refers to all objects in a graph, fragment identifier is `#o`" .
 
-sg:relation a rdf:Property ;
+nng:relation a rdf:Property ;
     rdfs:label "p" ;
     rdfs:comment "Refers to all properties in a graph, fragment identifier is `#p`" .
 
-sg:term a rdf:Property ;
+nng:term a rdf:Property ;
     rdfs:label "term" ;
     rdfs:comment "Refers to all terms in a graph, fragment identifier is `#term`"" .
 
-sg:triple a rdf:Property ;
+nng:triple a rdf:Property ;
     rdfs:label "t" ;
     rdfs:comment "Refers to the all statements in a graph, fragment identifier is `#t`" .
 
-sg:graph a rdf:Property ;
+nng:graph a rdf:Property ;
     rdfs:label "g" ;
     rdfs:comment "Refers to the graph itself, fragment identifier is `#g`" .
 
@@ -475,17 +474,17 @@ To give a complete example:
 ```
 :a :b :c .
 :a :b_1 :c .
-:b_1 sg:aspectOf :b ;  
-     sg:inGraph _:g ;  # graph containment itself *is* an annotation
-     sg:domain [       # annotating the subject
+:b_1 nng:aspectOf :b ;  
+     nng:inGraph _:g ;  # graph containment itself *is* an annotation
+     nng:domain [       # annotating the subject
          :f :g ] ;
-     sg:range [        # annotating the object
+     nng:range [        # annotating the object
          :h :i ] ;
-     sg:relation [     # annotating the property
+     nng:relation [     # annotating the property
          :k :l ] ;
-     sg:triple [       # annotating the triple itself
+     nng:triple [       # annotating the triple itself
          :o :p ] ;
-     sg:graph [        # annotating the nested graph itself
+     nng:graph [        # annotating the nested graph itself
          :q :r ] .
 _:g :d :e .             # annotating the nested graph *or* some aspect of it
 ```
@@ -494,8 +493,8 @@ Applying this mapping to the introducing example produces:
 ```
 :Alice :buys :House .
 :Alice :buys_1 :House .
-:buys_1 sg:aspectOf :buys ;
-        sg:domain [ 
+:buys_1 nng:aspectOf :buys ;
+        nng:domain [ 
             :age 40 ] .
 ```
 
@@ -503,8 +502,8 @@ Of course we can also apply fragment identifiers to the mapping and arrive at a 
 ```
 :a :b :c .
 :a :b_1 :c .
-:b_1 sg:aspectOf :b ;
-     sg:inGraph _:g .
+:b_1 nng:aspectOf :b ;
+     nng:inGraph _:g .
 :b_1#s :f :g .          # annotating the subject
 :b_1#o :h :i .          # annotating the object
 :b_1#p :k :l .          # annotating the property
@@ -516,7 +515,7 @@ In a more realistic example however the difference isn't that noticeable:
 ```
 :Alice :buys :House .
 :Alice :buys_1 :House .
-:buys_1 sg:aspectOf :buys .
+:buys_1 nng:aspectOf :buys .
 :buys_1#s :age 40 .
 ```
 

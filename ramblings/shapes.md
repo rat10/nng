@@ -15,13 +15,13 @@ We extend this approach to nested graphs, aiming at a tighter integration of sha
 
 To that end we define the following property:
 ```
-sg:hasShape a rdf:Property ;
+nng:hasShape a rdf:Property ;
     rdfs:comment "The subject - either a nested graph, a list or a term - follows the description of the object, a shape definition provided in SHACL or SHEX." .
 ```
 
 The following example annotates a nested graph with a SHACL shape definition:
 ```
-[]{ :s :p :o } sg:hasShape :MyFirstShape .
+[]{ :s :p :o } nng:hasShape :MyFirstShape .
 :MyFirstShape a sh:NodeShape ;
     [...]
 ```
@@ -29,11 +29,11 @@ The same principle can be applied to lists and terms:
 ```
 [ a rdfs:Collection ;
   rdf:value ( :a :b :c :d ) ;
-  sg:hasShape :MyFirstList 
+  nng:hasShape :MyFirstList 
   ]
 [ a rdfs:Resource ;
   rdf:value <:a> ;
-  sg:hasShape :MyFirstTerm
+  nng:hasShape :MyFirstTerm
   ] :b :c .
 ```
 We will introduce some examples of useful shapes for lists and terms in following sections.

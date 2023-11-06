@@ -1,6 +1,6 @@
 # Serialization
 
-The serialization of Semantic Graphs is defined as an extension to TriG. Its datatype is `application/sg`.
+The serialization of Named Nested Graphs is defined as an extension to TriG. Its datatype is `application/nng`.
 
 
 - graph annotation
@@ -13,10 +13,10 @@ The serialization of Semantic Graphs is defined as an extension to TriG. Its dat
 
 
 - graph literals
-[ seg:transcludesOpaquely ":a :b :c"^^rdf:ttl ] a :Nuisance .
-:X seg:transcludesOpaquely ":a :b :c"^^rdf:ttl a :Necessity .
-<.> seg:transcludesOpaquely ":a :b :c"^^rdf:ttl  
-                          # '<.>' refering to local graph
+[ seg:transcludesOpaquely ":a :b :c"^^nng:Graph ] a :Nuisance .
+:X seg:transcludesOpaquely ":a :b :c"^^nng:Graph a :Necessity .
+THIS seg:transcludesOpaquely ":a :b :c"^^nng:Graph  
+                          # 'THIS' referring to local graph
 
 
 

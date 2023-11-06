@@ -61,7 +61,7 @@ A query MUST return RDF literals *transcluded with asserted semantics* and it MU
 Explicitly asking for literal data with un-asserted semantics can be performed in two ways: either use a WITH modifier to the query or explicitly ask for the content of a literal.
 Any query asking specifically for data from a literal will get those results without having to select the literal type in a WITH clause.
 A query using the 'WITH' modifier will include results from all literals of that type:
-- LITERAL will include all ":s :p :o"^^sg:Graph and ":s"^^sg:Term literals, transcluded or not
+- LITERAL will include all ":s :p :o"^^nng:Graph and ":s"^^nng:Term literals, transcluded or not
 - TRANSCLUDED will include all transcluded literals, asserted and un-asserted, but not their LITERAL source
 - REPORT will include all unasserted transparent types
 
@@ -79,12 +79,12 @@ PROBLEM: how will the query engine know that some semantics is asserted or un-as
 ### Example
 ```
 prefix : <http://ex.org/>
-prefix sg: <http://rat.io/seg/>
+prefix nng: <http://rat.io/nng/>
 
-:X sg:transcludes ":Alice :likes :Skiing"^^sg:Graph .
-:Bob :says ":Moon :madeOf :Cheese"^^sg:Graph .
-:Alice :said ":s :p :o. :a :b :c"^^sg:Graph .
-[sg:name :Y, sg:semantics QUOTE]":ThisGraph a :Quote" .
+:X nng:transcludes ":Alice :likes :Skiing"^^nng:Graph .
+:Bob :says ":Moon :madeOf :Cheese"^^nng:Graph .
+:Alice :said ":s :p :o. :a :b :c"^^nng:Graph .
+[nng:name :Y, nng:semantics QUOTE]":ThisGraph a :Quote" .
 :LoisLane :loves [QUOTE]":Superman", :Skiing, [REPORT]":ClarkKent" .
 :Kid :loves [REPORT]":Superman" .
 :Carol :claims {":Denis :goes :Swimming"} .
@@ -164,19 +164,19 @@ because the respective candidate is a literal
 
 If a query addresses a graph literal explicitly, its results are rendered like regular RDF.
 ```
-:Alice :said ":s :p :o. :a :b :c"^^sg:Graph .
+:Alice :said ":s :p :o. :a :b :c"^^nng:Graph .
 ```
 [HELP]  i'd like to address the graph literal
     but how do i do that?
        maybe i need the following little helpers:
 ```
-sg:hasSource rdfs:range sg:GraphLiteral .
-[]{:a :b :c} sg:hasSource ":A :b :C"^^sg:Graph
+nng:hasSource rdfs:range nng:GraphLiteral .
+[]{:a :b :c} nng:hasSource ":A :b :C"^^nng:Graph
 
 # select all objects in the literal
 # assuming that graph literals are graphs too (ie referenced per graph keyword) ???
 SELECT ?so
-WHERE ?a sg:hasSource ?src
+WHERE ?a nng:hasSource ?src
         graph ?src { ?ss ?sp ?so }
 ```
 
