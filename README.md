@@ -20,7 +20,7 @@ The proposal doesn't require any changes or additions to the abstract syntax of 
 
 
 ## Concept
-The design of Named Nested Graphs aims for the least surprise. Annotated or not, they are always:
+The design of Nested Named Graphs aims for the least surprise. Annotated or not, they are always:
 - asserted (contrary to other approaches like RDF standard reification and RDF-star triple terms)
 - referentially transparent (contrary to other approaches like Notation3, Named Graphs Carroll et al 2005 and RDF-star triple terms)
 - tokens, as they are always named, either explicitly by the user or implicitly via blank nodes (similar to Named Graphs Carroll et al 2005, but contrary to other approaches like Notation3 and RDF-star triple terms)
@@ -30,8 +30,8 @@ They aim to integrate into existing applications without getting in the way of l
 - an annotated nested graph is actually a supertype of the graph into which its annotations transform it. This becomes visible in the mapping to standard RDF. It guarantees that annotations don't cloud the view on the principal relation.
 - annotations are applied to the statements they annotate and no intermediary node subtly changes their semantics.
 - optional fragment identifiers allow to identify with great precision the target of an annotation. However their use is not mandatory, enabling loose semantics per default.
-- Named Nested Graphs impose no artificial differentiation between singleton and multiple statements: a graph containing only one statement is a graph all the same.
-- as the name implies Named Nested Graphs provide a means to solidly specify their semantics while remaining backwards compatible to any application of named graphs in the wild.
+- Nested Named Graphs impose no artificial differentiation between singleton and multiple statements: a graph containing only one statement is a graph all the same.
+- as the name implies Nested Named Graphs provide a means to solidly specify their semantics while remaining backwards compatible to any application of named graphs in the wild.
 - special needs like unasserted assertions and quotation semantics are implemented via an extra mechanism.
 
 
@@ -91,7 +91,7 @@ The RDF 1.2 WG is still consolidating use cases [7]. On an abstract level the NN
 - specific needs w.r.t. semantics like lexically precise quotation should be possible, but as an extra and without making normal use cases more complicated
 - probably more.
 
-The [examples](examples.md) illustrate how Named Nested Graphs meet those demands. 
+The [examples](examples.md) illustrate how Nested Named Graphs meet those demands. 
 
 
 

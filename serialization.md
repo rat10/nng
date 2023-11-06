@@ -1,6 +1,6 @@
 # Serialization
 
-The serialization of Named Nested Graphs is defined as an extension to TriG. Its datatype is `application/nng`.
+The serialization of Nested Named Graphs is defined as an extension to TriG. Its datatype is `application/nng`.
 
 
 - graph annotation
