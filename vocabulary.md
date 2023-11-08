@@ -1,4 +1,5 @@
 # Configurable Semantics Vocabulary
+<!--
 
 ```
  _____ ___  ____   ___  
@@ -10,9 +11,13 @@
 
 convert to Nested Named Graphs
 
+transclusion -> inclusion
+
+semantics per property
+term semantics per annotation
+
 ```
 
-<!--
 	identification
 		M 	meaning
 		A 	artifact
