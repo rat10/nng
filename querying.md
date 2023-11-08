@@ -1,7 +1,7 @@
 
-# Querying
+# Querying TODO
 
-TBD - this is still *work in progress*
+there is still *a lot* to be done here
 
 > [TODO] 
 >
@@ -9,7 +9,7 @@ TBD - this is still *work in progress*
 >
 > - display of annotations (as "there is more..." or similar)
 > - scoping queries to nested graphs (recursively following their nested graphs)
-> - querying (included/transcluded) graph literals
+> - querying included graph literals
 > - displaying results with non-standard semantics, e.g. unasserted, opaque, etc
 
 
@@ -48,21 +48,21 @@ In a TSV/CSV query result set a value returned from an unasserted statement has 
 
 
 
-## Querying Transcluded Literals
+## Querying Included Literals
 
 We have to differentiate between 
-- regular RDF data and data *in/from* literals.
-- data *in* graph literals and data transcluded *from* graph literals with special semantics.
+- regular RDF data and data included from literals.
+- data *in* graph literals and data included *from* graph literals with special semantics.
 - data with semantics defining it as asserted or un-asserted data.
 
-A query MUST NOT return results *in* RDF literals or *transcluded with un-asserted semantics* from RDF literals if not explicitly asked for (to prevent accidental confusion of asserted and un-asserted data).
-A query MUST return RDF literals *transcluded with asserted semantics* and it MUST annotate the returned data with those semantics (because asserted data has to be visible, but its specific semantics have to be visible too).
+A query MUST NOT return results *in* RDF literals or *included with un-asserted semantics* from RDF literals if not explicitly asked for (to prevent accidental confusion of asserted and un-asserted data).
+A query MUST return RDF literals *included with asserted semantics* and it MUST annotate the returned data with those semantics (because asserted data has to be visible, but its specific semantics have to be visible too).
 
 Explicitly asking for literal data with un-asserted semantics can be performed in two ways: either use a WITH modifier to the query or explicitly ask for the content of a literal.
 Any query asking specifically for data from a literal will get those results without having to select the literal type in a WITH clause.
 A query using the 'WITH' modifier will include results from all literals of that type:
-- LITERAL will include all ":s :p :o"^^nng:Graph and ":s"^^nng:Term literals, transcluded or not
-- TRANSCLUDED will include all transcluded literals, asserted and un-asserted, but not their LITERAL source
+- LITERAL will include all ":s :p :o"^^nng:Graph and ":s"^^nng:Term literals, included or not
+- INCLUDED will include all included literals, asserted and un-asserted, but not their LITERAL source
 - REPORT will include all unasserted transparent types
 
 Annotating the returned data with semantics is performed in a similar way as when authoring. However, asserted terms are not put in quotes:
@@ -71,7 +71,7 @@ Annotating the returned data with semantics is performed in a similar way as whe
 
 [TODO] no quotes around asserted literals - is that a good idea? and feasible?
 
-Just to clarify: graph literals that are transcluded without semantics modifiers have regular RDF semantics and  queried and the results are displayed like regular RDF data - because that's what they are - without any prepended semantics modifier.
+Just to clarify: graph literals that are included without semantics modifiers have regular RDF semantics and when queried the results are displayed like regular RDF data - because that's what they are - without any prepended semantics modifier.
 
 PROBLEM: how will the query engine know that some semantics is asserted or un-asserted? Will it have t look up the semantics' definition on the web?
 
@@ -81,7 +81,7 @@ PROBLEM: how will the query engine know that some semantics is asserted or un-as
 prefix : <http://ex.org/>
 prefix nng: <http://rat.io/nng/>
 
-:X nng:transcludes ":Alice :likes :Skiing"^^nng:Graph .
+:X nng:includes ":Alice :likes :Skiing"^^nng:Graph .
 :Bob :says ":Moon :madeOf :Cheese"^^nng:Graph .
 :Alice :said ":s :p :o. :a :b :c"^^nng:Graph .
 [nng:name :Y, nng:semantics QUOTE]":ThisGraph a :Quote" .
@@ -124,7 +124,7 @@ because the respective candidate is a literal
 
 ### what to expect with WITH clause
 
-Query modifiers are introduced by a 'WITH' clause and use the provided semantics identifiers, e.g. LITERAL, TRANSCLUDED, REPORT, OPAQUE:
+Query modifiers are introduced by a 'WITH' clause and use the provided semantics identifiers, e.g. LITERAL, INCLUDED, REPORT, OPAQUE:
 ```
 SELECT ?s 
 WHERE  { ?s ?p :Superman }

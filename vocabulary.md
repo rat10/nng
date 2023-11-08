@@ -1,5 +1,5 @@
 # Configurable Semantics Vocabulary
-<!--
+
 
 ```
  _____ ___  ____   ___  
@@ -16,19 +16,16 @@ transclusion -> inclusion
 semantics per property
 term semantics per annotation
 
-```
+quotation -> not literalized (the literal does that good enough)
+             but normalized IRIs and strings
 
+```
+<!--
 	identification
 		M 	meaning
 		A 	artifact
 		Q	quotation
 
-
-	some things are messed up
-		CIT citation
-		QUT quotation
-		LIT literalization
-		OPA referantial opacity
 -->
 
 
@@ -132,32 +129,32 @@ nng:LOG a nng:SemanticsProfile ;
 
 ## Practical Application
 
-We can see two ways how such semantics profiles can be applied to RDF data: either they resort to an [transclusion](#graph-literals) construct based on regular RDF or they apply some syntactic sugar. Both approaches will be investigated below.
+We can see two ways how such semantics profiles can be applied to RDF data: either they resort to an [inclusion](#graph-literals) construct based on regular RDF or they apply some syntactic sugar. Both approaches will be investigated below.
 
 The practical problem that any approach on configurable semantics has to solve is how to guarantee that the RDF data so qualified can never be mistaken for regular RDF data. If the data would be introduced as a regular snippet of RDF, accompanied by an additional statement declaring its specific semantics, there could be no guarantee that an RDF processor is aware of that semantics fixing before deriving possibly unwanted entailments or in other ways processing the data in unintended ways.
 
 
-### Transclusion enabling Configurable Semantics
+### Inclusion enabling Configurable Semantics
 
-The transclusion mechanism introduced [above](#import-via-transclusion) allows to import graph literals with extremely restricted semantics. Adding to the transclusion a semantics instruction allows to tailor the semantics of the transcluded graph to the desired effect. We already gave the following example:
+The inclusion mechanism allows to import graph literals with extremely restricted semantics. Adding to the inclusion a semantics instruction allows to tailor the semantics of the included graph to the desired effect. We already gave the following example:
 ```
-THIS nng:transcludes [
+THIS nng:includes [
     rdf:value ":s :p :o"^^nng:Graph ;
     nng:semantics nng:APP
 ] .
 ```
-To make this arrangement more usable and also more tight, we could define proper subproperties of `nng:transcludes`, like e.g. `nng:transcludesAPP`:
+To make this arrangement more usable and also more tight, we could define proper subproperties of `nng:includes`, like e.g. `nng:includesAPP`:
 ```
-nng:transcludesAPP rdfs:subPropertyOf nng:transcludes ;
+nng:includesAPP rdfs:subPropertyOf nng:includes ;
                    rdfs:range nng:APP .
 ```
-This allows a streamlined transclusion of RDF data into a graph with very specific semantics.
+This allows a streamlined inclusion of RDF data into a graph with very specific semantics.
 ```
-THIS nng:transcludesAPP ":s :p :o"^^nng:Graph .
+THIS nng:includesAPP ":s :p :o"^^nng:Graph .
 ```
-Integrating such transclusions into regular RDF assertions is rather seamless as well, e.g.:
+Integrating such inclusions into regular RDF assertions is rather seamless as well, e.g.:
 ```
-:Bob :claims [ nng:transcludesCIT ":s :p :o"^^nng:Graph ].
+:Bob :claims [ nng:includesCIT ":s :p :o"^^nng:Graph ].
 ```
 
 It isn't hard to define tailored semantics solutions from the building blocks provided so far. We might for example start from the following construct, which expresses that the list of Alice's things follows the usual application intuitions (i.e. it is not concerned with syntactic fidelity, it is complete and the unique name assumption applies):
@@ -181,12 +178,12 @@ And apply it:
 ```
 That's still not very elegant, so let's define a property:
 ```
-ex:transcludesList rdfs:subPropertyOf nng:transcludes ;
+ex:includesList rdfs:subPropertyOf nng:includes ;
                    rdfs:range ex:List .
 ```
 And apply that:
 ```
-:Alice :has [ ex:transcludesList "( :D :E :F )"^^nng:Graph ]
+:Alice :has [ ex:includesList "( :D :E :F )"^^nng:Graph ]
 ```
 That's of course a bit much for one list, but it may pay off in an application context where we know that certain data sources are indeed complete and well kept and therefore it's safe to overrule the integration focused standard semantics of RDF.
 
@@ -197,7 +194,7 @@ That's of course a bit much for one list, but it may pay off in an application c
 >
 > This syntactic sugar is not tested yet and needs more work. The re-use of prepended square brackets to not declare a name but a semantics may cause more irritation than comfort.
 
-The following syntactic sugar aims to express transclusion with configurable semantics even more succinctly. An RDF graph literal is prepended with an argument specifying the intended semantics, re-using the already familiar square bracket syntax, e.g.:
+The following syntactic sugar aims to express inclusion with configurable semantics even more succinctly. An RDF graph literal is prepended with an argument specifying the intended semantics, re-using the already familiar square bracket syntax, e.g.:
 
 [APP]":a :b :c , :d" :e :f .
 
@@ -247,7 +244,7 @@ Here the square bracket prefix notation is used not to name the term - there's n
 
 
 
-## transclusion
+## inclusion
 
 
 ### quotation
@@ -339,6 +336,7 @@ or, to be more free in the use of vocabulary:
 
 ## inclusion + transclusion
 
+[TODO]  redefine inclusion, scratch tarnsclusion, but check the definition for useful bits first
 
 ```
 DEF

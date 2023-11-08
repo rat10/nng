@@ -19,7 +19,7 @@ As a graph is composed of triples and triples are composed of subject, predicate
 
 For example:
 ```
-[:g1]{ :a :b :c } 
+:g1{ :a :b :c } 
 :g1#s :d :e .
 ```
 annotates the subject `:a` alone. A more compact syntax is
@@ -28,13 +28,13 @@ annotates the subject `:a` alone. A more compact syntax is
 ```
 if readability is not considered an issue. However, annotating multiple fragments would mandate a separation of annotations from the annotated statement:
 ```
-[:g1]{ :a :b :c } 
+:g1 { :a :b :c } 
 :g1#s :d :e .
 :g1#o :d :f .
 ```
 Identification via fragment identifiers is distributive, i.e. it addresses each node of that type. An annotation of all triples in a nested graph, instead of the nested graph itself, can therefore be invoked via the `#t` triple fragment identifier, like so:
 ```
-[:g2]{ :a :b :c . 
+:g2 { :a :b :c . 
        :d :e :f }
 :g2#t :g :h .
 ```
@@ -43,7 +43,7 @@ Annotating the graph itself would either just omit the fragment identifier or, t
 
 As a motivating example, consider Alice buying a house when she turns 40:
 ```
-[:g1]{ :Alice :buys :House }
+:g1 { :Alice :buys :House }
 :g1#s :age 40 .
 ```
 Without the fragment identifier it would even for a human reader be impossible to disambiguate if the house is 40 years old when Alice buys it or if she herself is. A few decades from now one might even wonder if the annotation wants to express that the triple itself stems from the early days of the semantic web.
@@ -58,7 +58,7 @@ This is quite involved and does require that either users or some helpful backgr
 > 
 > The '#' syntax is failing in TriG (which is quite embarrassing TBH). Alternatives like '?' and '/' need escaping too. So either one breaks one's fingers when typing or one has to use a more explicit expression, e.g.
 >
->    :g1 seg:subject [ :age 40 ]
+>    :g1 nng:subject [ :age 40 ]
 >
 > Yes, that sucks.
 
@@ -80,15 +80,15 @@ To help disambiguate intended identification semantics we propose a small vocabu
 ```
 DEF
 
-seg:identifiedAs a rdf:Property ;
+nng:identifiedAs a rdf:Property ;
     rdfs:label "Interpretation semantics ;
     rdfs:comment "Specifies how an identifier should be interpreted." .
 
-seg:INT a seg:SemanticsAspect ;
+nng:INT a nng:SemanticsAspect ;
     rdfs:label "Interpretation" ;
     rdfs:comment "The identifier is interpreted to refer to an entity in the real world." .
 
-seg:ART a seg:SemanticsAspect ;
+nng:ART a nng:SemanticsAspect ;
     rdfs:label "Artifact" ;
     rdfs:comment "The identifier is used to refer to a web resource, i.e. an artifact." .
 ```
@@ -99,8 +99,8 @@ This proposal has several advantages over other solutions like IRI re-direction,
 
 In the following example the IRI <https://www.paris.com> is used to either refer to the website of Paris or to the city itself. The annotation via a fragment identifier disambiguates the intended referent:
 ```
-[]{<https://www.paris.com> :created 1995 .}#s seg:identifiedAs seg:ART .
-[]{<https://www.paris.com> :created "3rd century BC" .}#s seg:identifiedAs seg:INT .
+[]{<https://www.paris.com> :created 1995 .}#s nng:identifiedAs nng:ART .
+[]{<https://www.paris.com> :created "3rd century BC" .}#s nng:identifiedAs nng:INT .
 ```
 
 

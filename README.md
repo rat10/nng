@@ -26,6 +26,7 @@ Nested Named Graphs aim to integrate into existing applications without getting 
 - Nesting of graphs allows for the addition of unforeseen aspects without a need to modify existing structures and queries.
 - An annotated nested graph is actually a supertype of the graph into which its annotations transform it. This becomes visible in the mapping to standard RDF. It guarantees that annotations don't cloud the view on the principal relation.
 - Annotations are applied to the statements they annotate. No requirements for intermediary nodes can change their semantics in subtle and counter-intuitive ways.
+- Annotated statements represent tokens, which is the intuitive referent of use cases like administration and contextualization.
 - Optional fragment identifiers allow to identify with great precision the target of an annotation: a term on subject- or object position, the relation itself or the statement as a whole. However their use is not mandatory, defaulting to a loosely bound "cavalier" approach semantics.
 - Nested Named Graphs impose no artificial differentiation between singleton and multiple statements: a graph containing only one statement is a graph all the same.
 - They provide a means to solidly specify their semantics while remaining backwards compatible to any application of named graphs in the wild.
@@ -39,14 +40,16 @@ The design of Nested Named Graphs aims for the least surprise. Annotated or not,
 
 
 ## Syntax
-The main component of the proposal is a [syntactic extension](serialization.md) to TriG that adds the ability to nest named graphs inside each other. 
+The main component of the proposal is a [syntactic extension](serialization.md) to TriG that adds the ability to nest named graphs inside each other. The following short example may give a first impression:
+```turtle
+[TODO]
+```
+For a more extensive set of simple examples check out the [Introduction by Example](introexample.md)
 
 A complementary syntactic extension to JSON-LD is TBD. [Mappings](mappings.md) to triple- and quad based formats like Turtle, N-Triples and N-Quads are provided (or worked on). A mapping to RDF/XML so far isn't planned as RDF/XML doesn't even support named graphs. However it could be realized analogously to the approach taken with the Turtle mapping.
 
 See also an example of a [BNF](sources/trig-nng.bnf) for the NNG syntax - not exactly but close to the version actually deployed in the prototype notebook (see below).
 
-
-[TODO] example from telco.trig
 
 
 ## Semantics
@@ -86,7 +89,36 @@ One thing we learned from this huge corpus of works is that the one magic trick 
     [TODO] link to monotonicity.md ?
 - *don't break user's intuitions*: this one is not new, but it can't be repeated often enough. Semantics is an elusive beast, exceptionally prone to misunderstandings and contextual shape-shifting. If a formalism doesn't manage to capture the most prevalent intuitions intuitively, it is almost guaranteed to be mis-used in practice. This has happened many times - see RDF standard reification, the Named Graph semantics by Carroll et al 2005, RDF-stars completely ignored TEP-mechanism - and it takes a lot of self-scrutiny to get right.
 
+<!--
+from telco.trig
 
+- TOKENS 
+  administration
+  qualification
+
+- ASSERTED 
+  otherwise the connection to the annotated statement is too brittle
+
+- GRAPHS 
+  grouping (even just for the sake of it) is an important KR pattern
+  and it is easier to represent singletons with a grouping device 
+      than the other way round
+
+- IDENTIFIERS 
+  essential for tokens, otherwise one more triple (see RDF-star :occurrenceOf) 
+
+- REFERENTIAL TRANSPARENCY 
+  mainstream 
+
+- NESTING
+  resilience to change
+  multiple dimensions
+      (instead of "but we use named graphs for X, so can't use it for anything else")
+
+- THE 20 in 80/20
+  literals for types, referential opacity, un-asserted assertions etc 
+  separation of concerns
+-->
 
 
 ## Use Cases
@@ -115,7 +147,7 @@ The Semantic/Nested Named Graphs proposal was presented to the RDF 1.2 WG by mea
 - a [short text](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Oct/0041.html) from mid-October 23, providing a shorter introduction to the proposal
 - a [short presentation](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Oct/0109.html) from late-October 23, introducing the proposal by example.
   
-Discussions in the WG led to some modifications that resulted in the proposal documented here, which is completely conformant to the existing RDF 1.1 model and abstract syntax, at the expense of a bit of semantic rigidity. Some aspects like the in/transclusion mechanism have undergone some changes too, so consult those older texts with caution. 
+Discussions in the WG led to some modifications that resulted in the proposal documented here, which is completely conformant to the existing RDF 1.1 model and abstract syntax, at the expense of a bit of semantic rigidity. Some aspects like the inclusion/transclusion mechanism have undergone some changes too, so consult those older texts with caution. 
 
 
 ## References

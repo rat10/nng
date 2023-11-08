@@ -11,11 +11,18 @@ The serialization of Nested Named Graphs is defined as an extension to TriG. Its
    :g1{:a :b :c} :x :y .
    :g1 :u :w .
 
+[TODO] do we still support property lists?
+       or dow we reserve the [] syntax for either
+       - blank node names
+       or
+       - semantics declarations, eg
+         [APP]{ s p o }
+
 
 - graph literals
-[ seg:transcludesOpaquely ":a :b :c"^^nng:Graph ] a :Nuisance .
-:X seg:transcludesOpaquely ":a :b :c"^^nng:Graph a :Necessity .
-THIS seg:transcludesOpaquely ":a :b :c"^^nng:Graph  
+[ nng:quotes ":a :b :c"^^nng:Graph ] a :Nuisance .
+:X nng:quotes ":a :b :c"^^nng:Graph a :Necessity .
+THIS nng:quotes ":a :b :c"^^nng:Graph  
                           # 'THIS' referring to local graph
 
 

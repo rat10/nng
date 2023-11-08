@@ -10,7 +10,7 @@ Adding a length attribute to the container vocabulary enables users to describe 
 ```
 DEF
 
-seg:length a rdf:Property ;
+nng:length a rdf:Property ;
     rdfs:domain rdfs:Container ;
     rdfs:range xsd:integer ;
     rdfs:comment "Describes the number of entries of an rdf:Collection (rdf:Bag, rdf:Seq, rdf:Alt). Numbering is expected to start from 1 and missing entries may be interpreted as implicit existentials (i.e. blank nodes)." .
@@ -19,7 +19,7 @@ seg:length a rdf:Property ;
 Applications will have to decide what to make of containers that have less or more entries or whose entries are not consecutively numbered, beginning with `rdf:_1`. They may replace missing entries by blank nodes, like e.g. in the following sequence that misses the second entry. In any case at least they have been warned that something might be amiss.
 ```
 _:x a rdf:Bag ;
-    seg:length 3 ;
+    nng:length 3 ;
     rdf:_1 :Alice ;
     rdf:_2 [] ;
     rdf:_3 :Carol .
@@ -50,7 +50,7 @@ This is much shorter than the corresponding RDF sequence without syntactic sugar
 ```
 :Alice :owns [
     a rdf:Seq ; 
-    seg:length 3 ;
+    nng:length 3 ;
     rdf:_1 :Sedan ; 
     rdf:_2 :StationWagon ; 
     rdf:_3 :Coupe
@@ -119,7 +119,7 @@ or, to give a slightly more involved example:
 :Alice :has [
     rdfs:label :AliceList ;
     a rdf:Seq ;
-    seg:length 2 ;
+    nng:length 2 ;
     rdf:_1 :X ;
     rdf:_2 :Y .
 ]

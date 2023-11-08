@@ -187,20 +187,20 @@ Annotating an anonymous nested graph can only happen within the constraints of -
 
 An example of an explicitly named nested graph:
 ```
-[:MyFirstGraph]{:s :p :o}
+:MyFirstGraph {:s :p :o}
 ```
 
 This simple primitive can be employed in many different ways:
 ```
-[:MyGraph1]{ :a :b :c } :d :e .     # creation and annotation in one stroke
+:MyGraph1 { :a :b :c } :d :e .     # creation and annotation in one stroke
 :f :g :MyGraph1 ;                   # a separate reference to :MyGraph1
    :h :i .
-[:SomeGraph2]{
-    [:ThisGraph3]{:k :l :m , :n}    # heavy nesting
+:SomeGraph2 {
+    :ThisGraph3 {:k :l :m , :n}    # heavy nesting
     :o :p } :q :r .
 :MyGraph1 :s :ThisGraph3 ;
           :t :SomeGraph2 .
-[:ThatGraph4]{:u :v :w} .           # creation of :ThatGraph4
+:ThatGraph4 {:u :v :w} .           # creation of :ThatGraph4
 []{ :a :b :c }                      # _:g5, a different graph than :MyGraph1
 []{ :a :b :c }                      # _:g6, yet another graph
 :ThatGraph4 :y :z .                 # annotating :ThatGraph4 in a separate step

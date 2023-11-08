@@ -1,12 +1,10 @@
-# Shapes
-
-# this is WORK IN PROGRESS
+# Shapes - WORK IN PROGRESS
 
 > [TODO]  
 > The main aim is to establish anchor points that allow to impose tighter constraints on shapes and semantics of RDF constructs - nested graphs, lists and even terms, the idea being that establishing *one* such anchor point can solve *many* problems
 > However, not everything is well thought out yet:
 > - obviously the shortcut syntax isn't finished
-> - maybe the mapping to RDF has to use [inclusion/transclusion](#importing-assertions) to be really on the safe side w.r.t. monotonicity, maybe a syntactic mapping to n-ary relations is good enough
+> - maybe the mapping to RDF has to use inclusion of graph literals to be really on the safe side w.r.t. monotonicity, maybe a syntactic mapping to n-ary relations is good enough
 > - the mix of shape and semantics needs more investigation
 > - are shapes really the best overarching abstraction and does the effect warrant the effort?
 
@@ -45,9 +43,9 @@ However, we first need to tackle an obvious problem: the approach is syntactical
 ## Syntax
 The basic syntactic instrument to overcome the verbosity of the approach is a keyword prepended to a nested graph, list or term. To that end again the square bracket syntax introduced with nested graphs is reused, combined with a query parameter on the name of the construct to indicate the intended shape, e.g.:
 ```
-[:g1?shape=SomeGrafShape]{ :a :b :c }       # nested graph
-[:l1?shape=SomeListShape]( :a :b :c :d )    # list
-[:t1?shape=SomeTermShape]< :a >             # term
+:g1?shape=SomeGrafShape { :a :b :c }       # nested graph
+:l1?shape=SomeListShape ( :a :b :c :d )    # list
+:t1?shape=SomeTermShape < :a >             # term
 ```
 [TODO]  this requires to name any graph that has non-standard semantics
             but that is probably not too grave a demand

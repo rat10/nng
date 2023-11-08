@@ -1,4 +1,4 @@
-# RDF Literals and Transclusion
+# RDF Literals and Inclusion
 
 RDF literals serve to enable use cases with non-standard semantics. They provide a way to
 - reference RDF graphs for purposes beyond mere documentation and quotation, but implement any specific semantics arrangements different from the standard RDF semantics, and
@@ -23,7 +23,7 @@ It can be used like in the following, quite uninspiring example:
 :Alice :said ":s :p :o. :a :b :c"^^nng:Graph .
 ":s :p :o. :a :b :c"^^nng:Graph :assertedSoFar :zeroTimes .
 ```
-Graph literals are the basic building block from which any specific semantics configurations can be derived. The respective mechanism is called *transclusion* and will be presented next.
+Graph literals are the basic building block from which any specific semantics configurations can be derived. The respective mechanism is called *inclusion* and will be presented next.
 
 We [might](https://github.com/rat10/sg/issues/2) also define a term literal datatype, e.g.:
 ```
@@ -41,7 +41,7 @@ The approach has two important advantages:
 - graph literals provide very intuitive usability characteristics, because the literal syntax is easy to understand as a verbatim representation of unasserted statements.
 - graph literals don't require a modification of RDF model and syntax, but merely the definition of a new datatype. 
 
-We take up the approach because we consider it ideally suited to implement different semantics via configurable transclusion.
+We take up the approach because we consider it ideally suited to implement different semantics via configurable inclusion.
 
 To that end we introduce the Graph Literal class:
 ```
@@ -50,7 +50,7 @@ DEF
 nng:GraphLiteral a rdfs:Class ;
     rdfs:comment "A literal whose datatype matches the enclosing RDF document, e.g. NNG, Turtle, TriG or JSON-LD".
 ```
-We will in the following define ways in which the RDF contained in those literals can be introduced into the realm of interpretation. To that end it has to be ensured that query and reasoning engines can access the data contained in graph literals if applicable, i.e. they have to be able to parse RDF literal data types as if they were standard RDF data IFF the transcluding property linking to those literals suggests so. 
+We will in the following define ways in which the RDF contained in those literals can be introduced into the realm of interpretation. To that end it has to be ensured that query and reasoning engines can access the data contained in graph literals if applicable, i.e. they have to be able to parse RDF literal data types as if they were standard RDF data IFF the including property linking to those literals suggests so. 
 
 > [NOTE] 
 >
@@ -59,18 +59,21 @@ We will in the following define ways in which the RDF contained in those literal
 
 ## Configurable Semantics
 
-RDF literals can be used to introduce RDF with non-standard semantics into the data. Many such semantics are possible, like un-assertedness, referential opacity, closed world assumption, unique name assumption, combinations thereof, etc. To introduce a graph with specific semantics, it is *transcluded*, e.g.:
+RDF literals can be used to introduce RDF with non-standard semantics into the data. Many such semantics are possible, like un-assertedness, referential opacity, closed world assumption, unique name assumption, combinations thereof, etc. To introduce a graph with specific semantics, it is *included*, e.g.:
 ```
-:Alice :said [ nng:transcludes ":s :p :o. :a :b :c"^^nng:Graph 
+:Alice :said [ nng:includes ":s :p :o. :a :b :c"^^nng:Graph 
                nng:semantics nng:Quote ] 
 ```
-If no semantics is specified, the graph literal is transcluded according to regular RDF semantics, just like `owl:imports`` transcludes an RDF file into a graph. Just like an ontology imported via `owl:imports` the transcluded graph can not be modified in the transcluding graph. The semantics of the transclusion specify which operations may be performed on the transcluded graph. A quoted transclusion for example is not amenable to entailments and is not asserted either.
+If no semantics is specified, the graph literal is included according to regular RDF semantics, just like `owl:imports` includes an RDF file into a graph. Just like an ontology imported via `owl:imports` the included graph can not be modified in the including graph. 
+[TODO] scrub this?
 
-To prevent problems with monotonicity, specific transclusion properties for each semantics can be specified, e.g.
+The semantics of the inclusion specify which operations may be performed on the included graph. A quoted inclusion for example is not amenable to entailments and is not asserted either.
+
+To prevent problems with monotonicity, specific inclusion properties for each semantics can be specified, e.g.
 ```
-:Alice :said [ nng:transcludesQuote ":s :p :o. :a :b :c"^^nng:Graph ]
+:Alice :said [ nng:quotes ":s :p :o. :a :b :c"^^nng:Graph ]
 ```
-This provides an extra guarantee that no entailments are derived from the transcluded graph before a semantics configuration has been retrieved that might forbid such an operation. 
+This provides an extra guarantee that no entailments are derived from the included graph before a semantics configuration has been retrieved that might forbid such an operation. 
 
 To provide even more comfort, specific semantic modifiers like eg. QUOTE can be defined and prepended to a graph literal (also omitting the datatype declaration), creating a nested graph with the specified semantics: 
 ```
@@ -112,7 +115,7 @@ QUOTE   unasserted type, referentially opaque
 
 LITERAL last not least the bare graph literal
         " :s :p :o "^^nng:Graph
-        since it's not transcluded it is also not named by a blank node
+        since it's not included it is also not named by a blank node
             and the datatype declaration can't be omitted
         really just a datatyped string, but on demand accessible by a SPARQL engine
 ```
@@ -156,7 +159,7 @@ In a more specific arrangement we might want to document the revision history of
 
 
 ##### Literal
-The bare literal, besides its function as a building block for the transclusion mechanism, may find uses on its own, e.g. to keep graphs around that have not been properly defined yet
+The bare literal, besides its function as a building block for the inclusion mechanism, may find uses on its own, e.g. to keep graphs around that have not been properly defined yet
 ```
 :Gx rdf:value " :x :y :z ."^^nng:Graph ;
     :status :Unconfirmed .
@@ -200,14 +203,14 @@ Such semantics will not have the benefit of built-in syntactic sugar nor the pre
 ```
 if an unabbreviated form
 ```
-:Bob :claims [ nng:transcludes ":s :p :o. :a :b :c"^^nng:Graph 
+:Bob :claims [ nng:includes ":s :p :o. :a :b :c"^^nng:Graph 
                nng:semantics nng:App ] 
 ```
 is considered too verbose.
 
 
 
-## Naming a transcluded Graph Literal
+## Naming an Included Graph Literal
 
 All examples above used anonymous nested graph literals. Explicit naming can be implemented via property lists, e.g.
 ```
@@ -220,7 +223,7 @@ This is a bit awkward, but providing more syntactic sugar for such a corner case
 
 ## Transclusion, Inclusion and `owl:imports``
 
-[TODO] shorten and move definitions to vocabulary
+[TODO] scrub transclusion and move definitions to vocabulary
 
 
 
