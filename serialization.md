@@ -1,3 +1,13 @@
+```
+ _____ ___  ____   ___  
+|_   _/ _ \|  _ \ / _ \ 
+  | || | | | | | | | | |
+  | || |_| | |_| | |_| |
+  |_| \___/|____/ \___/ 
+                        
+
+```
+
 # Serialization
 
 The serialization of Nested Named Graphs is defined as an extension to TriG. Its datatype is `application/nng`.

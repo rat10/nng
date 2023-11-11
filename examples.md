@@ -1,6 +1,15 @@
+```
+ _____ ___  ____   ___  
+|_   _/ _ \|  _ \ / _ \ 
+  | || | | | | | | | | |
+  | || |_| | |_| | |_| |
+  |_| \___/|____/ \___/ 
+                        
+
+```
+
 # Examples
 
-TBD
 
 ## WG Use Cases
     https://github.com/w3c/rdf-ucr/wiki/Summary

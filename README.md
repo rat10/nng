@@ -9,7 +9,6 @@
                         
 
 check in all files 
-    that actual graph names are not enclosed in square brackets anymore
     transclusion -> inclusion
 -->
 
@@ -19,13 +18,27 @@ Nested Named Graphs (NNG) is a proposal to the RDF 1.2 Working Group [0]. It pro
 
 The proposal doesn't require any changes or additions to the abstract syntax of RDF [1] and can be deployed in quad stores that support RDF 1.1 datasets [2]. It is realized as a combination of syntactic sugar added to the popular TriG syntax [3] and a vocabulary to ensure sound semantics [4]. Mappings to triple-based approaches are provided. The proposal can be tested in a publicly accessible prototype implementation with SPARQL [5] support.
 
+After an initial version of this proposal has been presented to the RDF 1.2 Wg (see below in the "attic" section), a few concerns and requests have been voiced: more examples, shorter examples, formalization, shorter presentation, etc. Some of these requests obviously contradict each other, some are hard to meet at this point. This small site tries to provide both a short introduction on this page and more detailed discussions on separate pages:
+
+- [introduction by example](introexample.md)
+- [more examples](examples.md)
+- [surface syntax](serialization.md)
+- [fragment identification](fragmentIdentification.md)
+- [mappings to basic triples](mappings.md) 
+- [querying](querying.md)
+- [configurable semantics](inclusion.md)
+- [graph semantics](graphSemantics.md)
+- [vocabulary](vocabulary.md)
+
+Please be aware that annotations in RDF are a pretty complex topic and the RDF-star proposal, although apparently simple, fails to address those complexities in meaningful ways. Please keep in mind that a standard that aims to take shortcuts without properly thinking through the consequences will not do anyone a favour. The result has to be simple at the core, the way there however obviously isn't. The NNG proposal addresses a lot of concerns that RDF-star glosses over, but which shouldn't be ignored. So please take the necessary time to consider this proposal. We do however not attempt to provide a complete comparison to RDF-star; such an effort may be undertook at due time.
+
 
 ## Concept
 
 Nested Named Graphs aim to integrate into existing applications without getting in the way of less involved use cases:
 - Nesting of graphs allows for the addition of unforeseen aspects without a need to modify existing structures and queries.
-- An annotated nested graph is actually a supertype of the graph into which its annotations transform it. This becomes visible in the mapping to standard RDF. It guarantees that annotations don't cloud the view on the principal relation.
-- Annotations are applied to the statements they annotate. No requirements for intermediary nodes can change their semantics in subtle and counter-intuitive ways.
+- An annotated nested graph is actually a supertype of the graph into which its annotations transform it (as becomes apparent in the mapping to standard RDF). This guarantees that annotations don't cloud the view on the principal relation.
+- Annotations are applied to the statements they annotate. Their semantics are not prone to subtle and counter-intuitive changes because of the requirement to introduce intermediary nodes.
 - Annotated statements represent tokens, which is the intuitive referent of use cases like administration and contextualization.
 - Optional fragment identifiers allow to identify with great precision the target of an annotation: a term on subject- or object position, the relation itself or the statement as a whole. However their use is not mandatory, defaulting to a loosely bound "cavalier" approach semantics.
 - Nested Named Graphs impose no artificial differentiation between singleton and multiple statements: a graph containing only one statement is a graph all the same.
@@ -46,16 +59,17 @@ The main component of the proposal is a [syntactic extension](serialization.md) 
 ```
 For a more extensive set of simple examples check out the [Introduction by Example](introexample.md)
 
-A complementary syntactic extension to JSON-LD is TBD. [Mappings](mappings.md) to triple- and quad based formats like Turtle, N-Triples and N-Quads are provided (or worked on). A mapping to RDF/XML so far isn't planned as RDF/XML doesn't even support named graphs. However it could be realized analogously to the approach taken with the Turtle mapping.
+A complementary syntactic extension to JSON-LD remains TBD. 
+
+[Mappings](mappings.md) to triple- and quad based formats like Turtle, N-Triples and N-Quads are provided (or worked on). A mapping to RDF/XML so far isn't planned as RDF/XML doesn't even support named graphs. However it could be realized analogously to the approach taken with the Turtle mapping.
 
 See also an example of a [BNF](sources/trig-nng.bnf) for the NNG syntax - not exactly but close to the version actually deployed in the prototype notebook (see below).
 
 
 
-## Semantics
-A small [vocabulary](vocabulary.md) provides the means to solidly define the semantics of named graphs - nested or not. No change to already deployed named graphs is required. Nesting a graph however implicitly fixes its denotation semantics, just like calling a graph in a FROM or FROM NAMED clause unambiguously makes the name denote the graph via its use.
+## Fragment Identification
 
-Non-standard semantics can be implemented via an additional [inclusion](inclusion.md) mechanism that includes graph literals according to externally specified semantics. Syntactic sugar is provided for popular use cases like un-asserted assertions and referentially opaque quotation, but the mechanism itself is extensible as desired and an example vocabulary to support such extensions is provided.
+[TODO] [fragment identification](fragmentIdentification.md)
 
 
 
@@ -73,6 +87,32 @@ changes to sparql
 result formats
 
 
+
+## Semantics
+
+Two different approaches to the semantics of Nested Named Graphs are possible. One may either define the semantics via a mapping to triples or via the provision of means to describe the semantics of named graphs.
+
+Mappings to triples can go three ways: they can follow the singleton properties approach [8], providing a still quite usable surface syntax, or a fluents based approach [9] which has more favorable entailment properties but tends to alienate non-expert users (whereas user studies have found that expert users do indeed like its straightforwardness) and finally they can also go the way of n-ary relations [11]. These mappings all stay close to standard RDF and are discussed [in detail](mappings.md) on an extra page.
+
+Defining Nested Named Graphs as an extension of named graphs is syntactically straightforward, but has two downsides. It requires support of quads in an RDF store which, while certainly quite common, is neither the norm nor can it be considered ubiquitous. A second problem is the undefined state of named graph semantics, which the RDF 1.1 WG failed to resolve. Our proposal does not impose a more definite semantics on everybody, but provides a means to specify a clearer semantics on demand. To that end we provide a small [vocabulary](graphSemantics.md) to solidly define the semantics of named graphs - nested or not -, as a default arrangement per dataset or per graph individually via the SPARQL dataset description vocabulary. No change whatsoever to already deployed named graphs is required. 
+
+Instead, using the proposed nesting mechanism implicitly fixes the semantics. However, this fixing does only apply to the context of nesting, just like addressing a graph in a WHERE clause unambiguously makes the name address the graph without any further consequences on the naming semantics of named graphs in general (e.g. when using the graph name outside a WHERE clause). 
+Our proposal defines the semantics of nested graphs in a way reflecting users intuitions, bridging the gap between the abstract definitions in RDF and actual practice:
+- the graph name denotes the pair of the name and the graph it names
+- the graph is understood as a graph source as defined informally in the RDF 1.1 Concepts and Abstract Syntax [1], a mutable representation of a set of triples (or, phrasing it more correctly: the name may over time refer to different sets retrievable from the address the name encodes)
+- the triples in that graph are interpreted, they are referentially transparent just like any other snippet of RDF (i.e., entailments are possible and warmly welcomed).
+Note that a similar approach was already proposed by Hayes in 2011 [10] and in our opinion it not only makes sense but is a necessary step forward towards an RDF semantics that actually captures the intuitions and makes sense to non-logicians. It is in our proposal designed as *an additional layer*, that *doesn't change* the semantics of RDF *but extends* it towards actual practice.
+
+[TODO] check the RDF 1.1 dataset note for which of the variants proposed there matches our intuitions the best. probably the one reflecting SPARQL semantics
+
+
+
+### The Architecture and Politics of Semantics
+
+We would like to be very outspoken about our approach to semantics: the proposed semantics doesn't change anything for anybody in practice, it just reflects realities that nobody can escape anyway. It rejects however all approaches to prolong the mismatch between the abstract set-based type semantics of RDF and its predominantly token-based reality. In that respect NNG take a strong stance opposite to the proposal by the RDF-star CG or any other approaches that insist on understanding named graphs as opaque types - approaches that in our opinion make the formalistic tail that logicians feel comfortable about wag with the semantic web dog. We've spoken to many SemWeb'ers - rather pedestrian users and implementors as well as well-respected academics - that couldn't care less about the model-theoretic semantics of RDF anyway, but see RDF's virtues mainly as an interchange syntax supplemented by a rough consensus about meaning via shared vocabularies. That it the base for which this approach designs the semantics of Nested Named Graphs. Ignoring those people's stance will only make the already bad standing of formal semantics on the semantic web even worse. We do however claim that their intuitions can be matched and incorporated into the semantics foundations of RDF without breaking anything, by adding an additional layer of interpretation as a means to separate concerns.
+
+Note that this proposal does not dismiss applications on a more abstract level that logicians concentrate on, like reasoning over graph entailments. To that end it provides a separate mechanism tailored to use-cases that need to describe and reason about graph *types*: [graph literals](inclusion.md).
+Graph literals do not only provide a sound means to describe and reason about graphs as abstract types, they also provide the basic primitive to implement non-standard semantics via an additional [inclusion](inclusion.md) mechanism. Syntactic sugar is provided for popular use cases like un-asserted assertions and referentially opaque quotation, but the mechanism itself is extensible as desired and an example vocabulary to support such extensions is provided.
 
 
 
@@ -147,7 +187,7 @@ The Semantic/Nested Named Graphs proposal was presented to the RDF 1.2 WG by mea
 - a [short text](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Oct/0041.html) from mid-October 23, providing a shorter introduction to the proposal
 - a [short presentation](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Oct/0109.html) from late-October 23, introducing the proposal by example.
   
-Discussions in the WG led to some modifications that resulted in the proposal documented here, which is completely conformant to the existing RDF 1.1 model and abstract syntax, at the expense of a bit of semantic rigidity. Some aspects like the inclusion/transclusion mechanism have undergone some changes too, so consult those older texts with caution. 
+Discussions in the WG led to some modifications that resulted in this version here, which is completely conformant to the existing RDF 1.1 model and abstract syntax, at the expense of a bit of semantic rigidity. Some aspects like the inclusion/transclusion mechanism have undergone some changes too, so consult those older texts with caution. 
 
 
 ## References
@@ -159,3 +199,7 @@ Discussions in the WG led to some modifications that resulted in the proposal do
 [5] [SPARQL 1.1](https://www.w3.org/TR/2013/REC-sparql11-overview/)  
 [6] [Dydra graph store](https://dydra.com/home)  
 [7] [RDF 1.2 WG Use Cases](https://github.com/w3c/rdf-ucr/wiki)  
+[8] [Singleton Properties](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4350149/)
+[9] [NdFluents](https://link.springer.com/chapter/10.1007/978-3-319-58068-5_39)
+[10] [Pat Hayes' mail to the RDF 1.1 WG](https://lists.w3.org/Archives/Public/public-rdf-wg/2011Feb/0060.html) (many thanks to Niklas for unearthing this!) 
+[11] [W3C Note Defining N-ary Relations on the Semantic Web](https://www.w3.org/TR/swbp-n-aryRelations/)

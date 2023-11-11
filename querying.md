@@ -1,16 +1,22 @@
-
-# Querying TODO
-
-there is still *a lot* to be done here
-
-> [TODO] 
->
+```
+ _____ ___  ____   ___  
+|_   _/ _ \|  _ \ / _ \ 
+  | || | | | | | | | | |
+  | || |_| | |_| | |_| |
+  |_| \___/|____/ \___/ 
+                        
+                        
 > a detailed discussion of querying, including 
 >
 > - display of annotations (as "there is more..." or similar)
 > - scoping queries to nested graphs (recursively following their nested graphs)
 > - querying included graph literals
 > - displaying results with non-standard semantics, e.g. unasserted, opaque, etc
+
+
+```
+# Querying
+
 
 
 ## Querying Nested Graphs

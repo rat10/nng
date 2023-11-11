@@ -1,3 +1,16 @@
+```
+ _____ ___  ____   ___  
+|_   _/ _ \|  _ \ / _ \ 
+  | || | | | | | | | | |
+  | || |_| | |_| | |_| |
+  |_| \___/|____/ \___/ 
+                        
+unedited copy from the first long proposal
+
+```
+
+
+
 # Fragment Identification
 
 So far we didn't discuss in depth what exactly we are annotating when we add attributes to a nested graph. There are however important differences to consider.

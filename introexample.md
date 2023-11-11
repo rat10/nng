@@ -1,3 +1,14 @@
+```
+ _____ ___  ____   ___  
+|_   _/ _ \|  _ \ / _ \ 
+  | || | | | | | | | | |
+  | || |_| | |_| | |_| |
+  |_| \___/|____/ \___/ 
+                        
+unfinished
+
+```
+
 # Introduction by Example
 
 The following examples aim to provide a quick introduction into the user facing mechanics of Nested Named Graphs.

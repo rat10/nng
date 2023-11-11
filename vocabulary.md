@@ -50,8 +50,8 @@ Establishing the right set of semantic features is of course a task on its own, 
 
 The following vocabulary provides a term to introduce a semantics and offers a few possible applications.
 
-```
-DEF
+```turtle
+# DEFINITION
 
 nng:SemanticsAspect a rdf:Class ;
     rdfs:comment "An aspect of a semantics that differs from RDF’s default." .
@@ -92,8 +92,8 @@ We can also see other, less specific uses of nested graphs concerned with semant
 
 The following vocabulary combines semantics aspects and [naming semantics](#graph-types) into semantics profiles catered to different application scenarios.
 
-```
-DEF
+```turtle
+# DEFINITION
 
 nng:SemanticsProfile  a rdf:Class ;
     rdfs:comment "A combination of semantics aspects into a coherent whole." .
@@ -248,8 +248,8 @@ Here the square bracket prefix notation is used not to name the term - there's n
 
 
 ### quotation
-```
-DEF
+```turtle
+# DEFINITION
 
 nng:statedAs a rdf:Property ;
     rdfs:range nng:GraphLiteral ;
@@ -270,8 +270,8 @@ In the next example the literal is accompanied by a hash value to improve securi
 Note that while the graph literal is accompanying an assertion of the same type, itself it is unasserted.
 
 ### reification
-```
-DEF
+```turtle
+# DEFINITION
 
 nng:StatementGraph a rdfs:Class ;
     rdfs:subClassOf rdf:Statement, nng:GraphLiteral ;
@@ -310,8 +310,8 @@ Mapped to RDF standard reification this would be equal to:
 ### Literalization - Referentially Opaque Assertions
 
 the literalized graph is indeed asserted. This semantics could be specified by means of the following vocabulary:
-```
-DEF
+```turtle
+# DEFINITION
 
 nng:LiteralizedGraph a rdfs:Class ;
     rdfs:comment "A quoted assertion. IRIs are interpreted, but *verbatim*, so to say, as their literal form is significant, e.g. the IRIs `:Superman`and `:ClarkKent` can't be used interchangeably although they refer to the same thing. This is a semantics quite close to the RDF-star CG proposal and to Notation3." .
@@ -336,10 +336,10 @@ or, to be more free in the use of vocabulary:
 
 ## inclusion + transclusion
 
-[TODO]  redefine inclusion, scratch tarnsclusion, but check the definition for useful bits first
+[TODO]  redefine inclusion, scratch transclusion, but check the definition for useful bits first
 
-```
-DEF
+```turtle
+# DEFINITION
 
 nng:includes a rdf:Property,
     rdfs:subPropertyOf owl:imports ;
@@ -349,8 +349,8 @@ nng:includes a rdf:Property,
 ```
 
 The respective property is defined as:
-```
-DEF
+```turtle
+# DEFINITION
 
 nng:transcludes a rdf:Property,
     rdfs:subPropertyOf owl:imports ;

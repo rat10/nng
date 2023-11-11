@@ -1,3 +1,14 @@
+```
+ _____ ___  ____   ___  
+|_   _/ _ \|  _ \ / _ \ 
+  | || | | | | | | | | |
+  | || |_| | |_| | |_| |
+  |_| \___/|____/ \___/ 
+                        
+check again
+
+```
+
 # RDF Literals and Inclusion
 
 RDF literals serve to enable use cases with non-standard semantics. They provide a way to
@@ -44,8 +55,8 @@ The approach has two important advantages:
 We take up the approach because we consider it ideally suited to implement different semantics via configurable inclusion.
 
 To that end we introduce the Graph Literal class:
-```
-DEF
+```turtle
+# DEFINITION
 
 nng:GraphLiteral a rdfs:Class ;
     rdfs:comment "A literal whose datatype matches the enclosing RDF document, e.g. NNG, Turtle, TriG or JSON-LD".
