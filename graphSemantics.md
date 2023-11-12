@@ -49,7 +49,7 @@ _:x nng:nestedIn _:y .
 This mapping assumes a uniform dataspace in which all named graphs can interact with each other. A more  fragmented intuition, that understands each named graph as its own "data island" could employ the `owl:imports` property to include nested graphs. 
 To that end we introduce a new `THIS` operator to allow a named graph to reference itself, mimicking the `<>` operator in SPARQL that addresses the enclosing dataset. 
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 THIS a rdfs:Resource ;
     rdfs:comment "A self-reference from inside a named or nested graph to itself" .
@@ -91,7 +91,7 @@ More vocabulary on related issues like quotation versus interpretation semantics
 ### Graph Types
 
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 
@@ -114,7 +114,7 @@ nng:IdentGraph a rdfs:Class ;
 ### Graph Identity
 
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 nng:identifiedBy a rdf:Property ;
     rdfs:comment "Establishes what defines the identity of a graph." .
@@ -130,7 +130,7 @@ nng:Content a rdfs:Class ;
 ### Graph Naming
 
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 nng:naming a rdf:Property ;
     rdfs:comment "Establishes the naming semantics." .
@@ -149,7 +149,7 @@ nng:overloading a rdf:Property ;
 ### Graph Mutability
 
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 nng:mutability a rdf:Property ;
     rdfs:comment "Establishes if the graph is considered to represent an immutable abstract graph type or a mutable source of RDF data." .
@@ -168,7 +168,7 @@ nng:GraphType a rdfs:Class ;
 
 To flesh out the descriptions of the graph types defined above we need one last thing:
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 nng:Undefined a rdfs:Class ;
     rdfs:comment "An utility class to describe that this property has no value for this class." .
@@ -247,7 +247,7 @@ Note that specifying a graph to be of type `nng:NamedGraph` effectively amounts 
 Having to explicitly specify the semantics of each graph is cumbersome. The SD vocabulary provides a property to define the default entailment regime for all named graphs in a dataset. We extend the vocabulary analogously by a property to define a default type for all graphs in a dataset:
 
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 nng:defaultGraphType a rdf:Property ;
     rdfs:comment "Defines the graph type for all graphs in a dataset."

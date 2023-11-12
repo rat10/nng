@@ -11,7 +11,7 @@ All mappings need to describe:
 
 To that end we define the following properties:
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 nng:containedIn a rdfs:Property ;
     rdfs:range nng:GraphSource ;
@@ -100,7 +100,7 @@ an older version of fragment identification with singleton properties
 
 The singleton properties based mapping introduced [above](#singleton-properties-mapping) can be extended to annotate individual terms in a statement by using `rdfs:domain`, `rdfs:range` and a newly introduced `nng:relation` to annotate subject, object and predicate of the relation. Further properties `nng:term`, `nng:triple` and `nng:graph` allow to refer to all terms or all triples in a graph, or to the graph itself explicitly.
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 nng:domain a rdf:Property ;
     rdfs:subPropertyOf rdfs:domain ;

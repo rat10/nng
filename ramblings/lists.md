@@ -8,7 +8,7 @@ To that end RDF does indeed provide two different constructs, collections and co
 
 Adding a length attribute to the container vocabulary enables users to describe how many entries a list is supposed to have. 
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 nng:length a rdf:Property ;
     rdfs:domain rdfs:Container ;

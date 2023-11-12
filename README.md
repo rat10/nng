@@ -10,6 +10,19 @@
 
 check in all files 
     transclusion -> inclusion
+
+differentiate between nng:Graph and nng:GraphLiteral
+
+
+add namespace declarations to semantics identifiers, eg ´ngg:APP` ?
+  in some places i did, in most i didn't
+
+CONSOLE
+  do fragment shortcuts get expanded 
+    :NNG1?subject :b :c    to   :NNG1 nng:subject [ :b :c]
+  is THIS not supported in the testbed?
+  what is the LOG supposed to describe?
+    <urn:dydra:default> <http://segraph.org/LOG> <http://example.org/X> .
 -->
 
 ## Overview
@@ -23,14 +36,16 @@ After an initial version of this proposal has been presented to the RDF 1.2 Wg (
 - [introduction by example](introexample.md)
 - [more examples](examples.md)
 - [surface syntax](serialization.md)
-- [fragment identification](fragmentIdentification.md)
+- [fragment identification](fragments.md)
+- [identification semantics](identification.md)
 - [mappings to basic triples](mappings.md) 
 - [querying](querying.md)
-- [configurable semantics](inclusion.md)
 - [graph semantics](graphSemantics.md)
-- [vocabulary](vocabulary.md)
+- [graph literals](graphLiterals.md)
+- [citation semantics](citationSemantics.md)
+- [configurable semantics](configSemantics.md)
 
-Please be aware that annotations in RDF are a pretty complex topic and the RDF-star proposal, although apparently simple, fails to address those complexities in meaningful ways. Please keep in mind that a standard that aims to take shortcuts without properly thinking through the consequences will not do anyone a favour. The result has to be simple at the core, the way there however obviously isn't. The NNG proposal addresses a lot of concerns that RDF-star glosses over, but which shouldn't be ignored. So please take the necessary time to consider this proposal. We do however not attempt to provide a complete comparison to RDF-star; such an effort may be undertook at due time.
+Please be aware that annotations in RDF are a pretty complex topic and the RDF-star proposal, although apparently simple, fails to address those complexities in meaningful ways. Please keep in mind that a standard that aims to take shortcuts without properly thinking through the consequences will not do anyone a favour. The result has to be simple at the core, the way there however obviously isn't. The NNG proposal addresses a lot of concerns that RDF-star glosses over, but which shouldn't be ignored. So please take the necessary time to consider this proposal. However, we do not attempt to provide a complete comparison to RDF-star.
 
 
 ## Concept
@@ -67,10 +82,14 @@ See also an example of a [BNF](sources/trig-nng.bnf) for the NNG syntax - not ex
 
 
 
-## Fragment Identification
+## Fragments
 
-[TODO] [fragment identification](fragmentIdentification.md)
+[TODO] [fragment identification](fragments.md)
 
+
+## Identification SEmantics
+
+[TODO] [identification semantics](identification.md)
 
 
 ## Querying
@@ -109,10 +128,12 @@ Note that a similar approach was already proposed by Hayes in 2011 [10] and in o
 
 ### The Architecture and Politics of Semantics
 
-We would like to be very outspoken about our approach to semantics: the proposed semantics doesn't change anything for anybody in practice, it just reflects realities that nobody can escape anyway. It rejects however all approaches to prolong the mismatch between the abstract set-based type semantics of RDF and its predominantly token-based reality. In that respect NNG take a strong stance opposite to the proposal by the RDF-star CG or any other approaches that insist on understanding named graphs as opaque types - approaches that in our opinion make the formalistic tail that logicians feel comfortable about wag with the semantic web dog. We've spoken to many SemWeb'ers - rather pedestrian users and implementors as well as well-respected academics - that couldn't care less about the model-theoretic semantics of RDF anyway, but see RDF's virtues mainly as an interchange syntax supplemented by a rough consensus about meaning via shared vocabularies. That it the base for which this approach designs the semantics of Nested Named Graphs. Ignoring those people's stance will only make the already bad standing of formal semantics on the semantic web even worse. We do however claim that their intuitions can be matched and incorporated into the semantics foundations of RDF without breaking anything, by adding an additional layer of interpretation as a means to separate concerns.
+We would like to be quite clear about our approach to semantics: the proposed semantics doesn't change anything for anybody in practice, it just reflects realities that nobody can escape anyway. It rejects however all approaches to prolong the mismatch between the abstract set-based type semantics of RDF and its predominantly token-based reality. In that respect NNG take a strong stance opposite to the semantics proposed by the RDF-star CG or any other approaches that insist on understanding named graphs as opaque types - approaches that in our opinion make the logically safe formalistic tail wag with the very practical semantic web dog. 
 
-Note that this proposal does not dismiss applications on a more abstract level that logicians concentrate on, like reasoning over graph entailments. To that end it provides a separate mechanism tailored to use-cases that need to describe and reason about graph *types*: [graph literals](inclusion.md).
-Graph literals do not only provide a sound means to describe and reason about graphs as abstract types, they also provide the basic primitive to implement non-standard semantics via an additional [inclusion](inclusion.md) mechanism. Syntactic sugar is provided for popular use cases like un-asserted assertions and referentially opaque quotation, but the mechanism itself is extensible as desired and an example vocabulary to support such extensions is provided.
+We've spoken to many SemWeb'ers - rather pedestrian users and implementors as well as well-respected academics - that couldn't care less about the model-theoretic semantics of RDF anyway, but see RDF's virtues mainly as an interchange syntax supplemented by a rough consensus about meaning via shared vocabularies. That it the base for which this approach designs the semantics of Nested Named Graphs. Ignoring those people's stance will only make the already bad standing of formal semantics on the semantic web even worse. We do however claim that their intuitions can be matched and incorporated into the semantics foundations of RDF without breaking anything, by adding an additional layer of interpretation as a means to separate concerns.
+
+Note that this proposal does not dismiss the more abstract logic-oriented applications like reasoning over graph entailments. To that end it provides a separate mechanism tailored to use-cases that need to describe and reason about graph *types*: [graph literals](graphLiterals.md).
+Graph literals do not only provide a sound means to describe and reason about graphs as abstract types, they also provide the basic primitive to implement non-standard semantics via an additional *inclusion* mechanism. Syntactic sugar is provided for popular use cases like un-asserted assertions and referentially opaque quotation, but the mechanism itself is extensible as desired and an example vocabulary to support such extensions is provided.
 
 
 

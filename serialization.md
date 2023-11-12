@@ -30,9 +30,9 @@ The serialization of Nested Named Graphs is defined as an extension to TriG. Its
 
 
 - graph literals
-[ nng:quotes ":a :b :c"^^nng:Graph ] a :Nuisance .
-:X nng:quotes ":a :b :c"^^nng:Graph a :Necessity .
-THIS nng:quotes ":a :b :c"^^nng:Graph  
+[ nng:quotes ":a :b :c"^^nng:GraphLiteral ] a :Nuisance .
+:X nng:quotes ":a :b :c"^^nng:GraphLiteral a :Necessity .
+THIS nng:quotes ":a :b :c"^^nng:GraphLiteral  
                           # 'THIS' referring to local graph
 
 

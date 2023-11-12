@@ -78,7 +78,7 @@ RDF provides no easy to use and flexible provisions to express such specific ide
 
 To help disambiguate intended identification semantics we propose a small vocabulary with two classes referring to the two main kinds of identification semantics, interpretation and artifact.
 ```turtle
-# DEFINITION
+# VOCABULARY
 
 nng:identifiedAs a rdf:Property ;
     rdfs:label "Interpretation semantics ;
