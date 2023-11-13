@@ -14,12 +14,6 @@ so please proceed with care and be prepared for bugs.
 ```
 
 <!--
- _____ ___  ____   ___  
-|_   _/ _ \|  _ \ / _ \ 
-  | || | | | | | | | | |
-  | || |_| | |_| | |_| |
-  |_| \___/|____/ \___/ 
-                        
 
 check in all files 
     transclusion -> inclusion
@@ -82,7 +76,6 @@ After an initial version of this proposal has been presented to the RDF 1.2 Wg (
   semantic/syntactic sugar for common use case like quoting and unasserted assertions
 - [configurable semantics](configSemantics.md)  
   N3 formulas, closed world, unique names... you name it!
-
 
 
 Please be aware that annotations in RDF are a pretty complex topic and the RDF-star proposal, although apparently simple, fails to address those complexities in meaningful ways. However, a standard that aims to take shortcuts without properly thinking through the consequences will not do anyone a favour. A useful annotation mechanism has to be simple at the core, the way to develop it however obviously isn't. The NNG proposal addresses a lot of concerns that RDF-star glosses over, but which shouldn't be ignored. So please take the necessary time to consider this proposal. 
