@@ -79,7 +79,7 @@ We can also see other, less specific uses of nested graphs concerned with semant
 - blank node scoping via specific blank node scoping graphs (maybe to be called "bGraphs")
 - entailment scoping to e.g. state that within some nested graphs no contradictions are allowed (a SPARQL dataset itself constituting an outermost nested graph)
 
-The following vocabulary combines semantics aspects and [naming semantics](#graph-types) into semantics profiles catered to different application scenarios.
+The following vocabulary combines semantics aspects and [naming semantics](graphSemantics.md) into semantics profiles catered to different application scenarios.
 
 ```turtle
 # VOCABULARY

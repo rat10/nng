@@ -26,7 +26,7 @@ nng:ART a nng:SemanticsAspect ;
 
 
 Note that these annotations can't be used when creating an identifier, e.g. when naming a nested graph. They only serve to disambiguate the intended interpretation when using an IRI as identifier, i.e. when "calling" it in a specific way. 
-
+^
 In the following example the IRI <https://www.paris.com> is used to either refer to the website of Paris or to the city itself. The annotation via a fragment identifier disambiguates the intended referent:
 
 ```turtle
