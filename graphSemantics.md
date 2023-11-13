@@ -22,18 +22,18 @@ In that respect this proposal does indeed hope to change the status quo of named
 
 
 The nested graph construct
-```
+```turtle
 []{ []{ :a :b :c } :d :e }
 ```
 as standard RDF 1.1 named graphs maps to
-```
+```turtle
 _:x {  :a :b :c  }
 _:y { _:x a nng:NestedGraph ;
           :d :e
 }
 ```
 or even just
-```
+```turtle
 _:x {  :a :b :c  }
 _:y { _:x :d :e  }
 ```
@@ -43,7 +43,7 @@ again involving a two-step process, this time
 - mapping annotations on nested graphs into separate named graphs that reference the annotated graph.
 
 In general it shouldn't be necessary to explicitly specify that `_:x` and, for that matter, also `_:y` are nested graphs, as this can can be declared as a default arrangement for a whole dataset. This will be discussed in more detail in the next section. It also shouldn't be necessary to explicitly state the containment relation, i.e.
-```
+```turtle
 _:x nng:nestedIn _:y .
 ```
 This mapping assumes a uniform dataspace in which all named graphs can interact with each other. A more  fragmented intuition, that understands each named graph as its own "data island" could employ the `owl:imports` property to include nested graphs. 
@@ -55,7 +55,7 @@ THIS a rdfs:Resource ;
     rdfs:comment "A self-reference from inside a named or nested graph to itself" .
 ```
 This results in the following mapping:
-```
+```turtle
 _:x { :a :b :c  }
 _:z { THIS owl:imports _:x .
       _:x :d :e  }
@@ -175,7 +175,7 @@ nng:Undefined a rdfs:Class ;
 ```
 
 Putting the vocabulary just established to good use: 
-```
+```turtle
 nng:NestedGraph 
     a nng:Graph ;
     nng:identifiedBy nng:Identifier ;
@@ -183,7 +183,7 @@ nng:NestedGraph
     nng:mutability nng:GraphSource .
 ```
 
-```
+```turtle
 sd:NamedGraph 
     a nng:Graph ;
     nng:identifiedBy nng:Undefined ;
@@ -191,7 +191,7 @@ sd:NamedGraph
     nng:mutability nng:Undefined .
 ```
 
-```
+```turtle
 nng:IdentGraph 
     a nng:Graph ;
     nng:identifiedBy nng:Content ;
@@ -199,7 +199,7 @@ nng:IdentGraph
     nng:mutability nng:GraphType .
 ```
 
-```
+```turtle
 :MyGraph_1 
     a nng:Graph ;
     nng:identifiedBy nng:Identifier ;
@@ -213,7 +213,7 @@ nng:IdentGraph
 ### Graph Naming Example
 
 The [RDF 1.1 WG Note](https://www.w3.org/TR/2014/NOTE-rdf11-datasets-20140225/#declaring) suggests to use the [SPARQL 1.1 Service Description](http://www.w3.org/TR/sparql11-service-description/) vocabulary to describe graph semantics, giving the following example:
-```
+```turtle
 @prefix er: <http://www.w3.org/ns/entailment> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 []  a sd:Dataset;
@@ -225,7 +225,7 @@ The [RDF 1.1 WG Note](https://www.w3.org/TR/2014/NOTE-rdf11-datasets-20140225/#d
 ```
 
 In the following we use the `nng:` vocabulary to extend this example towards a mixed environment of named and nested graphs:
-```
+```turtle
 @prefix er: <http://www.w3.org/ns/entailment> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 []  a sd:Dataset;
@@ -254,7 +254,7 @@ nng:defaultGraphType a rdf:Property ;
 ```
 
 The following example defines all named graphs to be of type `nng:NestedGraph`, but also adds an exception to that rule:
-```
+```turtle
 @prefix er: <http://www.w3.org/ns/entailment> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 []  a sd:Dataset;

@@ -59,6 +59,7 @@ nng:graph a rdf:Property;
 A property to explicitly annotate the graph itself is provided to disambiguate careful modelling from cases where careless annotation might annotate the graph but mean a term.
 
 Applying that vocabulary can feel a bit tedious when the object isn't a class, as in the example above, but in other cases is pretty straightforward, e.g. when [disambiguating identification semantics](identification.md) :
+
 ```turtle
 :g1 { :Alice :buys :House }
     nng:subject [ :age 40 ] ;
@@ -89,7 +90,8 @@ Annotating multiple fragments is possible in the same way:
 -->
 
 Identification via fragment identifiers is distributive, i.e. it addresses each node of that type in the annotated graph. An annotation of all triples in a nested graph, instead of the nested graph itself, can therefore be invoked via the triple fragment identifier, like so:
-```
+
+```turtle
 :g2 { :a :b :c . 
       :d :e :f }
     nng:triple [ :g :h ] .

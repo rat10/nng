@@ -130,6 +130,12 @@ See also an example of a [BNF](sources/trig-nng.bnf) for the NNG syntax - not ex
 
 [querying](querying.md)
 
+```sparql
+SELECT *
+WHERE ?g { ?s ?p ?o }
+
+```
+
 extensions to sparql
 - FROM ALL|DEFAULT|...
 - WITH LITERAL|INCLUDED|QUOTE|REPORT|RECORD

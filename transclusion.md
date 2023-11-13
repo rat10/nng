@@ -11,9 +11,7 @@ check again when the fever is gone
 
 ```
 
-Transclusion imports a graph source into another graph source. Transclusion is transitive: if the transcluded source contains further transclusion directives, those are executed as well. 
-
-Transclusion is the mechanism driving graph nesting. An example without any syntactic support illustrates its application:
+Transclusion is the mechanism driving graph nesting. It imports a graph source into another graph source. Transclusion is transitive: if the transcluded source contains further transclusion directives, those are executed as well. A `TriG` example without extra syntactic support illustrates its application:
 
 ```turtle
 :NG_2 nng:transcludes :NG_1 .
@@ -21,7 +19,7 @@ Transclusion is the mechanism driving graph nesting. An example without any synt
 :NG_2 { :d :e :f }
 ```
 
-In principle the location of the transclusion statement doesn't matter. The following snippet is equivalent to the one above:
+The location of the transclusion statement doesn't matter. The following snippet is equivalent to the one above:
 
 ```turtle
 

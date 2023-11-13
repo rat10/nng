@@ -126,52 +126,52 @@ The practical problem that any approach on configurable semantics has to solve i
 ### Inclusion enabling Configurable Semantics
 
 The inclusion mechanism allows to import graph literals with extremely restricted semantics. Adding to the inclusion a semantics instruction allows to tailor the semantics of the included graph to the desired effect. We already gave the following example:
-```
+```turtle
 THIS nng:includes [
     rdf:value ":s :p :o"^^nng:GraphLiteral ;
     nng:semantics nng:APP
 ] .
 ```
 To make this arrangement more usable and also tighter against misinterpretation by an over-eager inferencing engine, we could define proper subproperties of `nng:includes`, like e.g. `nng:includesAPP`:
-```
+```turtle
 nng:includesAPP rdfs:subPropertyOf nng:includes ;
                 rdfs:range nng:APP .
 ```
 This allows a streamlined inclusion of RDF data into a graph with very specific semantics.
-```
+```turtle
 THIS nng:includesAPP ":s :p :o"^^nng:GraphLiteral .
 ```
 Integrating such inclusions into regular RDF assertions is rather seamless as well, e.g.:
-```
+```turtle
 :Bob :claims [ nng:includesCIT ":s :p :o"^^nng:GraphLiteral ].
 ```
 
 Tailored semantics can be defined from the building blocks provided so far. We might for example start from the following construct, which expresses that the list of Alice's things follows the usual application intuitions, i.e. it is not concerned with syntactic fidelity, it is complete and the unique name assumption applies. We call it `ClosedList`:
-```
+```turtle
 :Alice :has [ rdf:value "(:D :E :F)"^^nng:GraphLiteral ;
               nng:semantics nng:Interpretation ,
                             nng:UNA ,
                             nng:CWA ]
 ```
 Because that's rather involved we create a shorter description of the desired semantics:  
-```
+```turtle
 ex:ClosedList a nng:SemanticsProfile ;
               nng:semantics nng:Interpretation ,
                             nng:UNA ,
                             nng:CWA .
 ```
 And apply it:
-```
+```turtle
 :Alice :has [ rdf:value "( :D :E :F)"^^nng:GraphLiteral ;
               nng:semantics ex:ClosedList ]
 ```
 That's still not very elegant, so let's define a property:
-```
+```turtle
 ex:includesClosedList rdfs:subPropertyOf nng:includes ;
                       rdfs:range ex:ClosedList .
 ```
 And apply that:
-```
+```turtle
 :Alice :has [ ex:includesClosedList "( :D :E :F )"^^nng:GraphLiteral ]
 ```
 That's of course a lot of effort for one list, but it can pay off in an application context where we know that certain data sources are indeed complete and well kept and therefore it's safe to overrule the integration focused standard semantics of RDF.
@@ -181,11 +181,11 @@ That's of course a lot of effort for one list, but it can pay off in an applicat
 
 The following syntactic sugar aims to express inclusion with configurable semantics even more succinctly. 
 An anonymous RDF graph literal is equipped with an argument specifying the intended semantics, re-using the already familiar square bracket syntax, e.g.:
-
+```turtle
 [APP]":a :b :c , :d" :e :f .
-
-The following examples show some possible scenarios, involving both aspects and profiles:
 ```
+The following examples show some possible scenarios, involving both aspects and profiles:
+```turtle
 [APP]" :a :b :c , :d " :e :f .
 :g :h [LOG]" :h :i :k " .
 :l :m [HYP,OPA]" :n :o :p " ,
@@ -201,7 +201,7 @@ This syntactic sugar requires that the included literal is named by a bank node,
 To make the application of configurable semantics more precise we explore a variant of RDF literals that targets individual terms. 
 
 A popular example to motivate referential opacity is the Superman comic, with the reporter Lois Lane not being aware that her crush Superman is in fact the same person as her slightly dull colleague Clark Kent. This can precisely be modelled with a referentially opaque semantics applied only to the identifier for Superman: 
-```
+```turtle
 :LouisLane :loves [OPA]":Superman" .
 ```
 Note how the references to Louis Lane and the concept of loving are still referentially transparent, as they should be, and solely the reference to Superman is constrained to refer only to that specific persona of the extra-terrestrial character Kal-El, but never to its alternative persona Clark Kent.

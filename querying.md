@@ -83,7 +83,7 @@ PROBLEM: how will the query engine know that some semantics is asserted or un-as
 
 
 ### Example
-```
+```turtle
 prefix : <http://ex.org/>
 prefix nng: <http://rat.io/nng/>
 
@@ -99,7 +99,7 @@ prefix nng: <http://rat.io/nng/>
 :ClarkKent :loves :LoisLane .
 ```
 ### what to expect without WITH clause or explicit addressing
-```
+```sparql
 SELECT ?s
 WHERE  { ?s ?p :Superman }
 ```
@@ -110,7 +110,7 @@ but not
 - :Kid  
 because it loves an unasserted comic figure (poor kid) 
 
-```
+```sparql
 SELECT ?o
 WHERE { :LoisLane :loves ?o }
 ```
@@ -120,7 +120,7 @@ here i would like to see
 but not 
 - [REPORT]":ClarkKent"
 
-```
+```sparql
 SELECT ?o
 WHERE { :moon ?p ?o}
 ```
@@ -131,7 +131,7 @@ because the respective candidate is a literal
 ### what to expect with WITH clause
 
 Query modifiers are introduced by a 'WITH' clause and use the provided semantics identifiers, e.g. LITERAL, INCLUDED, REPORT, OPAQUE:
-```
+```sparql
 SELECT ?s 
 WHERE  { ?s ?p :Superman }
 WITH   REPORT
@@ -142,7 +142,7 @@ here i would like to see
 because she loves the opaque (but asserted) version of :Superman  
 and the kid loves the reported Superman
 
-```
+```sparql
 SELECT ?o
 WHERE { :LoisLane :loves ?o }
 WITH   REPORT
@@ -152,7 +152,7 @@ here i would like to see
 - :Skiing
 - [REPORT]":ClarkKent"
 
-```
+```sparql
 SELECT ?o
 WHERE { :moon ?p ?o}
 WITH LITERAL
@@ -169,13 +169,13 @@ because the respective candidate is a literal
 ### what to expect with Explicit Addressing
 
 If a query addresses a graph literal explicitly, its results are rendered like regular RDF.
-```
+```turtle
 :Alice :said ":s :p :o. :a :b :c"^^nng:GraphLiteral .
 ```
 [HELP]  i'd like to address the graph literal
     but how do i do that?
        maybe i need the following little helpers:
-```
+```turtle
 nng:hasSource rdfs:range nng:GraphLiteral .
 []{:a :b :c} nng:hasSource ":A :b :C"^^nng:Graph
 
