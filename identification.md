@@ -21,7 +21,7 @@ nng:INT a nng:SemanticsAspect ;
 
 nng:ART a nng:SemanticsAspect ;
     rdfs:label "Artifact" ;
-    rdfs:comment "The identifier is used to refer to a web resource, i.e. an artifact." .
+    rdfs:comment "The identifier is used to refer to a resource retrievable over the internet, i.e. an artifact." .
 ```
 
 

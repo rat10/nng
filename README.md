@@ -47,36 +47,7 @@ Nested Named Graphs (NNG) is a proposal to the RDF 1.2 Working Group [0]. It pro
 
 The proposal doesn't require any changes or additions to the abstract syntax of RDF [1] and can be deployed in quad stores that support RDF 1.1 datasets [2]. It is realized as a combination of syntactic sugar added to the popular TriG syntax [3] and a vocabulary to ensure sound semantics [4]. Mappings to triple-based approaches are provided. The proposal can be tested in a publicly accessible prototype implementation with SPARQL [5] support.
 
-After an initial version of this proposal has been presented to the RDF 1.2 Wg (see below in the "attic" section), a few concerns and requests have been voiced: more examples, shorter examples, formalization, shorter presentation, etc. Some of these requests obviously contradict each other, some are hard to meet at this point. This small site tries to provide both a short introduction on this page and more detailed discussions on separate pages:
-
-- [nesting graphs](transclusion.md)  
-  the basic mechanism to nest graphs
-- [surface syntax](serialization.md)  
-  TODO syntactic sugar to nest and annotate graphs
-- [introduction by example](introexample.md)  
-  TODO a walkthrough illustrating core features and some applications
-- [more examples](examples.md)  
-  TODO especially WG use cases
-
-- [fragment identification](fragments.md)  
-  addressing and annotating individual nodes in a statement
-- [identification semantics](identification.md)  
-  applying fragment identification to solve the semantic web identity crisis
-- [graph semantics](graphSemantics.md)  
-  a semantics for (not only nested) named graphs that doesn't break existing usage
-
-- [mappings to basic triples](mappings.md)  
-  a lossless translation from NNG to standard triples
-- [querying](querying.md)  
-  TODO still a mess
-
-- [graph literals](graphLiterals.md)  
-  a basic building block to enable configurable semantics
-- [citation semantics](citationSemantics.md)  
-  semantic/syntactic sugar for common use case like quoting and unasserted assertions
-- [configurable semantics](configSemantics.md)  
-  N3 formulas, closed world, unique names... you name it!
-
+After an initial version of this proposal has been presented to the RDF 1.2 Wg (see below in the "attic" section), a few concerns and requests have been voiced: more examples, shorter examples, formalization, shorter presentation, etc. Some of these requests obviously contradict each other, some are hard to meet at this point. This small site tries to provide both a short introduction on this page and more detailed discussions on separate pages (see links below).
 
 Please be aware that annotations in RDF are a pretty complex topic and the RDF-star proposal, although apparently simple, fails to address those complexities in meaningful ways. However, a standard that aims to take shortcuts without properly thinking through the consequences will not do anyone a favour. A useful annotation mechanism has to be simple at the core, the way to develop it however obviously isn't. The NNG proposal addresses a lot of concerns that RDF-star glosses over, but which shouldn't be ignored. So please take the necessary time to consider this proposal. 
 
@@ -143,6 +114,46 @@ extensions to sparql
 changes to sparql
 
 result formats
+
+
+## Prototype
+A prototype implementation in the Dydra graph store [6], including an appropriate extension to SPARQL, provides a public [notebook](https://observablehq.com/@datagenous/se-graph-workbook) that can be used to explore, test and play around with the proposal.
+
+
+## Details
+
+The finer details of ths proposal are discussed on separate pages:
+
+- [nesting graphs](transclusion.md)  
+  the basic mechanism to nest graphs
+- TODO [surface syntax](serialization.md)  
+  syntactic sugar to nest and annotate graphs
+- TODO [introduction by example](introexample.md)  
+  a walkthrough illustrating core features and some applications
+- TODO [more examples](examples.md)  
+  especially WG use cases
+
+
+- [fragment identification](fragments.md)  
+  addressing and annotating individual nodes in a statement
+- [identification semantics](identification.md)  
+  applying fragment identification to solve the semantic web identity crisis
+- [graph semantics](graphSemantics.md)  
+  a semantics for (not only nested) named graphs that doesn't break existing usage
+
+
+- [mappings to basic triples](mappings.md)  
+  a lossless translation from NNG to standard triples
+- TODO [querying](querying.md)  
+  still a mess
+
+
+- [graph literals](graphLiterals.md)  
+  a basic building block to enable configurable semantics
+- [citation semantics](citationSemantics.md)  
+  semantic/syntactic sugar for common use case like quoting and unasserted assertions
+- TODO [configurable semantics](configSemantics.md)  
+  N3 formulas, closed world, unique names... you name it!
 
 
 
@@ -234,10 +245,6 @@ The RDF 1.2 WG is still consolidating use cases [7]. On an abstract level the NN
 
 The [examples](examples.md) illustrate how Nested Named Graphs meet those demands. 
 
-
-
-## Prototype
-A prototype implementation in the Dydra graph store [6], including an appropriate extension to SPARQL, provides a public [notebook](https://observablehq.com/@datagenous/se-graph-workbook) that can be used to explore, test and play around with the proposal.
 
 
 

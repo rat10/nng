@@ -1,6 +1,5 @@
 # Fragment Identification
 
-
 So far we didn't discuss in depth what exactly we are annotating when we add attributes to a nested graph. However, there are important differences to consider.
 Annotating a triple or graph as a whole is well suited to describe administrative detail like the statement's source, date of ingestion, reliability, etc.
 But sometimes we want to qualify the statement in certain ways, e.g. to provide further detail about its subject or object or the relation type itself.

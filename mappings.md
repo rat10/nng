@@ -1,5 +1,17 @@
 # Mappings
 
+```
+ _____ ___  ____   ___  
+|_   _/ _ \|  _ \ / _ \ 
+  | || | | | | | | | | |
+  | || |_| | |_| | |_| |
+  |_| \___/|____/ \___/ 
+                        
+the mappings suffer from the problem that annotations themselves need to be reified to capture in which graph they are made. this gets pretty ugly pretty quickly. 
+check again with less feverish head
+
+```
+
 A mapping from Nested Named Graphs to regular RDF provides backwards compatibility to triple-based serializations and stores, albeit not with the same ease of use. 
 Mapping nested graphs to standard RDF triples also serves to pin down their semantics and enable sound reasoning. We know precisely what those standard RDF triples mean, and therefore such a mapping can guide intuitions and implementations.
 
@@ -31,11 +43,9 @@ nng:nestedIn a rdfs:Property ;
     rdfs:comment "The property `nng:nestedIn` records the named graph (nested or not) that the attributed graph is nested in." .
 -->
 
-
-
 > [NOTE] 
 >
-> Following the example of `a` in Turtle we might define the shortcuts `in` and `as` to provide some syntactic sugar for `nng:containedIn` and `nng:transcludes`
+> Following the example of `a` as a shortcut for `rdf:type` in Turtle we might define the shortcuts `in` and `as` to provide some syntactic sugar for `nng:containedIn` and `nng:principal`
 
 For each approach we also explore how annotations on individual nodes may be mapped. To that end we need to define some more properties:
 ```turtle
@@ -97,16 +107,24 @@ gets mapped to
 :a :b :c .
 :a :b_1 :c .
 :b_1 nng:principal :b ;
-     nng:domain [ :s :t ] ;
-     nng:relation [ :v :w ] ;
-     nng:range [ :x :y ] ;
-     nng:containedIn _:ag2 .
+     nng:containedIn _:ag2 ;
+     :domain_1 [ :s :t ] ;
+     :relation [ :v :w ] ;
+     :range [ :x :y ] .
 _:ag2 :d_1 :e ;
 :d_1 nng:principal :d ;
      nng:containedIn _:ag1 .
+:domain_1 nng:principal nng:domain ;
+          nng:containedIn _:ag1 .
+:relation_1 nng:principal nng:relation ;
+            nng:containedIn _:ag1 . 
+:range_1 nng:principal nng:range ;
+         nng:containedIn _:ag1 .
 _:ag1 nng:transcludes _:ag2 . 
 ```
-[TODO] subject predicate object annotations need to be reified too
+> NOTE
+>
+> Obviously reifying annotations and their property list values is getting pretty crazy. We'll skip the latter... 
 
 
 As N-Triples:
@@ -159,17 +177,20 @@ The fluents mapping doesn't require special properties: the same principle appli
 _:a1 :b_1 _:c1 .
 _:a1 nng:principal :a ;
      :s :t .
-_:c1 nng:principal :c ;
-     :x :y .
 :b_1 nng:principal :b ;
      :v :w ;
      nng:containedIn _:ag2 .
+_:c1 nng:principal :c ;
+     :x :y .
 _:ag2 :d_1 :e ;
 :d_1 nng:principal :d ;
      nng:containedIn _:ag1 .
 _:ag1 nng:transcludes _:ag2 . 
 ```
-[TODO] subject predicate object annotations need to be reified too
+> TODO
+>
+> Reifying annotations and their property list values seems to behave better with fluents. However, this needs more investigation. Again we ignore the containment attribute of property lists.
+
 
 As N-Triples:
 ```N-Triples
@@ -203,9 +224,6 @@ _:ag2 :d_1 :e ;
      nng:containedIn _:ag1 .
 _:ag1 nng:transcludes _:ag2 . 
 ```
-
-
-
 
 This modelling style is very close to regular RDF as we know it. In principle this mapping could be supported in RDF by a follow-your-nose behaviour that automagically follows any `nng:principal` relation, returns its value instead of the blank node from which it originates, and adds all other attributes to the originating blank node as additional annotations. 
 However, the intuitive semantics is a bit shaky, as an annotation on the object of a relation would by convention not be understood as referring to the whole relation, or even the enclosing graph: while application specific intuitions may interpret it as referring to the graph itself, it seems risky to make such an interpretation mandatory. This problem could again be solved by defining additional vocabulary to refer to individual nodes in the statement, as above.
@@ -253,10 +271,14 @@ In general we think that implementation details like triple count shouldn't be g
 
 We would argue that a fluents based approach should be considered the baseline mapping, whereas singleton property- and n-ary relation based approaches provide different kinds of optimizations.
 
-### Caveat
+However, it also is quite obvious that in all variants recording graph-containment quickly leads to very convoluted serializations. 
+
+> Note: One may ask why containment relations need to be mapped if the containing graph is neither explicitly named nor annotated. More generally however membership in a graph is considered an act of composing statements into groups and as such an important enough knowledge representation activity on its own as to require faithful reproduction in the mapped representation.
+
+
+## Caveat
 
 No approach to a mapping from nested graphs to regular triples in RDF can bridge a fundamental gap: regular RDF can only express types of statement. In a mapping the basic, unannotated fact - no matter how it is derived - will always loose the connection to its annotated variant. This is true for approaches like RDF standard reification and RDF-star as well.
 It is not impossible for applications to keep track of annotated and un-annotated triples of the same type, e.g. to implement sound update and delete operations on annotated statements, but any mechanism to that effect will be rather expensive to implement, involved to run and as a result brittle in practice. A mapping to simple RDF triple types necessarily has its limitations and is no replacement for a mechanism like nested graphs.
 
 
-> Note: One may ask why containment relations need to be mapped if the containing graph is neither explicitly named nor annotated. More generally however membership in a graph is considered an act of composing statements into groups and as such an important enough knowledge representation activity on its own as to be faithfully recorded.
