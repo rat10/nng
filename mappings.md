@@ -10,6 +10,8 @@
 the mappings suffer from the problem that annotations themselves need to be reified to capture in which graph they are made. this gets pretty ugly pretty quickly. 
 check again with less feverish head
 
+also, what about a mapping to RDF standard reification?
+
 ```
 
 A mapping from Nested Named Graphs to regular RDF provides backwards compatibility to triple-based serializations and stores, albeit not with the same ease of use. 

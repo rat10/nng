@@ -1,6 +1,6 @@
 # Configurable Semantics
 
-
+<!--
 ```
  _____ ___  ____   ___  
 |_   _/ _ \|  _ \ / _ \ 
@@ -9,18 +9,17 @@
   |_| \___/|____/ \___/ 
                         
 
-convert to Nested Named Graphs
 semantics per property
 term semantics per annotation
-namespaced semantics identifiers?
 
 ```
+-->
 
 
-
-The semantics of RDF is designed to reflect the realities of a shared and decentralized information system spanning the whole world: no one ever has a complete grasp on the data, people use different names to refer to the same thing, no-one is entitled to change the truth value of someone else's data, what is not in the data at hand may nonetheless be true, etc. Some of these criteria have names, like the Open World Assumption (OWA) or the No Unique Name Assumption (NUNA). Some, like referential transparency, are baked so deeply into the formalism that they a barely noticed. Some only become visible through the absence of certain constructs like e.g. negation.
+The semantics of RDF is designed to reflect the realities of a shared and decentralized information system spanning the whole world: no one ever has a complete grasp on the data, people use different names to refer to the same thing, no one is entitled to change the truth value of someone else's data, what is not in the data at hand may nonetheless be true, etc. Some of these criteria have names, like the Open World Assumption (OWA) or the No Unique Name Assumption (NUNA). Some, like referential transparency, are baked so deeply into the formalism that they a barely noticed. Some only become visible through the absence of certain constructs like e.g. negation.
 
 Some of these semantic fixings are rather counter-intuitive to application developers accustomed to closed environments e.g. driven by relational database systems, as those systems tend to take a rather opposing stance: in an in-house application the data is expected to be complete, what is not in the database is false, everything has exactly one name, etc.
+
 This tension between data *integration* semantics for the open semantic web and *application* semantics for in-house use of such data has frustrated application developers since the start of the Semantic Web. At the time a popular intuition was that mechanisms should be added to the RDF semantics machinery that allowed to put into effect on demand more restrictive semantics, tailored to the needs of applications. However, such mechanisms have never materialized and one of the reasons might have been the problem of how to describe the boundaries of such a change of semantics regime, even more so after the RDF 1.1 WG failed to standardize a semantics of named graphs.
 Graph literals offer a chance to rectify this issue as they soundly discriminate between abstract graphs as literal types and their application via [inclusion](graphLiterals.md).
 
@@ -182,14 +181,14 @@ That's of course a lot of effort for one list, but it can pay off in an applicat
 The following syntactic sugar aims to express inclusion with configurable semantics even more succinctly. 
 An anonymous RDF graph literal is equipped with an argument specifying the intended semantics, re-using the already familiar square bracket syntax, e.g.:
 ```turtle
-[APP]":a :b :c , :d" :e :f .
+[nng:APP]":a :b :c , :d" :e :f .
 ```
 The following examples show some possible scenarios, involving both aspects and profiles:
 ```turtle
-[APP]" :a :b :c , :d " :e :f .
-:g :h [LOG]" :h :i :k " .
-:l :m [HYP,OPA]" :n :o :p " ,
-      [NEG,CIT]" :q :r :s " .
+[nng:APP]" :a :b :c , :d " :e :f .
+:g :h [nng:LOG]" :h :i :k " .
+:l :m [nng:HYP,nng:OPA]" :n :o :p " ,
+      [nng:NEG,nng:CIT]" :q :r :s " .
 ```
 Note that mixing semantics profiles is not advisable with the profiles suggested above, as properties might contradict each other. In principle however profiles and aspects can be combined in modular fashion. If contradictions occur, the fixings of inner nested graphs overrule those of the graphs enclosing them. Contradictions within the same nested graph can't be resolved automatically and have to be interpreted as logical `OR`.
 
@@ -202,7 +201,7 @@ To make the application of configurable semantics more precise we explore a vari
 
 A popular example to motivate referential opacity is the Superman comic, with the reporter Lois Lane not being aware that her crush Superman is in fact the same person as her slightly dull colleague Clark Kent. This can precisely be modelled with a referentially opaque semantics applied only to the identifier for Superman: 
 ```turtle
-:LouisLane :loves [OPA]":Superman" .
+:LouisLane :loves []{":Superman"} .
 ```
 Note how the references to Louis Lane and the concept of loving are still referentially transparent, as they should be, and solely the reference to Superman is constrained to refer only to that specific persona of the extra-terrestrial character Kal-El, but never to its alternative persona Clark Kent.
 

@@ -24,11 +24,11 @@ The serialization of Nested Named Graphs is defined as an extension to TriG. Its
    :g1 :u :w .             # annotating the graph independent from its definition
 
 [TODO] do we still support property lists?
-       or dow we reserve the [] syntax for either
+       or do we reserve the [] syntax for either
        - blank node names
        or
        - semantics declarations, eg
-         [APP]{ s p o }
+         [nng:APP]{ s p o }
 
 
 - graph literals

@@ -116,9 +116,3 @@ We [might](https://github.com/rat10/sg/issues/2) also define a term literal data
 ```
 
 See [Term Semantics Syntactic Sugar](configSemantics.md) for more detail.
-
-> [TODO] 
-> 
-> don't forget to clear this up
-
-

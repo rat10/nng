@@ -36,7 +36,7 @@ nng:subject a rdf:Property;
 
 nng:predicate a rdf:Property;
   rdfs:domain nng:GraphSource ;
-  rdfs:range rdfs:Class ;  # TODO or rather rdf:Property ?
+  rdfs:range rdfs:Class ;
   rdfs:comment "Addresses the predicate of a statement, or all predicate of all statements in a graph source" .
 
 nng:object a rdf:Property;

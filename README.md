@@ -38,7 +38,7 @@ CONSOLE
     - blank node names
     or
     - semantics declarations, eg
-      [APP]{ s p o }
+      [nng:APP]{ s p o }
 -->
 
 ## Overview
@@ -72,28 +72,41 @@ The design of Nested Named Graphs aims for the least surprise. Annotated or not,
 
 
 ## Syntax
-The main component of the proposal is a [syntactic extension](serialization.md) to TriG that adds the ability to nest named graphs inside each other. The following short example may give a first impression:
+The main component of the proposal is a [syntactic extension](serialization.md) to TriG that adds the ability to nest named graphs inside each other. The following short example may give a first impression of its various virtues:
 ```turtle
-[TODO]
+:G1 {
+    :G2 {
+        :Alice :buys :Car .
+        :G2 nng:subject [ :age 20 ].        # Alice, not the car, is 20 years old
+            nng:predicate [ :payed :Cash ] .
+            nng:object nng:INT ;            # Alice buys a car, not a website
+                       [ :color :black ].
+    } :source :Denis ;                      # an annotation on the graph
+      :purpose :JoyRiding .                 # sloppy, but not too ambiguous
+    :G3 {
+        [] {                                # graphs may be named by blank nodes 
+            :Alice :buys :Car .             # probably a different car buying event
+            THIS nng:subject [ :age 28 ] .  # self reference
+        } :source :Eve .
+    } :todo :AddDetail .                    # add detail
+}                                           # then remove this level of nesting
+                                            # without changing the data topology
 ```
+
 For a more extensive set of simple examples check out the [Introduction by Example](introexample.md)
 
 A complementary syntactic extension to JSON-LD remains TBD. 
 
-[Mappings](mappings.md) to triple- and quad based formats like Turtle, N-Triples and N-Quads are provided (or worked on). A mapping to RDF/XML so far isn't planned as RDF/XML doesn't even support named graphs. However it could be realized analogously to the approach taken with the Turtle mapping.
+[Mappings](mappings.md) to triple-based formats like Turtle and N-Triples are provided. A mapping to RDF/XML so far isn't planned as RDF/XML doesn't even support named graphs. However it could be realized analogously to the approach taken with the Turtle mapping.
 
 See also an example of a [BNF](sources/trig-nng.bnf) for the NNG syntax - not exactly but close to the version actually deployed in the prototype notebook (see below).
 
 
+## Fragments and Identification Semantics
 
-## Fragments
+The introducing example makes use of a [fragment identification](fragments.md) vocabulary to annotate individual terms on a statement. This can be helpful e.g. to faithfully represent Labeled Property Graphs in RDF as it allows to clearly separate e.g. provenance annotations on the whole graph from qualifications of the relation type. 
 
-[TODO] [fragment identification](fragments.md)
-
-
-## Identification SEmantics
-
-[TODO] [identification semantics](identification.md)
+Fragment identification also comes in handy when [identification semantics](identification.md) need to be disambiguated, e.g. to clarify if an IRI is used to refer to a web resource or to the entity that web resource describes. Another possible application is the disambiguation of [graph naming semantics](graphSemantics.md) when using the graph name in a statement, e.g. an annotation to the graph.
 
 
 ## Querying
@@ -116,7 +129,7 @@ changes to sparql
 result formats
 
 
-## Prototype
+## Public Notebook
 A prototype implementation in the Dydra graph store [6], including an appropriate extension to SPARQL, provides a public [notebook](https://observablehq.com/@datagenous/se-graph-workbook) that can be used to explore, test and play around with the proposal.
 
 
@@ -152,8 +165,8 @@ The finer details of ths proposal are discussed on separate pages:
   a basic building block to enable configurable semantics
 - [citation semantics](citationSemantics.md)  
   semantic/syntactic sugar for common use case like quoting and unasserted assertions
-- TODO [configurable semantics](configSemantics.md)  
-  N3 formulas, closed world, unique names... you name it!
+- [configurable semantics](configSemantics.md)  
+  N3 formulas, closed world, unique name... you name it!
 
 
 
@@ -172,8 +185,9 @@ Our proposal defines the semantics of nested graphs in a way reflecting users in
 - the triples in that graph are interpreted, they are referentially transparent just like any other snippet of RDF (i.e., entailments are possible and warmly welcomed).
 Note that a similar approach was already proposed by Hayes in 2011 [10] and in our opinion it not only makes sense but is a necessary step forward towards an RDF semantics that actually captures the intuitions and makes sense to non-logicians. It is in our proposal designed as *an additional layer*, that *doesn't change* the semantics of RDF *but extends* it towards actual practice.
 
+<!-- 
 [TODO] check the RDF 1.1 dataset note for which of the variants proposed there matches our intuitions the best. probably the one reflecting SPARQL semantics
-
+-->
 
 
 ### The Architecture and Politics of Semantics
