@@ -78,7 +78,8 @@ We will in the following define ways in which the RDF contained in those literal
 
 ## Inclusion
 
-Inclusion offers the possibility to parse a graph literal and add its content into a graph. It can intuitively be understood as adding the statements documented in a literal graph to the set of asserted statements. This works very much like `owl:imports` for ontologies and the respective property, `nng:includes`, is named to allude to that similarity.
+Inclusion offers the possibility to parse a graph literal and add its content into a graph. It can intuitively be understood as adding the statements documented in a literal graph to the set of asserted statements. This works very much like `owl:imports` for ontologies. However, unlike `owl:imports` it is not transitive and included graph literals are not allowed to contain other graph literals. 
+This has technical reasons as it puts less strain on the parser, but also conceptual ones: a graph literal should be self-contained and free of any kind of ambiguity.
 
 Importing a literal into a graph doesn't create a nested graph but includes the statements from the graph literal into a graph. The including graph may be explicitly named or referenced as the local graph.
 
@@ -107,44 +108,6 @@ THIS nng:includes ":s :p :o . :u :v :w ."^^nng:GraphLiteral .
 Inclusion means that the graph can be assumed to contain the statements from the included literal. Those statements therefore can not only be queried but also reasoned on, new entailments can be derived, etc. However, new entailments can not be written back into the graph literal. Therefore the only guarantee that this mechanism provides is a reference to an original state.
 
 Inclusion may also be used to provide well-formedness guarantees, comparable to un-folding/un-blessing operators in other languages.
-
-
-
-<!--
-
-## Transclusion
-
-Transclusion in the most basic arrangement only includes by reference, meaning that a transcluded graph is asserted and can be queried, but it is referentially opaque and no entailments can be derived - blocking any kind of change to and inference on the transcluded data, much like the semantics of Notation3 formulas and RDF-star triple terms per the semantics presented in the CG report, as in the following example:
-```
-THIS nng:transcludes ":s :p :o"^^nng:GraphLiteral .
-```
-
-However, transclusion also makes it possible to configure the semantics of transcluded graph literals. Mediating access through the transclusion property guarantees that such semantics arrangements are obeyed and no unintended entailments can leak into transcluding graphs. Configurable semantics are discussed in detail only later [below](#configurable-semantics), so a simple example has to suffice here:
-```
-THIS nng:transcludes [
-    rdf:value ":s :p :o"^^nng:GraphLiteral ;
-    nng:semantics nng:APP
-] .
-```
-An additional annotation with a semantics attribute, in this case `nng:APP`, can loosen the very restrictive base semantics to arrange for use cases driven by e.g. application intuitions like a Closed World Assumption, an Unique Name Assumption, etc.
-
-The respective property is defined as:
-```turtle
-# VOCABULARY
-
-nng:transcludes a rdf:Property,
-    rdfs:subPropertyOf owl:imports ;
-    rdfs:domain nng:Graph ;
-    rdfs:range nng:GraphLiteral ;
-    rdfs:comment "Transcludes the literal via reference. Transcluding a graph literal provides certain immutability guarantees for the transcluded graph." .
-```
-
--->
-
-
-
-
-
 
 
 

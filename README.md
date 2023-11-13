@@ -1,4 +1,17 @@
 # Nested Named Graphs (NNG)
+```
+ _____ ___  ____   ___  
+|_   _/ _ \|  _ \ / _ \ 
+  | || | | | | | | | | |
+  | || |_| | |_| | |_| |
+  |_| \___/|____/ \___/ 
+                        
+
+to anybody who visits this site now because i bragged that by monday it would be ready:
+it isn't, and i'm a bit under the weather.
+so please proceed with care and be prepared for bugs.
+
+```
 
 <!--
  _____ ___  ____   ___  
@@ -11,7 +24,10 @@
 check in all files 
     transclusion -> inclusion
 
-differentiate between nng:Graph and nng:GraphLiteral
+differentiate between 
+  nng:Graph
+  nng:GraphSource
+  nng:GraphLiteral
 
 
 add namespace declarations to semantics identifiers, eg ´ngg:APP` ?
@@ -23,6 +39,12 @@ CONSOLE
   is THIS not supported in the testbed?
   what is the LOG supposed to describe?
     <urn:dydra:default> <http://segraph.org/LOG> <http://example.org/X> .
+  do we still support property lists?
+    or dow we reserve the [] syntax for either
+    - blank node names
+    or
+    - semantics declarations, eg
+      [APP]{ s p o }
 -->
 
 ## Overview
@@ -33,19 +55,37 @@ The proposal doesn't require any changes or additions to the abstract syntax of 
 
 After an initial version of this proposal has been presented to the RDF 1.2 Wg (see below in the "attic" section), a few concerns and requests have been voiced: more examples, shorter examples, formalization, shorter presentation, etc. Some of these requests obviously contradict each other, some are hard to meet at this point. This small site tries to provide both a short introduction on this page and more detailed discussions on separate pages:
 
-- [introduction by example](introexample.md)
-- [more examples](examples.md)
-- [surface syntax](serialization.md)
-- [fragment identification](fragments.md)
-- [identification semantics](identification.md)
-- [mappings to basic triples](mappings.md) 
-- [querying](querying.md)
-- [graph semantics](graphSemantics.md)
-- [graph literals](graphLiterals.md)
-- [citation semantics](citationSemantics.md)
-- [configurable semantics](configSemantics.md)
+- [nesting graphs](transclusion.md)  
+  the basic mechanism to nest graphs
+- [surface syntax](serialization.md)  
+  TODO syntactic sugar to nest and annotate graphs
+- [introduction by example](introexample.md)  
+  TODO a walkthrough illustrating core features and some applications
+- [more examples](examples.md)  
+  TODO especially WG use cases
 
-Please be aware that annotations in RDF are a pretty complex topic and the RDF-star proposal, although apparently simple, fails to address those complexities in meaningful ways. Please keep in mind that a standard that aims to take shortcuts without properly thinking through the consequences will not do anyone a favour. The result has to be simple at the core, the way there however obviously isn't. The NNG proposal addresses a lot of concerns that RDF-star glosses over, but which shouldn't be ignored. So please take the necessary time to consider this proposal. However, we do not attempt to provide a complete comparison to RDF-star.
+- [fragment identification](fragments.md)  
+  addressing and annotating individual nodes in a statement
+- [identification semantics](identification.md)  
+  applying fragment identification to solve the semantic web identity crisis
+- [graph semantics](graphSemantics.md)  
+  a semantics for (not only nested) named graphs that doesn't break existing usage
+
+- [mappings to basic triples](mappings.md)  
+  a lossless translation from NNG to standard triples
+- [querying](querying.md)  
+  TODO still a mess
+
+- [graph literals](graphLiterals.md)  
+  a basic building block to enable configurable semantics
+- [citation semantics](citationSemantics.md)  
+  semantic/syntactic sugar for common use case like quoting and unasserted assertions
+- [configurable semantics](configSemantics.md)  
+  N3 formulas, closed world, unique names... you name it!
+
+
+
+Please be aware that annotations in RDF are a pretty complex topic and the RDF-star proposal, although apparently simple, fails to address those complexities in meaningful ways. However, a standard that aims to take shortcuts without properly thinking through the consequences will not do anyone a favour. A useful annotation mechanism has to be simple at the core, the way to develop it however obviously isn't. The NNG proposal addresses a lot of concerns that RDF-star glosses over, but which shouldn't be ignored. So please take the necessary time to consider this proposal. 
 
 
 ## Concept

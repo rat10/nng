@@ -18,8 +18,10 @@ The serialization of Nested Named Graphs is defined as an extension to TriG. Its
    []{:a :b :c} :x :y .
    [:x :y]{:a :b :c}       # property list
 -- named
-   :g1{:a :b :c} :x :y .
-   :g1 :u :w .
+   :g1 {:a :b :c} 
+       :x :y .             # defining and annotating a graph in one sweep
+   :f :m :n .
+   :g1 :u :w .             # annotating the graph independent from its definition
 
 [TODO] do we still support property lists?
        or dow we reserve the [] syntax for either
@@ -33,7 +35,7 @@ The serialization of Nested Named Graphs is defined as an extension to TriG. Its
 [ nng:quotes ":a :b :c"^^nng:GraphLiteral ] a :Nuisance .
 :X nng:quotes ":a :b :c"^^nng:GraphLiteral a :Necessity .
 THIS nng:quotes ":a :b :c"^^nng:GraphLiteral  
-                          # 'THIS' referring to local graph
+                          # 'THIS' referring to the local graph
 
 
 
