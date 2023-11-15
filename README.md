@@ -148,7 +148,7 @@ The finer details of ths proposal are discussed in separate sections:
   the basic mechanism to nest graphs
 - TODO [surface syntax](serialization.md)  
   syntactic sugar to nest and annotate graphs
-- TODO [introduction by example](introexample.md)  
+- [introduction by example](introexample.md)  
   a walkthrough illustrating core features and some applications
 - TODO [more examples](examples.md)  
   especially WG use cases

@@ -1,14 +1,3 @@
-```
- _____ ___  ____   ___  
-|_   _/ _ \|  _ \ / _ \ 
-  | || | | | | | | | | |
-  | || |_| | |_| | |_| |
-  |_| \___/|____/ \___/ 
-                        
-unfinished
-
-```
-
 # Introduction by Example
 
 The following examples aim to provide a quick introduction into the user facing mechanics of Nested Named Graphs.
@@ -51,11 +40,14 @@ is just syntactic sugar for this:
 :Y {:Alice :buys :Car}
 :Y :says :Denis .
 ```
-Some proposals have done this to achieve the same goal:
+  
+  
+Some proposals have hacked the Turtle syntax to achieve the same goal:
 ```turtle
 :Alice :buys :Car                   # :Z
 :Z :says :Denis . 
 ```
+Others provide statement identifiers additionally to graph identifiers.
 
 
 ## A simplistic application of a nested graph
@@ -64,7 +56,7 @@ A bit like property graphs:
 []{:Alice :buys :Car} 
     :age 20 ;                               # who is 20 years old ?
     :color :black ;                         # who is black ?
-    :paymentMethod :Cash ;                  # seems clear
+    :payment :Cash ;                        # seems clear
     :purpose :JoyRiding ;                   # ditto
     :model :Coupe ;                         # ditto
     :source :Denis .                        # ditto ... or did Denis sell the car?
@@ -78,7 +70,7 @@ A bit like property graphs:
     :age 20
 ]
 :X nng:predicate [
-    :paymentMethod :Cash ;
+    :payment :Cash ;
     :purpose :JoyRiding                     # ambivalence, could also be object property
 ]
 :X nng:object [
@@ -86,7 +78,7 @@ A bit like property graphs:
     :model :Coupe
 ]
 :X nng:triple [
-    ex:void ex:void                         # forEach, not needed here
+    ex:void ex:void                         # forEach semantics, not needed here
 ]
 :X nng:graph [
     :source :Denis
@@ -99,7 +91,7 @@ A bit like property graphs:
 :Alice :buys_1 :Car .
 :buys_1 
     rdfs:subPropertyOf :buys ;
-    :paymentMethod :Cash ;
+    :payment :Cash ;
     :purpose :JoyRiding ;
     :nestedIn :X ;
     rdfs:domain [
@@ -116,21 +108,35 @@ A bit like property graphs:
 Two other mappings - fluents and n-ary relations - are provided in the section on [mappings](mappings.md)
 
 
-## A compact version of the nested graph
+## A compact and less pedantic version
+Tedious disambiguation doesn't need to become a new religion.
 ```turtle
 :X {
     :Alice :buys :Car .
-    :X?s :age 20 .
-    :X?p :paymentMethod :Cash ;
-         :purpose :JoyRiding  .
-    :X?o :color :black ;
-         :model :Coupe .
-#   :X?g :source :Denis
-} :source :Denis .                          # doesn't provide an explicit ?g fragment identifier
+} 
+    nng:subject [ :age 20 ] ;
+    nng:object [ :color :black ;
+                 :model :Coupe ] ;
+    :payment :Cash ;
+    :purpose :JoyRiding ;
+    :source :Denis .
 ```
 
 
 ## The same as RDF-star 
+A sloppy mapping:
+```turtle
+:Alice :buys :Car .
+<< :Alice :buys :Car >> 
+    rdf-star:hasOccurrence :X .
+:X  nng:subject [ :age 20 ] ;
+    nng:object [ :color :black ;
+                 :model :Coupe ] ;
+    :payment :Cash ;
+    :purpose :JoyRiding ;
+    :source Denis .
+```
+An exact mapping:
 ```turtle
 :Alice_1 :buys_1 :Car_1 .
 :Alice_1 rdf:type :Alice ;
@@ -139,10 +145,10 @@ Two other mappings - fluents and n-ary relations - are provided in the section o
 << :Alice_1 rdf:type :Alice >> :source Denis .
 << :Alice_1 :age 20 >> :source Denis .
 :buys_1 rdfs:subPropertyOf :buys ;
-    :paymentMethod :Cash ;
+    :payment :Cash ;
     :purpose :JoyRiding .
 << :buys_1 rdfs:subPropertyOf :buys  >> :source Denis .
-<< :buys_1 :paymentMethod :Cash >> :source Denis .
+<< :buys_1 :payment :Cash >> :source Denis .
 << :buys_1 :purpose :JoyRiding  >> :source Denis .
 :Car_1 rdf:type :Car ;
     :color :Black ;
@@ -165,15 +171,16 @@ Imagine what happens with a second level of nesting or even the TEP mechanism.
         :Y {
             :X {
                 :Alice :buys :Car .
-                :X?s :age 20 .
-                :X?p :paymentMethod :Cash ;
-                     :purpose :JoyRiding  .
-                :X?o :color :black ;
-                     :model :Coupe .
-            } :source :Denis . 
+            } 
+            nng:subject [ :age 20 ] ;
+            nng:predicate [ :payment :Cash ;
+                            :purpose :JoyRiding ] ;
+            nng:object [ :color :black ;
+                         :model :Coupe ] ;
+            nng:graph [ :source :Denis ] .
         }
     } :FirstCarEvent ;
-      :source :GreenDiary ;                 # imagine 2nd level nesting with RDF-star =:-|
+      :source :GreenDiary ;
       :date :10_12_08 .
 }
 ```
@@ -182,88 +189,54 @@ eg her parents helping fund it,
 the insurance company having yet a different view, etc. Nothing breaks, it's just more layers of nesting getting added.
 
 
-## A second AliceBuysCar triple
+## Resilience to updates
+Add a second AliceBuysCar event, and add detail to the first, without changing the data topology
 ```turtle
 :Y {
     :X {
         :Alice :buys :Car .
-        :X?s :age 20 .
-        :X?p :paymentMethod :Cash ;
-             :purpose :JoyRiding  .
-        :X?o :color :black ;
-             :model :Coupe .
-    } :source :Denis .
+    } nng:subject [ :age 20 ]
+      nng:predicate [ :payment :Cash ;
+                      :purpose :JoyRiding ] ;
+      nng:object [ :color :black ;
+                   :model :Coupe ] ; 
+                 nng:Interpretation ;       # disambiguating identification
+      :source :Denis .
     :W {
         :V {
             :Alice :buys :Car .
-            :V?s :age 28 .
-        } :source :Eve .
-    } :todo :AddDetail .                    # add detail
-}                                           # then remove this level of nesting
-                                            # without changing the data topology
+        } nng:subject [ :age 28 ] ;
+          :source :Eve .
+    } :todo :AddDetail .                    # add detail, then remove this nesting
+}                                           # without changing the data topology
 ```
 
-
-## Literals as un-asserted opaque types
+<!--
 ```turtle
 :Y {
+    :Alice :buys :House .                  # <--- !
     :X {
         :Alice :buys :Car .
         :X?s :age 20 .
-        :X?p :paymentMethod :Cash ;
-             :purpose :JoyRiding  .
-        :X?o :color :black ;
-             :model :Coupe .
-    } :source :Denis ;
-      :asLiteral " :X {:Alice :buys :Car
-                  :X?s :age 20 .
-                  :X?p :paymentMethod :Cash ;
-                  :purpose :JoyRiding  .
-                  :X?o :color :black ;
-                  :model :Coupe ."^^rdfx:graph .
-      }
-}
-```
-## Literals as un-asserted transparent types
-(what RDF standard reification is popularly misused to represent)
-```turtle
-:Bob :says {" :Moon :madeOf :Cheese . "}
-# { ... } indicate transparency
-# " ... " indicate un-assertedness
-```
-
-```turtle
-:Bob :says [ seg:transcludesCitation ":Moon :madeOf :Cheese"^^rdfx:graph ]
-
-```
-
-## Resilience to updates
-
-```turtle
-:Y {
-    :Alice :buys :House .                   # <--- !
-    :X {
-        :Alice :buys :Car .
-        :X?s :age 20 .
-        :X?p :paymentMethod :Cash ;
+        :X?p :payment :Cash ;
              :purpose :JoyRiding  .
         :X?o :color :black ;
              :model :Coupe ;
-             :maker :Pininfarina .           # <--- !!
+             :maker :Pininfarina .         # <--- !!
     }
 } :source :Denis .
 
-# --->
+# updated to
 
 :Y {
     :W {
         :Alice :buys :House . 
-        :W?s :age :40 .                     # <--- !!!
+        :W?s :age :40 .                    # <--- !!!
     }
     :X {
         :Alice :buys :Car .
         :X?s :age 20 .
-        :X?p :paymentMethod :Cash ;
+        :X?p :payment :Cash ;
              :purpose :JoyRiding  .
         :X?o :color :black ;
              :model :Coupe ;
@@ -272,24 +245,65 @@ the insurance company having yet a different view, etc. Nothing breaks, it's jus
 }
 
 ```
+-->
 
+## Graph literals as a basic type
+```turtle
+:Y {
+    :X {
+        :Alice :buys :Car .
+    } nng:subject [ :age 20 ]
+      nng:predicate [ :payment :Cash ;
+                      :purpose :JoyRiding ] ;
+      nng:object [ :color :black ;
+                   :model :Coupe ] ;
+      :source :Denis .
+      nng:statedAs ":X {                    # documenting the original source
+                        :Alice :buys :Car .
+                    } nng:subject [ :age 20 ]
+                      nng:predicate [ :payment :Cash ;
+                                      :purpose :JoyRiding ] ;
+                      nng:object [ :color :black ;
+                                   :model :Coupe ] ;
+                      :source :Denis ."^^nng:GraphLiteral .
+}
+```
+
+## Reports - literals as un-asserted transparent types
+(what RDF standard reification is popularly misused to represent)
+```turtle
+:Bob :says []"{ :Moon :madeOf :Cheese . }" .
+# " ... " indicate un-assertedness
+# { ... } indicate referential transparency
+```
+Less syntactic sugar, same meaning:
+```turtle
+:Bob :says [ nng:reports ":Moon :madeOf :Cheese"^^nng:GraphLiteral ]
+```
+<!--
+## Records - literals as asserted opaque types
+
+
+## Quotes - literals as un-asserted opaque types
+
+
+-->
 
 ## DnS shortcut relations
-
 ```turtle
-:T {
+:T1 {
     :Alice :travelsTo :ISWC23 .
-    :T?p rdfs:seeAlso :U , :P.
-}
-:U {
-    :Schedule :startsAt :Hamburg ;
-                    :byMeans :Plane ;
-                    :date "05.11.2023" ;
-                    :gate ...
-    :Purpose :see :P .
+    THIS nng:predicate [ rdfs:seeAlso :S1 ,    # THIS graph self reference
+                                      :P1 ] .
 } a :Travel .
-:P {
-    :Purpose :present :Paper ;
+:S1 {
+    :Schedule :startsAt :Hamburg ;
+              :byMeans :Plane ;
+              :date "05.11.2023" ;
+              :gate ...
+} a :Schedule .
+:P1 {
+    :Purpose :present :Poster ;
              :topic :MetaVisualization ;
              ...
 }
