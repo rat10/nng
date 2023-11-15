@@ -160,33 +160,6 @@ An exact mapping:
 Imagine what happens with a second level of nesting or even the TEP mechanism.
 
 
-## Embedded in Named Graphs as we know them
-```turtle
-:NG_1 :source :Laptop ;                     # application specific graph annotations
-      :status :Unredacted ;
-      :visibility :Private .
-
-:NG_1 {
-    :Z {
-        :Y {
-            :X {
-                :Alice :buys :Car .
-            } 
-            nng:subject [ :age 20 ] ;
-            nng:predicate [ :payment :Cash ;
-                            :purpose :JoyRiding ] ;
-            nng:object [ :color :black ;
-                         :model :Coupe ] ;
-            nng:graph [ :source :Denis ] .
-        }
-    } :FirstCarEvent ;
-      :source :GreenDiary ;
-      :date :10_12_08 .
-}
-```
-Imagine adding more levels of nesting for different accounts of Alice buying her first car,
-eg her parents helping fund it,
-the insurance company having yet a different view, etc. Nothing breaks, it's just more layers of nesting getting added.
 
 
 ## Resilience to updates
@@ -290,28 +263,3 @@ TODO
 TODO
 
 -->
-
-## DnS shortcut relations
-
-A basic relation, capturing the essential information about a travel, and annotated with references to more detailed descriptions of both means and purpose of the travel
-(DnS is an ontology design pattern, called "Descriptions and Situations", that develops the idea behind this modelling approach).
-
-```turtle
-:T1 {
-    :Alice :travelsTo :ISWC23 .
-    THIS nng:predicate [ rdfs:seeAlso :S1 ,    # THIS graph self reference
-                                      :P1 ] .
-} a :Travel .
-:S1 {
-    :Schedule :startsAt :Hamburg ;
-              :byMeans :Plane ;
-              :date "05.11.2023" ;
-              :gate ...
-} a :Schedule .
-:P1 {
-    :Purpose :present :Poster ;
-             :topic :MetaVisualization ;
-             ...
-}
-
-```

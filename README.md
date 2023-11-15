@@ -150,7 +150,7 @@ The finer details of ths proposal are discussed in separate sections:
   syntactic sugar to nest and annotate graphs
 - [introduction by example](introexample.md)  
   a walkthrough illustrating core features and some applications
-- TODO [more examples](examples.md)  
+- [more examples](examples.md)  
   especially WG use cases
 
 
