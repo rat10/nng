@@ -84,7 +84,7 @@ nng:identifiedAs a rdf:Property ;
     rdfs:label "Interpretation semantics ;
     rdfs:comment "Specifies how an identifier should be interpreted." .
 
-nng:INT a nng:SemanticsAspect ;
+nng:Interpretation a nng:SemanticsAspect ;
     rdfs:label "Interpretation" ;
     rdfs:comment "The identifier is interpreted to refer to an entity in the real world." .
 

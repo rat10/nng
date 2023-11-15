@@ -86,7 +86,7 @@ The following example includes a graph literal into another graph (local or not)
 ex:Graph_1 nng:includes ":s :p :o . :u :v :w ."^^nng:GraphLiteral .
 ```
 
-To include a graph literal into the local graph a syntactically more elegant approach is available, using a self-referencing identifier, `THIS` (see the page on [mappings](mappimg.md)), to refer to the enclosing nested graph:
+To include a graph literal into the local graph a syntactically more elegant approach is available, using a self-referencing identifier, `THIS` (see the section on [mappings](mappimg.md)), to refer to the enclosing nested graph:
 
 ```turtle
 THIS nng:includes ":s :p :o . :u :v :w ."^^nng:GraphLiteral .

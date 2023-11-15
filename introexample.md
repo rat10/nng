@@ -18,7 +18,7 @@ The following examples aim to provide a quick introduction into the user facing 
 
 A nested graph, named by a blank node:
 ```turtle
-[]{:Alice :buys :Car}
+[] {:Alice :buys :Car}
 ```
 A nested graph with an explicitly given name:
 ```turtle
@@ -26,10 +26,10 @@ A nested graph with an explicitly given name:
 ```
 Two (different) nested graphs, named by (different) blank nodes:
 ```turtle
-[]{:Alice :buys :Car}
-[]{:Alice :buys :Car}
+[] {:Alice :buys :Car}
+[] {:Alice :buys :Car}
 ```
-Some nested nested graphs:
+Some nested nested graphs, all different (tokens, not types):
 ```turtle
 :NG_1 {
     []{
@@ -40,12 +40,11 @@ Some nested nested graphs:
 }
 ```
 
-
 ## Every triple in every nested graph is asserted and referentially transparent
 
 The semantics of nested named graphs is that of middle of the road RDF. This:
 ```turtle
-:Y {:Alice :buys :Car} :says :Denis
+:Y {:Alice :buys :Car} :says :Denis .
 ```
 is just syntactic sugar for this:
 ```turtle
@@ -66,30 +65,30 @@ A bit like property graphs:
     :age 20 ;                               # who is 20 years old ?
     :color :black ;                         # who is black ?
     :paymentMethod :Cash ;                  # seems clear
-    :purpose :JoyRiding ;                   # dito
-    :model :Coupe ;                         # dito
-    :source :Denis .                        # dito ... or did Denis sell the car
+    :purpose :JoyRiding ;                   # ditto
+    :model :Coupe ;                         # ditto
+    :source :Denis .                        # ditto ... or did Denis sell the car?
 ```
 
 
 ## Targeting fragments, verbosely
 ```turtle
 :X {:Alice :buys :Car} .
-:X seg:subject [
+:X nng:subject [
     :age 20
 ]
-:X seg:predicate [
+:X nng:predicate [
     :paymentMethod :Cash ;
     :purpose :JoyRiding                     # ambivalence, could also be object property
 ]
-:X seg:object [
+:X nng:object [
     :color :black ;
     :model :Coupe
 ]
-:X seg:triple [
+:X nng:triple [
     ex:void ex:void                         # forEach, not needed here
 ]
-:X seg:graph [
+:X nng:graph [
     :source :Denis
 ]
 ```
@@ -110,11 +109,11 @@ A bit like property graphs:
         :color :black ;
         :model :Coupe
     ];
-    rdfx:triple [
+    nng:triple [
         :source :Denis
     ]
 ```
-Two other mappings - with rdf:value and lots of blank nodes, and with named graphs - are provided in the extra page on [mappings](mappings.md)
+Two other mappings - fluents and n-ary relations - are provided in the section on [mappings](mappings.md)
 
 
 ## A compact version of the nested graph

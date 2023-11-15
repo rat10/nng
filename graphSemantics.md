@@ -1,30 +1,26 @@
 # Named Graph Semantics
 
-```
- _____ ___  ____   ___  
-|_   _/ _ \|  _ \ / _ \ 
-  | || | | | | | | | | |
-  | || |_| | |_| | |_| |
-  |_| \___/|____/ \___/ 
-                        
-check again when the fever is gone
-
-```
-
 Nested Named Graphs are designed as an extension to RDF 1.1 named graphs. However this approach comes with two caveats: named graphs as specified in RDF 1.1 have no standard semantics, and their syntax doesn't support nesting. The latter problem is easy to dispel via a mapping - [transclusion](transclusion.md) and some [syntactic sugar](serialization.md) -, the former however it seems is an issue with many facets and not possible to resolve in a general way.
 
  The RDF 1.1 Working Group did spend a lot of effort on trying to standardize a semantics of named graphs in RDF but ultimately failed, as it proved impossible to get the various intuitions and implementations of the different stakeholders under one hood - see the [RDF 1.1 WG Note on Dataset Semantics](https://www.w3.org/TR/2014/NOTE-rdf11-datasets-20140225/) for more detail. This is contaminated terrain, but we assert that the risks are manageable if we don't fall into the same trap as the RDF 1.1 WG and demand too much. To ease backwards compatibility and not step on anybody's toes, the Nested Named Graphs proposal is designed in a a way that it doesn’t *need* to touch the semantics, or rather the lack thereof, of named graphs as specified in RDF 1.1.
 
-This proposal defines Nested Graphs *inside of* named graphs, with a specific semantics at that, but without making any assumptions about the semantics of an enclosing named graph or even the whole dataset. This leaves implementors free to continue to use named graphs in any application-specific way they desire - the status quo of named graphs in RDF remains untouched.
+This proposal favors a specific semantics and provides several different ways to introduce it, but it doesn't make any assumptions about the semantics of an enclosing named graph or even the whole dataset. This leaves implementors free to continue to use named graphs in any application-specific way they desire - the status quo of named graphs in RDF remains untouched.
 
-However, as the RDF 1.1 WG hinted at in the above mentioned note, it is very well possible to describe the semantics employed in the use of named graphs as a default semantics of all named graphs contained in some dataset or on a per case basis, e.g. per individual named graph. Our proposal provides some vocabulary to describe the semantics of named graphs. One way these semantics can be described is as being exactly the same as that of nested graphs, aligning the two mechanisms as to make them virtually indistinguishable.
+There are different ways to provide a semantics to graphs: 
+- a SPARQL service description can define a semantics for individual named graphs or a default semantics for all named graphs in a dataset
+- a graph naming semantics can be defined for the domain and/or range of properties
+- annotating a statement that refers to a graph can clarify with which semantics the reference is used
+- encoding graph names that follow a certain semantics with a .well-known URI scheme
 
-In that respect this proposal does indeed hope to change the status quo of named graphs in RDF: it claims to prove that a better world, in which RDF 1.1 named graphs have configurable semantics, is not only possible, but even quite practical. Standardizing *one* semantics for named graphs might have been useful, but that chance has passed. Standardizing a way to express the chosen semantics and agreeing on what those choices mean is *good enough* in most scenarios.
+As the RDF 1.1 WG hinted at in the above mentioned note, it is possible to describe the semantics employed in the use of named graphs as a default semantics of all named graphs contained in some dataset or on a per case basis, e.g. per individual named graph. Our proposal provides such a vocabulary to describe the semantics of named graphs. One way these semantics can be described is as being exactly the same as that of nested graphs, aligning the two mechanisms as to make them virtually indistinguishable.
+
+In that respect this proposal does indeed hope to change the status quo of named graphs in RDF: it claims to prove that a better world, in which RDF 1.1 named graphs have configurable semantics, is not only possible, but even quite practical. Standardizing *one* semantics for named graphs might have been an illusionary goal all along, given the many variants of graph semantics in the wild. However, standardizing a way to express such semantics is *good enough* in most scenarios.
+
+This proposal also provides ways to disambiguate graph naming semantics per property via the [transclusion mechanism](transclusion.md) and individually per reference via [identification semantics](identification.md).
 
 
 
 ## Nested Graph Semantics
-
 
 The basic semantics of nested graphs represents what we interpret to be the minimal standard semantics of SPARQL (and in extension of RDF 1.1) anyway:
 
@@ -32,7 +28,7 @@ The basic semantics of nested graphs represents what we interpret to be the mini
 - a graph name has no meaning in itself and overloading the graph name with other meaning in addition to its use as an address to retrieve the graph is an out-of-band arrangement (and violates a foundational principle of web architecture: that an IRI should refer to one and only one resource), and
 - a named graph is not an abstract type, but just a source of RDF data. In particular it is a mutable resource.
 
-By making these fixing arrangements explicit and in addition providing vocabulary for alternative arrangements we hope to foster sounder semantics and enhanced compatibility among applications of named graph at a wider scale.
+By making these fixing arrangements explicit and in addition providing vocabulary for alternative arrangements we hope to foster sounder semantics and enhanced compatibility among applications of named graphs at a wider scale.
 If e.g. an application chooses to overload the graph name with more meaning, that meaning may be made explicit using the vocabulary provided in the next section. 
 
 
@@ -41,8 +37,8 @@ If e.g. an application chooses to overload the graph name with more meaning, tha
 
 The following vocabulary provides ways to describe the semantics of graphs. We hope that it not only provides the necessary means to integrate Nested Named Graphs into RDF 1.1 datasets, but also helps to advance sound semantics for RDF 1.1 named graphs themselves.
 
-Note that a vocabulary to tackle the related issue of quotation versus interpretation semantics is defined in the page on [Citation Semantics](citationSemantics.md).
-Another related vocabulary to resolve ambiguity in identification is discussed in the page on [Identification Semantics](identification.md). The issue of ambiguous identification does not only concern named graphs, but any IRI in RDF, i.e. the question if an IRI is meant to refer to a network retrievable resource itself or to something that that resource is about. This, and a possible approach to its resolve, 
+Note that a vocabulary to tackle the related issue of quotation versus interpretation semantics is defined in the section on [Citation Semantics](citationSemantics.md).
+Another related vocabulary to resolve ambiguity in identification is discussed in the section on [Identification Semantics](identification.md). The issue of ambiguous identification does not only concern named graphs, but any IRI in RDF, i.e. the question if an IRI is meant to refer to a network retrievable resource itself or to something that that resource is about. This, and a possible approach to its resolve, 
 
 
 
@@ -127,11 +123,11 @@ nng:GraphType a rdfs:Class ;
 
 ## Graph Definitions
 
-``` 
-[TODO] check these definitions again
-       there is some duplication going on between these definitions
-       and the class definitions above
-``` 
+> [TODO]  
+> 
+> check these definitions again  
+> there is some duplication going on between these definitions  
+> and the class definitions above  
 
 To flesh out the descriptions of the graph types defined above we need one last thing:
 ```turtle
@@ -166,6 +162,9 @@ nng:IdentGraph
     nng:mutability nng:GraphType .
 ```
 
+<!--
+what's thd purpose of this example?
+
 ```turtle
 :MyGraph_1 
     a nng:Graph ;
@@ -174,7 +173,7 @@ nng:IdentGraph
 	             nng:overloading nng:TopicOfGraph ] ;
     nng:mutability nng:GraphSource .
 ```
-
+-->
 
 
 ## Graph Naming Example

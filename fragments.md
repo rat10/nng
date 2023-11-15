@@ -62,7 +62,7 @@ Applying that vocabulary can feel a bit tedious when the object isn't a class, a
 ```turtle
 :G1 { :Alice :buys :House }
     nng:subject [ :age 40 ] ;
-    nng:object nng:INT .       # Alice buys a house, not a webpage
+    nng:object nng:Interpretation .       # Alice buys a house, not a webpage
 ```
 
 <!--

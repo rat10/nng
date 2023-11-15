@@ -15,11 +15,11 @@ nng:identifiedAs a rdf:Property ;
     rdfs:label "Interpretation semantics ;
     rdfs:comment "Specifies how an identifier should be interpreted." .
 
-nng:INT a nng:SemanticsAspect ;
+nng:Interpretation a nng:SemanticsAspect ;
     rdfs:label "Interpretation" ;
     rdfs:comment "The identifier is interpreted to refer to an entity in the real world." .
 
-nng:ART a nng:SemanticsAspect ;
+nng:Artifact a nng:SemanticsAspect ;
     rdfs:label "Artifact" ;
     rdfs:comment "The identifier is used to refer to a resource retrievable over the internet, i.e. an artifact." .
 ```
@@ -31,9 +31,9 @@ In the following example the IRI <https://www.paris.com> is used to either refer
 
 ```turtle
 []{<https://www.paris.com> :created 1995 .}
-    nng:subject [ nng:identifiedAs nng:ART ].
+    nng:subject nng:Artifact.
 
 []{<https://www.paris.com> :created "3rd century BC" .}
-    nng:subject [ nng:identifiedAs nng:INT ].
+    nng:subject nng:Interpretation .
 ```
 

@@ -1,6 +1,6 @@
 # Citation Semantics
 
-RDF literals can be used to introduce RDF with non-standard semantics into the data. Many such semantics are possible, like un-assertedness, referential opacity, closed world assumption, unique name assumption, combinations thereof, etc. In this section we will concentrate on different kinds of citation. The page on [Configurable Semantics](configSemantics.md) discusses other options.
+RDF literals can be used to introduce RDF with non-standard semantics into the data. Many such semantics are possible, like un-assertedness, referential opacity, closed world assumption, unique name assumption, combinations thereof, etc. In this section we will concentrate on different kinds of citation. The section on [Configurable Semantics](configSemantics.md) discusses other options.
 
 To introduce a graph with specific semantics it is *included* from a graph literal, e.g.:
 ```turtle
