@@ -15,17 +15,6 @@ so please proceed with care and be prepared for bugs.
 
 <!--
 
-check in all files 
-    transclusion -> inclusion
-
-differentiate between 
-  nng:Graph
-  nng:GraphSource
-  nng:GraphLiteral
-
-
-add namespace declarations to semantics identifiers, eg ´ngg:APP` ?
-  in some places i did, in most i didn't
 
 CONSOLE
   do fragment shortcuts get expanded 
@@ -142,16 +131,16 @@ A prototype implementation in the Dydra graph store [6], including an appropriat
 
 ## Details
 
-The finer details of ths proposal are discussed in separate sections:
+The finer details of this proposal are discussed in separate sections:
 
 - [nesting graphs](transclusion.md)  
   the basic mechanism to nest graphs
-- TODO [surface syntax](serialization.md)  
-  syntactic sugar to nest and annotate graphs
+- [surface syntax](serialization.md)  
+  TODO syntactic sugar to nest and annotate graphs
 - [introduction by example](introexample.md)  
-  a walkthrough illustrating core features and some applications
+  a walkthrough illustrating core features
 - [more examples](examples.md)  
-  especially WG use cases
+  WG use cases and other applications
 
 
 - [fragment identification](fragments.md)  
@@ -164,8 +153,8 @@ The finer details of ths proposal are discussed in separate sections:
 
 - [mappings to basic triples](mappings.md)  
   a lossless translation from NNG to standard triples
-- TODO [querying](querying.md)  
-  still a mess
+- [querying](querying.md)  
+  TODO still a mess
 
 
 - [graph literals](graphLiterals.md)  

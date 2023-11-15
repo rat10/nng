@@ -13,6 +13,23 @@
 The serialization of Nested Named Graphs is defined as an extension to TriG. Its datatype is `application/nng`.
 
 
+The [nested graph syntax](serialization.md)
+```turtle
+:Y { 
+    :X { :a :b :c } 
+         :d :e 
+}
+```
+maps to standard RDF 1.1 named graphs 
+```turtle
+:X { :a :b :c  }
+:Y { :Y nng:transcludes :X .
+     :X :d :e .
+}
+```
+
+
+
 - graph annotation
 -- anonymous
    []{:a :b :c} :x :y .
@@ -55,23 +72,8 @@ This (no pun intended) provides a bit of convenience when transcluding graphs, e
      :G :d :e  }
 ```
 
-#### As already established 
-the [nested graph syntax](serialization.md)
-```turtle
-:Y { 
-    :X { :a :b :c } 
-         :d :e 
-}
-```
-maps to standard RDF 1.1 named graphs 
-```turtle
-:X { :a :b :c  }
-:Y { :Y nng:transcludes :X .
-     :X :d :e .
-}
-```
 
 
 > [NOTE] 
 >
-> Membership in a nested graph is understood here to be an annotation in itself. However, that means that in this paradigm there are no un-annotated types anymore (the RDF spec doesn't discuss graph sources in much detail and only gives an informal description; however, this seems to be a necessary consequence of the concept). Types are instead established on demand, through queries and other means of selection and focus, and their type depends on the constraints expressed in such operations. If no other constraints are expressed than on the content of the graph itself, i.e. annotations on the graph are not considered, then a type akin to the RDF notion of a graph type is established. This approach to typing might be characterized as extremely late binding.
+> Membership in a nested graph is understood here to be an annotation in itself. However, that means that in this paradigm there are no un-annotated types anymore (the RDF spec doesn't discuss graph sources in much detail and only gives an informal description; however, this seems to be a necessary consequence of the concept). Types are instead established on demand, through queries and other means of selection and focus, and their type depends on the constraints expressed in such operations. If no other constraints are expressed than on the content of the graph itself, i.e. if annotations on the graph are not considered, then a type akin to the RDF notion of a graph type is established. This approach to typing might be characterized as extremely late binding.

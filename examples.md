@@ -31,18 +31,6 @@ ex:Ioannes_68 a crm:E21_Person , ex:Gender_Eunuch ;
 
 ```
 
-### [Superman](https://www.w3.org/2001/12/attributions/#superman) 
-
-The notorious Superman problem can be addressed as an application of graph literals, for example using the proposed syntactic sugar for `nng:Record`s (asserted, but referentially opaque types):
-```turtle
-[] {":LoisLane :loves :Superman"} .
-```
-
-Even a much more precise variant via a [term literal](citationSemantics.md) is thinkable:
-```turtle
-:LoisLane :loves []{":Superman"} .
-```
-Here only the reference to Superman himself is referentially opaque - no need to apply the same mechanism to Lois Lane or the concept of love. However, term literals are still "at risk".
 
 
 
@@ -104,39 +92,161 @@ eg her parents helping fund it,
 the insurance company having yet a different view, etc. Nothing breaks, it's just adding more layers of nesting.
 
 
-## TODO
+### Superman
 
-We hope to provide more examples soon.
+The notorious [Superman](https://www.w3.org/2001/12/attributions/#superman) problem can be addressed as an application of graph literals, for example using the proposed syntactic sugar for `nng:Record`s (asserted, but referentially opaque types):
+```turtle
+[] {":LoisLane :loves :Superman"} .
+```
+
+Even a much more precise variant via a [term literal](citationSemantics.md) is thinkable:
+```turtle
+:LoisLane :loves []{":Superman"} .
+```
+Here only the reference to Superman himself is referentially opaque - no need to apply the same mechanism to Lois Lane or the concept of love. However, term literals are still "at risk".
+
 
 ### Related Approaches
 
 #### RDFn
 Souri Das' examples stress the RDFn approach's virtues w.r.t. to resilience against updates and change. We think that nested graphs provide these very desirable properties as well.
 
+Add a second AliceBuysCar event, and add detail to the first, without changing the data topology
+```turtle
+:Y {
+    :X {
+        :Alice :buys :Car .
+    } nng:subject [ :age 20 ]
+      nng:predicate [ :payment :Cash ;
+                      :purpose :JoyRiding ] ;
+      nng:object [ :color :black ;
+                   :model :Coupe ] ; 
+                 nng:Interpretation ;       # disambiguating identification
+      :source :Denis .
+    :W {
+        :V {
+            :Alice :buys :Car .
+        } nng:subject [ :age 28 ] ;
+          :source :Eve .
+    } :todo :AddDetail .                    # add detail, then remove this nesting
+}                                           # without changing the data topology
+```
+
 #### OneGraph
 The OneGraph paper discusses a problem related to the type/token distinction. Annotations on types suffer from dangling link problems and unclear belonging when multiple occurrences have been annotated and some of them get removed from the data. We believe that our token-based approach provides a robust basis in which this problem can't occur.
+[TODO]
 
 #### Labelled Property Graph 
 Object attributes and relations between objects
+[TODO]
 
 #### N-Ary Relations
 N-ary relations have a tendency to get rather un-wieldy. Branching out requires to change existing statements. NNG can help with both.
+[TODO]
 
 #### Singleton Properties
 With NNG the core of an annotated relation, its unannotated form, is front and center, providing a distinct usability advantage over the semantically very sound singleton properties approach.
+[TODO]
+
+#### RDF-star 
+Repeating an example from he [introduction](introexample.md):
+
+```turtle
+:X {
+    :Alice :buys :Car .
+} 
+    nng:subject [ :age 20 ] ;
+    nng:object [ :color :black ;
+                 :model :Coupe ] ;
+    :payment :Cash ;
+    :purpose :JoyRiding ;
+    :source :Denis .
+```
+
+A sloppy mapping to RDF-star:
+
+```turtle
+:Alice :buys :Car .
+<< :Alice :buys :Car >> 
+    rdf-star:hasOccurrence :X .
+:X  nng:subject [ :age 20 ] ;
+    nng:object [ :color :black ;
+                 :model :Coupe ] ;
+    :payment :Cash ;
+    :purpose :JoyRiding ;
+    :source Denis .
+```
+
+An exact mapping:
+```turtle
+:Alice_1 :buys_1 :Car_1 .
+:Alice_1 rdf:type :Alice ;
+    :age 20 .
+<< :Alice_1 :buys :Car_1 >> :source Denis .
+<< :Alice_1 rdf:type :Alice >> :source Denis .
+<< :Alice_1 :age 20 >> :source Denis .
+:buys_1 rdfs:subPropertyOf :buys ;
+    :payment :Cash ;
+    :purpose :JoyRiding .
+<< :buys_1 rdfs:subPropertyOf :buys  >> :source Denis .
+<< :buys_1 :payment :Cash >> :source Denis .
+<< :buys_1 :purpose :JoyRiding  >> :source Denis .
+:Car_1 rdf:type :Car ;
+    :color :Black ;
+    :model :Coupe .
+<< :Car_1 rdf:type :Car >> :source Denis .
+<< :Car_1 :color :Black >> :source Denis .
+<< :Car_1 :model :Coupe >> :source Denis .
+```
+Imagine what happens with a second level of nesting or even the TEP mechanism.
 
 
 ### Graph Literals
 Graph literals provide an elegant solution to some hard problems.
 
-#### RDF standard reification
-Graph literals are both more succinct and more flexible.
+#### Reports - literals as un-asserted transparent types
+(what RDF standard reification is popularly misused to represent)
+```turtle
+:Bob :says [] "{ :Moon :madeOf :Cheese . }" .
+
+                 # " ... " indicate un-assertedness
+                 # { ... } indicate referential transparency
+```
+Less syntactic sugar, same meaning:
+```turtle
+:Bob :says [ nng:reports ":Moon :madeOf :Cheese"^^nng:GraphLiteral ]
+```
+
 
 #### Notation3 formulas
 We hope that graph literals provide everything needed to properly support N3 formulas in standard RDF, but we await a comment from the experts :)
+[TODO]
+
 
 #### Warrants, Versioning, Verifiable Credentials, Explainable AI
 Graph literals provide an easy way to document RDF state verbatim in the most unambiguous way.
+```turtle
+:Y {
+    :X {
+        :Alice :buys :Car .
+    } nng:subject [ :age 20 ]
+      nng:predicate [ :payment :Cash ;
+                      :purpose :JoyRiding ] ;
+      nng:object [ :color :black ;
+                   :model :Coupe ] ;
+      :source :Denis .
+      nng:statedAs ":X {                    # documenting the original source
+                        :Alice :buys :Car .
+                    } nng:subject [ :age 20 ]
+                      nng:predicate [ :payment :Cash ;
+                                      :purpose :JoyRiding ] ;
+                      nng:object [ :color :black ;
+                                   :model :Coupe ] ;
+                      :source :Denis ."^^nng:GraphLiteral .
+}
+```
+
 
 #### Reasoning on Graphs
 Graph literals provide a clear distinction between an abstract graph - as a literal - and its application. Reasoning over abstract graphs can be performed on literal types, saving it from the ambiguities of graph instantiation in practice. This effectively introduces a level of indirection that makes the distinction between the two realms explicit, but also links them explicitly - to the benefit of both.
+[TODO]

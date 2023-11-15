@@ -18,7 +18,7 @@ Two (different) nested graphs, named by (different) blank nodes:
 [] {:Alice :buys :Car}
 [] {:Alice :buys :Car}
 ```
-Some nested nested graphs, all different (tokens, not types):
+Some nested nested graphs, all with different names (they are tokens, not types):
 ```turtle
 :NG_1 {
     []{
@@ -48,6 +48,11 @@ Some proposals have hacked the Turtle syntax to achieve the same goal:
 :Z :says :Denis . 
 ```
 Others provide statement identifiers additionally to graph identifiers.
+
+
+## Nesting via Transclusion
+[TODO]
+
 
 
 ## A simplistic application of a nested graph
@@ -109,7 +114,8 @@ Two other mappings - fluents and n-ary relations - are provided in the section o
 
 
 ## A compact and less pedantic version
-Tedious disambiguation doesn't need to become a new religion.
+Explicit, but tedious disambiguation doesn't need to become the new religion. The target of `:payment`, `:purpose` and `:source` is in most cases clear enough to make explicit disambiguation unnecessary.
+
 ```turtle
 :X {
     :Alice :buys :Car .
@@ -123,66 +129,9 @@ Tedious disambiguation doesn't need to become a new religion.
 ```
 
 
-## The same as RDF-star 
-A sloppy mapping:
-```turtle
-:Alice :buys :Car .
-<< :Alice :buys :Car >> 
-    rdf-star:hasOccurrence :X .
-:X  nng:subject [ :age 20 ] ;
-    nng:object [ :color :black ;
-                 :model :Coupe ] ;
-    :payment :Cash ;
-    :purpose :JoyRiding ;
-    :source Denis .
-```
-An exact mapping:
-```turtle
-:Alice_1 :buys_1 :Car_1 .
-:Alice_1 rdf:type :Alice ;
-    :age 20 .
-<< :Alice_1 :buys :Car_1 >> :source Denis .
-<< :Alice_1 rdf:type :Alice >> :source Denis .
-<< :Alice_1 :age 20 >> :source Denis .
-:buys_1 rdfs:subPropertyOf :buys ;
-    :payment :Cash ;
-    :purpose :JoyRiding .
-<< :buys_1 rdfs:subPropertyOf :buys  >> :source Denis .
-<< :buys_1 :payment :Cash >> :source Denis .
-<< :buys_1 :purpose :JoyRiding  >> :source Denis .
-:Car_1 rdf:type :Car ;
-    :color :Black ;
-    :model :Coupe .
-<< :Car_1 rdf:type :Car >> :source Denis .
-<< :Car_1 :color :Black >> :source Denis .
-<< :Car_1 :model :Coupe >> :source Denis .
-```
-Imagine what happens with a second level of nesting or even the TEP mechanism.
 
 
 
-
-## Resilience to updates
-Add a second AliceBuysCar event, and add detail to the first, without changing the data topology
-```turtle
-:Y {
-    :X {
-        :Alice :buys :Car .
-    } nng:subject [ :age 20 ]
-      nng:predicate [ :payment :Cash ;
-                      :purpose :JoyRiding ] ;
-      nng:object [ :color :black ;
-                   :model :Coupe ] ; 
-                 nng:Interpretation ;       # disambiguating identification
-      :source :Denis .
-    :W {
-        :V {
-            :Alice :buys :Car .
-        } nng:subject [ :age 28 ] ;
-          :source :Eve .
-    } :todo :AddDetail .                    # add detail, then remove this nesting
-}                                           # without changing the data topology
-```
 
 <!--
 ```turtle
@@ -220,39 +169,6 @@ Add a second AliceBuysCar event, and add detail to the first, without changing t
 ```
 -->
 
-## Graph literals as a basic type
-```turtle
-:Y {
-    :X {
-        :Alice :buys :Car .
-    } nng:subject [ :age 20 ]
-      nng:predicate [ :payment :Cash ;
-                      :purpose :JoyRiding ] ;
-      nng:object [ :color :black ;
-                   :model :Coupe ] ;
-      :source :Denis .
-      nng:statedAs ":X {                    # documenting the original source
-                        :Alice :buys :Car .
-                    } nng:subject [ :age 20 ]
-                      nng:predicate [ :payment :Cash ;
-                                      :purpose :JoyRiding ] ;
-                      nng:object [ :color :black ;
-                                   :model :Coupe ] ;
-                      :source :Denis ."^^nng:GraphLiteral .
-}
-```
-
-## Reports - literals as un-asserted transparent types
-(what RDF standard reification is popularly misused to represent)
-```turtle
-:Bob :says []"{ :Moon :madeOf :Cheese . }" .
-# " ... " indicate un-assertedness
-# { ... } indicate referential transparency
-```
-Less syntactic sugar, same meaning:
-```turtle
-:Bob :says [ nng:reports ":Moon :madeOf :Cheese"^^nng:GraphLiteral ]
-```
 <!--
 ## Records - literals as asserted opaque types
 
