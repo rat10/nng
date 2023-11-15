@@ -283,13 +283,19 @@ Less syntactic sugar, same meaning:
 <!--
 ## Records - literals as asserted opaque types
 
+TODO
 
 ## Quotes - literals as un-asserted opaque types
 
+TODO
 
 -->
 
 ## DnS shortcut relations
+
+A basic relation, capturing the essential information about a travel, and annotated with references to more detailed descriptions of both means and purpose of the travel
+(DnS is an ontology design pattern, called "Descriptions and Situations", that develops the idea behind this modelling approach).
+
 ```turtle
 :T1 {
     :Alice :travelsTo :ISWC23 .
