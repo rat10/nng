@@ -17,6 +17,8 @@
 ```
 # Querying
 
+A publicly accessible working prototype implementation is available at 
+https://observablehq.com/@datagenous/nested-named-graphs 
 
 
 ## Querying Nested Graphs
@@ -194,3 +196,11 @@ However, I expect that constructed graphs will also contain
     - terms from nested graphs with special semantics or 
     - nested terms with special semantics
 so it will again be necessary to be able to encode semantics per term. In the case where  whole statements have the same semantics they have to be encoded as nested graphs.
+
+
+
+
+## The current implementation exhibits (at least) two idiosyncrasies:
+
+- it provides no means to bind the actual graph which comprises a matched statement. To do so will require BGP processing to include quad statement patterns
+- a query which provides as its matching dataset description an explicit list of graphs will match a BGP against a single effective graph which is the closure of all nested graphs at those roots, rather than computing a distinct effective graph from each root graph.

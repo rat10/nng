@@ -12,7 +12,6 @@
 semantics per property
 term semantics per annotation
 
-```
 -->
 
 
