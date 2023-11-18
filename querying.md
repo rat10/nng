@@ -5,7 +5,10 @@
   | || |_| | |_| | |_| |
   |_| \___/|____/ \___/ 
                         
-                        
+
+> PLEASE EXCUSE THE CHAOS AROUND HERE !!!
+
+
 > a detailed discussion of querying, including 
 >
 > - display of annotations (as "there is more..." or similar)
@@ -17,8 +20,8 @@
 ```
 # Querying
 
-A publicly accessible working prototype implementation is available at 
-https://observablehq.com/@datagenous/nested-named-graphs 
+A publicly accessible prototype implementation is available at 
+https://observablehq.com/@datagenous/nested-named-graphs.
 
 
 ## Querying Nested Graphs
@@ -38,6 +41,26 @@ CONSTRUCT nested graph queries results
 	n-quads
 SELECT result sets as TSV
 	[:ng_a]:a1 :b2 :c3 [:ng_d]:d4 :e5
+
+
+
+```sparql
+SELECT *
+WHERE ?g { ?s ?p ?o }
+
+```
+
+extensions to sparql
+- FROM ALL|DEFAULT|...
+- WITH LITERAL|INCLUDED|QUOTE|REPORT|RECORD
+
+changes to sparql
+
+result formats
+
+
+
+
 -->
 
 
@@ -63,8 +86,13 @@ We have to differentiate between
 - data *in* graph literals and data included *from* graph literals with special semantics.
 - data with semantics defining it as asserted or un-asserted data.
 
-A query MUST NOT return results *in* RDF literals or *included with un-asserted semantics* from RDF literals if not explicitly asked for (to prevent accidental confusion of asserted and un-asserted data).
-A query MUST return RDF literals *included with asserted semantics* and it MUST annotate the returned data with those semantics (because asserted data has to be visible, but its specific semantics have to be visible too).
+
+A query MUST NOT return results *in* RDF literals or *included with un-asserted semantics* from RDF literals if not explicitly asked for (to prevent accidental confusion of asserted and un-asserted data).  
+This is guaranteed by the need to use specific keywords in a `WITH` clause to include literals in the context graph of a query. 
+
+A query MUST return RDF literals *included with asserted semantics* and it MUST annotate the returned data with those semantics (because asserted data has to be visible, but its specific semantics have to be visible too).   
+[TODO] this is not yet guaranteed, as it requires some modification to the query execution engine. Those modifications however will be beneficial to all queries on nested graphs, not just such including graphs with special semantics.
+
 
 Explicitly asking for literal data with un-asserted semantics can be performed in two ways: either use a WITH modifier to the query or explicitly ask for the content of a literal.
 Any query asking specifically for data from a literal will get those results without having to select the literal type in a WITH clause.
