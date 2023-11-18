@@ -102,7 +102,7 @@ Inclusion may also be used to provide well-formedness guarantees, comparable to 
 
 All examples above used anonymous nested graph literals. Explicit naming can be implemented via property lists, e.g.
 ```turtle
-[rdfs:label ex:X; nng:semantics nng:QUOTE]":s :p :o"
+[rdfs:label ex:X; nng:semantics nng:Quote]":s :p :o"
 ```
 This is a bit awkward, but providing more syntactic sugar for such a corner case would seem too much of a stretch.
 
