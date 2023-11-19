@@ -30,27 +30,27 @@ Fragment identifiers for RDF statements are defined as a small vocabulary. As a 
 # VOCABULARY
 
 nng:subject a rdf:Property;
-  rdfs:domain nng:GraphSource ;
+  rdfs:domain nng:NestedGraph ;
   rdfs:range rdfs:Class ;
   rdfs:comment "Addresses the subject of a statement, or all subjects of all statements in a graph source" .
 
 nng:predicate a rdf:Property;
-  rdfs:domain nng:GraphSource ;
+  rdfs:domain nng:NestedGraph ;
   rdfs:range rdfs:Class ;
   rdfs:comment "Addresses the predicate of a statement, or all predicate of all statements in a graph source" .
 
 nng:object a rdf:Property;
-  rdfs:domain nng:GraphSource ;
+  rdfs:domain nng:NestedGraph ;
   rdfs:range rdfs:Class ;
   rdfs:comment "Addresses the object of a statement, or all object of all statements in a graph source" .
 
 nng:triple a rdf:Property;
-  rdfs:domain nng:GraphSource ;
+  rdfs:domain nng:NestedGraph ;
   rdfs:range rdfs:Class ;
   rdfs:comment "Addresses all statements in a graph source" .
 
 nng:graph a rdf:Property;
-  rdfs:domain nng:GraphSource ;
+  rdfs:domain nng:NestedGraph ;
   rdfs:range rdfs:Class ;
   rdfs:comment "Addresses a graph source" .
 ```

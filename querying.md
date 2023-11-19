@@ -5,7 +5,10 @@
   | || |_| | |_| | |_| |
   |_| \___/|____/ \___/ 
                         
-                        
+
+> PLEASE EXCUSE THE CHAOS AROUND HERE !!!
+
+
 > a detailed discussion of querying, including 
 >
 > - display of annotations (as "there is more..." or similar)
@@ -13,45 +16,86 @@
 > - querying included graph literals
 > - displaying results with non-standard semantics, e.g. unasserted, opaque, etc
 
-
 ```
 # Querying
 
-A publicly accessible working prototype implementation is available at 
-https://observablehq.com/@datagenous/nested-named-graphs 
+Olaf's formalization:
+https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Nov/0027.html
+
+A publicly accessible prototype implementation is available at 
+https://observablehq.com/@datagenous/nested-named-graphs.
+
+## Basic Design
+
+### entailment process
+BGP matching is defined as an entailment process.
+Simple entailment is defined on the basis of (and is equivalent to) same term equality.
+entailment rules of graph transclusion
+- we define relations
+- and how they determine target graph construction
+
+### terminology
+the context graph is the initial target graph
+  as defined in FROM and FROM NAMED
+the target graph is the graph to match BGP against
+  it can change over the course of a query
+
+### querying with context
+  to return results with context (for each result the graph it was found in)
+    eg `:G1 :Car` instead of just `:Car`
+  one has to retain the name of the source graph
+  from which a matched graph pattern originates
+  that requires the target graph to become a QUAD graph
 
 
-## Querying Nested Graphs
+## inherited annotations
 
-<!--
-- query formulation
-- expressions
+how to query inherited annotations on nested graphs?
+
+
+## Extensions to SPARQL
+
+### FROM NAMED|ALL|DEFAULT
+
+### WITH LITERAL|INCLUDE|QUOTE|REPORT|RECORD
+
+
+expressions
 - 'SELECT [?g]?a …' to explicitly demand for the context of term
 - 'with CONTEXT' to ask for all contexts
 - 'WHERE [?g]{…' as you proposed
 
-querying inherited annotations on nested graphs?
-
-- result encoding
-CONSTRUCT nested graph queries results
-	trig
-	n-quads
 SELECT result sets as TSV
 	[:ng_a]:a1 :b2 :c3 [:ng_d]:d4 :e5
--->
+
+## Changes to SPARQL
+
+None, hopefully.
+
+### do we always union?
+  if we query for "FROM :Alice" then every graph transcluded into :Alice becomes part of the target graph as well (it is "union-ed" into the target graph)
+  we consider it sensible to union but it's not mandatory
+
+## Result Formats
 
 
-<!--
-Nested graphs are implicitly flattened. A query for `?s ?p ?o` in `_:id.1` above will return `:s :p :o` and `:a :b :c` just as well as `:d :e :f`, `:i :k :l`, `:o :p :q` (once) and `:x :y :z`. It will also return annotations on those nested statements as `_:id.2 :g :h`, `_:id.3 :m :n`, `_:id.4 :r :s`, `_:id.5 :t :u`and `_:id.5 :v :w`. [TODO check that these references still work after we are done with re-writing the examples]
+
+## Querying Nested Graphs
+
+```sparql
+SELECT *
+WHERE ?g { ?s ?p ?o }
+```
 
 
-Querying nested graph literals requires some extra arrangements: query engines should support querying these quotes, but must return results in the same syntax: as quoted graph literals. 
+## The current implementation exhibits (at least) two idiosyncrasies:
 
-In a TSV/CSV query result set a value returned from an unasserted statement has to be rendered as a singleton unasserted term, e.g. `{":a"}`. Note that we can by default omit the naming part `[]`, but it will be added if the query explicitly asks for it. 
+- it provides no means to bind the actual graph which comprises a matched statement. To do so will require BGP processing to include quad statement patterns
+- a query which provides as its matching dataset description an explicit list of graphs will match a BGP against a single effective graph which is the closure of all nested graphs at those roots, rather than computing a distinct effective graph from each root graph.
 
-> [TODO] To ensure that unasserted values are not accidentally returned, a special `with UNASSERTED` parameter could be provided in the query. However, putting the query result in quotes might be just as effective and less troublesome. The opposite approach, a parameter `without UNASSERTED` that suppresses unasserted results on demand might also be an option. TBD
+a query for a BGP over all graphs will find it in any graph, also nested ones. as olaf's formalization illustrates it finds the same BGP again per nesting graph, not only in the innermost graph containing it. that is counterintuitive. what to do about it?
 
--->
+
 
 
 
@@ -63,8 +107,13 @@ We have to differentiate between
 - data *in* graph literals and data included *from* graph literals with special semantics.
 - data with semantics defining it as asserted or un-asserted data.
 
-A query MUST NOT return results *in* RDF literals or *included with un-asserted semantics* from RDF literals if not explicitly asked for (to prevent accidental confusion of asserted and un-asserted data).
-A query MUST return RDF literals *included with asserted semantics* and it MUST annotate the returned data with those semantics (because asserted data has to be visible, but its specific semantics have to be visible too).
+
+A query MUST NOT return results *in* RDF literals or *included with un-asserted semantics* from RDF literals if not explicitly asked for (to prevent accidental confusion of asserted and un-asserted data).  
+This is guaranteed by the need to use specific keywords in a `WITH` clause to include literals in the context graph of a query. 
+
+A query MUST return RDF literals *included with asserted semantics* and it MUST annotate the returned data with those semantics (because asserted data has to be visible, but its specific semantics have to be visible too).   
+[TODO] this is not yet guaranteed, as it requires some modification to the query execution engine. Those modifications however will be beneficial to all queries on nested graphs, not just such including graphs with special semantics.
+
 
 Explicitly asking for literal data with un-asserted semantics can be performed in two ways: either use a WITH modifier to the query or explicitly ask for the content of a literal.
 Any query asking specifically for data from a literal will get those results without having to select the literal type in a WITH clause.
@@ -83,6 +132,15 @@ Just to clarify: graph literals that are included without semantics modifiers ha
 
 PROBLEM: how will the query engine know that some semantics is asserted or un-asserted? Will it have t look up the semantics' definition on the web?
 
+<!--
+
+Querying nested graph literals requires some extra arrangements: query engines should support querying these quotes, but must return results in the same syntax: as quoted graph literals. 
+
+In a TSV/CSV query result set a value returned from an unasserted statement has to be rendered as a singleton unasserted term, e.g. `{":a"}`. Note that we can by default omit the naming part `[]`, but it will be added if the query explicitly asks for it. 
+
+> [TODO] To ensure that unasserted values are not accidentally returned, a special `with UNASSERTED` parameter could be provided in the query. However, putting the query result in quotes might be just as effective and less troublesome. The opposite approach, a parameter `without UNASSERTED` that suppresses unasserted results on demand might also be an option. TBD
+
+-->
 
 ### Example
 ```turtle
@@ -132,7 +190,7 @@ because the respective candidate is a literal
 
 ### what to expect with WITH clause
 
-Query modifiers are introduced by a 'WITH' clause and use the provided semantics identifiers, e.g. LITERAL, INCLUDED, REPORT, OPAQUE:
+Query modifiers are introduced by a 'WITH' clause and use the provided semantics identifiers, e.g. LITERAL, RECORD, REPORT, OPAQUE:
 ```sparql
 SELECT ?s 
 WHERE  { ?s ?p :Superman }
@@ -198,9 +256,3 @@ However, I expect that constructed graphs will also contain
 so it will again be necessary to be able to encode semantics per term. In the case where  whole statements have the same semantics they have to be encoded as nested graphs.
 
 
-
-
-## The current implementation exhibits (at least) two idiosyncrasies:
-
-- it provides no means to bind the actual graph which comprises a matched statement. To do so will require BGP processing to include quad statement patterns
-- a query which provides as its matching dataset description an explicit list of graphs will match a BGP against a single effective graph which is the closure of all nested graphs at those roots, rather than computing a distinct effective graph from each root graph.
