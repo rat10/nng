@@ -116,6 +116,14 @@ WHERE ?g { ?s ?p ?o }
       ?g annotated* ?q
 ```
 
+
+paths *
+standard sparql feature, but slightly extended
+  as they traverse graphs.
+  standard sparql paths do not.
+  see https://www.w3.org/TR/sparql11-query/#propertypaths
+
+
 ### querying for a report
 
 

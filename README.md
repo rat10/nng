@@ -7,10 +7,8 @@
   |_| \___/|____/ \___/ 
                         
 
-to anybody who visits this site now because i bragged that 
-by monday it would be ready:
-it isn't (but it's getting there)
-so please proceed with care and be prepared for bugs.
+Querying is still in a rather sorry state.
+The rest looks promising...
 
 ```
 <!--

@@ -56,6 +56,16 @@ The differences to the [inclusion](graphLiterals.md) mechanism is that
 
 There is little, if any, difference to `owl:imports`, but it seems prudent to define a new property for a task so central to this proposal.
 
+<!--
+https://www.w3.org/TR/2012/REC-owl2-primer-20121211/#Ontology_Management
+
+It is also common in OWL to reuse general information that is stored in one ontology in other ontologies. Instead of requiring the copying of this information, OWL allows the import of the contents of entire ontologies in other ontologies, using import statements, as follows:
+
+Turtle Syntax
+<http://example.com/owl/families> owl:imports
+	<http://example.org/otherOntologies/families.owl> .
+-->
+
 
 ### Vocabulary
 
