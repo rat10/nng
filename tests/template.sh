@@ -7,10 +7,10 @@
 # 4. execute queries and validate the results.
 #
 
-source define.sh
 set -e
+if [[ -z $STORE_HOST ]]; then source ../define.sh; fi
 
-clear_repository_content ;
+curl_clear_repository_content ;
 
 curl_graph_store_update -H "Content-Type: text/turtle" <<EOF
 @base <http://dydra.com/> .

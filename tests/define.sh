@@ -21,10 +21,16 @@
 #
 #
 
+if [[ "" == "${STORE_TOKEN}" ]]
+then
+    echo "STORE_TOKEN is required"
+    return 1
+fi
+
 
 if [[ "" == "${STORE_HOST}" ]]
 then
-  export STORE_HOST="dydra.com"
+  export STORE_HOST="dydra.com:8443"
 fi
 if [[ "" == "${STORE_ACCOUNT}" ]]
 then
@@ -32,10 +38,15 @@ then
 fi
 if [[ "" == "${STORE_REPOSITORY}" ]]
 then
-  export STORE_REPOSITORY="graph";
+  export STORE_REPOSITORY="test";
 fi
 export STORE_URL=https://${STORE_HOST}
-
+export STORE_GRAPH_MEDIA_TYPE="application/n-quads"
+export STORE_ACCEPT="Accept: application/sparql-results+json"
+export STORE_ACCEPT_GRAPH="Accept: application/n-triples"
+export STORE_SPARQL_QUERY_MEDIA_TYPE="application/sparql-query"
+export STORE_SPARQL_UPDATE_MEDIA_TYPE="application/sparql-update"
+export STORE_SPARQL_RESULTS_MEDIA_TYPE="application/sparql-results+json"
 
 export STATUS_OK=200
 export STATUS_ACCEPTED='202'
@@ -355,8 +366,10 @@ function curl_graph_store_update () {
   local repository=${STORE_REPOSITORY}
   local curl_url="${GRAPH_STORE_URL}"
   local url_args=()
+      echo "$@"
   curl_url="${STORE_URL}/${account}/${repository}/service"
   while [[ "$#" > 0 ]] ; do
+    echo "$@"
     case "$1" in
       --account) account="${2}"; shift 2; curl_url="${STORE_URL}/${account}/${repository}/service";;
       all|ALL) graph="all"; shift 1;;
