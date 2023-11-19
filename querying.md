@@ -20,20 +20,34 @@
 ```
 # Querying
 
-
-## Basic Design
-
-
 A publicly accessible prototype implementation is available at 
 https://observablehq.com/@datagenous/nested-named-graphs.
 
+## Basic Design
+
+BGP matching is defined as an entailment process.
+Simple entailment is defined on the basis of (and is equivalent to) same term equality.
+entailment rules of graph transclusion
+- we define relations
+- and how they determine target graph construction
+the context graph is the initial target graph
+  as defined in FROM and FROM NAMED
+the target graph is the graph to match BGP against
+  it can change over the course of a query
+
+querying with context
+  to return results with context (for each result the graph it was found in)
+    eg `:G1 :Car` instead of just `:Car`
+  one has to retain the name of the source graph
+  from which a matched graph pattern originates
+  that requires the target graph to become a QUAD graph
 
 ## Extensions to SPARQL
 
 
 extensions to sparql
-- FROM ALL|DEFAULT|...
-- WITH LITERAL|INCLUDED|QUOTE|REPORT|RECORD
+- FROM NAMED|ALL|DEFAULT
+- WITH LITERAL|INCLUDE|QUOTE|REPORT|RECORD
 
 expressions
 - 'SELECT [?g]?a …' to explicitly demand for the context of term
@@ -46,6 +60,10 @@ SELECT result sets as TSV
 ## Changes to SPARQL
 
 None, hopefully.
+
+do we always union?
+  if we query for "FROM :Alice" then every graph transcluded into :Alice becomes part of the target graph as well (it is "union-ed" into the target graph)
+  we consider it sensible to union but it's not mandatory
 
 ## Result Formats
 
@@ -165,7 +183,7 @@ because the respective candidate is a literal
 
 ### what to expect with WITH clause
 
-Query modifiers are introduced by a 'WITH' clause and use the provided semantics identifiers, e.g. LITERAL, INCLUDED, REPORT, OPAQUE:
+Query modifiers are introduced by a 'WITH' clause and use the provided semantics identifiers, e.g. LITERAL, RECORD, REPORT, OPAQUE:
 ```sparql
 SELECT ?s 
 WHERE  { ?s ?p :Superman }
