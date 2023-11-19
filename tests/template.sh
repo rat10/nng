@@ -20,8 +20,8 @@ curl_graph_store_update -H "Content-Type: text/turtle" <<EOF
     <http://example.org/p> <http://example.org/o> .
 
 <urn:dydra:default>
-    <http://segraph.org/LOG> [
-        <http://segraph.org/LOG> _:b21
+    <http://nested-named-graph.org/LOG> [
+        <http://nested-named-graph.org/LOG> _:b21
     ] .
 EOF
 
@@ -31,4 +31,4 @@ fgrep -c http://example.org/s /tmp/template.out | fgrep -s "1"
 fgrep -c http://example.org/p /tmp/template.out | fgrep -s "1"
 fgrep -c http://example.org/o /tmp/template.out | fgrep -s "1"
 fgrep -c urn:dydra:default /tmp/template.out | fgrep -s "1"
-fgrep -c http://segraph.org/LOG /tmp/template.out | fgrep -s "2"
+fgrep -c http://nested-named-graph.org/LOG /tmp/template.out | fgrep -s "2"
