@@ -29,7 +29,7 @@ To that end we define the following properties:
 # VOCABULARY
 
 nng:containedIn a rdfs:Property ;
-    rdfs:range nng:GraphSource ;
+    rdfs:range nng:NestedGraph ;
     rdfs:comment "The property `nng:containedIn` records the named graph (nested or not) that the statement occurs in." .
 
 nng:principal a rdfs:Property ;
@@ -40,8 +40,8 @@ nng:principal a rdfs:Property ;
 
 <!--
 nng:nestedIn a rdfs:Property ;
-    rdfs:domain nng:GraphSource ;
-    rdfs:range nng:GraphSource ;
+    rdfs:domain nng:NestedGraph ;
+    rdfs:range nng:NamedGraph ;
     rdfs:comment "The property `nng:nestedIn` records the named graph (nested or not) that the attributed graph is nested in." .
 -->
 

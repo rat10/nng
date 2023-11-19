@@ -75,7 +75,7 @@ Importing a literal into a graph doesn't create a nested graph but includes the 
 
 nng:includes a rdf:Property,
     rdfs:subPropertyOf owl:imports ;
-    rdfs:domain nng:GraphSource ;
+    rdfs:domain nng:NestedGraph ;
     rdfs:range nng:GraphLiteral ;
     rdfs:comment "Includes a graph literal as regular RDF data into the current graph, like owl:imports does for RDF ontologies." .
 ```
