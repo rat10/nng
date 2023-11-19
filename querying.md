@@ -1,3 +1,5 @@
+# Querying
+
 ```
  _____ ___  ____   ___  
 |_   _/ _ \|  _ \ / _ \ 
@@ -17,10 +19,8 @@
 > - displaying results with non-standard semantics, e.g. unasserted, opaque, etc
 
 ```
-# Querying
 
-Olaf's formalization:
-https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Nov/0027.html
+
 
 A publicly accessible prototype implementation is available at 
 https://observablehq.com/@datagenous/nested-named-graphs.
@@ -40,6 +40,13 @@ the context graph is the initial target graph
 the target graph is the graph to match BGP against
   it can change over the course of a query
 
+
+### Depth First vs Breadth First Search of Nested Graphs
+ 
+[Olaf's formalization](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Nov/0027.html ) can be understood as the equivalent of a depth first search. Results for nested BGPs are to be expected, but not exactly intuitive.
+One way to work around that is to go breadth first.
+
+
 ### querying with context
   to return results with context (for each result the graph it was found in)
     eg `:G1 :Car` instead of just `:Car`
@@ -56,10 +63,16 @@ how to query inherited annotations on nested graphs?
 ## Extensions to SPARQL
 
 ### FROM NAMED|ALL|DEFAULT
+SPARQL leaves it unspecified if the context graph is the default graph or the union of all named graphs. This needs a solution.
 
-### WITH LITERAL|INCLUDE|QUOTE|REPORT|RECORD
+### WITH nng:Literal|nng:quote|nng:Report|nng:Record
+We introduce graph literals as a queryable datatype to implement non-default semantics. However, we need to control how matches against these graph literals get included in query results. By default they are not included. They can however be matched against by
+- either calling them in a WITH clause (WITH nng:Literal|nng:quote|nng:Report|nng:Record)
+- or by matching them explicitly in a query, using the appropriate inclusion property
 
+TODO examples
 
+### CONTEXT
 expressions
 - 'SELECT [?g]?a …' to explicitly demand for the context of term
 - 'with CONTEXT' to ask for all contexts
@@ -68,13 +81,18 @@ expressions
 SELECT result sets as TSV
 	[:ng_a]:a1 :b2 :c3 [:ng_d]:d4 :e5
 
-## Changes to SPARQL
 
-None, hopefully.
 
 ### do we always union?
   if we query for "FROM :Alice" then every graph transcluded into :Alice becomes part of the target graph as well (it is "union-ed" into the target graph)
   we consider it sensible to union but it's not mandatory
+
+### union vs merge of blank nodes
+what are the consequences for blank graphs if we merge?
+what strategy do we recommend?
+what may happen to other strategies wrt blank node merging?
+
+
 
 ## Result Formats
 
@@ -82,10 +100,24 @@ None, hopefully.
 
 ## Querying Nested Graphs
 
+### querying as usual
+
 ```sparql
 SELECT *
 WHERE ?g { ?s ?p ?o }
 ```
+
+### querying along nesting paths
+querying for an annotation on a nesting graph or any graph it is nested in
+
+```sparql
+SELECT *
+WHERE ?g { ?s ?p ?o }
+      ?g annotated* ?q
+```
+
+### querying for a report
+
 
 
 ## The current implementation exhibits (at least) two idiosyncrasies:
