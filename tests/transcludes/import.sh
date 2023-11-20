@@ -21,10 +21,10 @@ curl_graph_store_update -H "Content-Type: text/turtle" <<EOF
     ] .
 EOF
 
-curl_graph_store_get > /tmp/template.out
+curl_graph_store_get > ${RESULT_OUTPUT}
 
-fgrep -c http://example.org/s /tmp/template.out | fgrep -s "1"
-fgrep -c http://example.org/p /tmp/template.out | fgrep -s "1"
-fgrep -c http://example.org/o /tmp/template.out | fgrep -s "1"
-fgrep -c urn:dydra:default /tmp/template.out | fgrep -s "1"
-fgrep -c transcludes /tmp/template.out | fgrep -s "2"
+fgrep -c http://example.org/s ${RESULT_OUTPUT} | fgrep -s "1"
+fgrep -c http://example.org/p ${RESULT_OUTPUT} | fgrep -s "1"
+fgrep -c http://example.org/o ${RESULT_OUTPUT} | fgrep -s "1"
+fgrep -c urn:dydra:default ${RESULT_OUTPUT} | fgrep -s "1"
+fgrep -c transcludes ${RESULT_OUTPUT} | fgrep -s "2"

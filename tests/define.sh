@@ -77,7 +77,8 @@ if [[ "" == "${ECHO_OUTPUT}" ]]
 then
   export ECHO_OUTPUT=/dev/null # /dev/tty # 
 fi
-export RESULT_OUTPUT=
+
+export RESULT_OUTPUT="/tmp/$$.out"
 
 function 1cpl () {
  sed 's/[[:space:]]*//g' | sed 's/\(.\)/\1\
