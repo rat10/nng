@@ -1,0 +1,161 @@
+The semantics of RDF is based on sets and it is monotonic. Those two very basic arrangements seem to rule out statement qualification and annotations on multiple occurrences of the same statement. 
+
+
+
+RDF standard reification addresses the act of saying something, but not the said thing itself. Named Graphs per Carroll et al 2005 addresses the act of saying something and its exact syntactic representation. N3 formulas address the exact syntactic representation, but as a type, not a speech act. RDF-star does something quite similar, modulo graphs and blank nodes (which are referentially transparent). 
+
+The problem with all these approaches is that they don’t address what users expect and desire: 
+- a reference to an occurrence, not the abstract type, and
+- a way to attribute that occurrence, to refine its meaning.
+And honestly, I don’t see the problem in satisfying those desires - certainly not on a syntactic level, but also not w.r.t. the semantics.
+
+
+Syntax (first, because it’s the easier part)
+
+I pretty much like Souri’s approach. I have always favored identifiers to quoting - it just scales better - and had once even proposed to add an id attribute to quoted triples. One could also encode the id attribute into the property for backwards compatabilty (e.g. GraphDB implements singleton properties by appending a fragment identifier to properties). 
+The advantage of an identifier based approach is twofold:
+- no need for an extra triple to establish the identifier for an occurrence
+- always the same idiom, no change in modelling through updates or merges.
+ (well, that is not so sure)
+The first advantage is not to be snuffed at - one triple instead of two is always good - , but the second one is HUGE, because it means that navigation and queries are much easier and updates don’t require modifying existing data.
+
+ [EXAMPLE] [indeed, and also at least an attempt at a counterexample ]
+
+Most use cases annotate a specific instance of a statement, either by qualifying it or by recording administrative detail about the act of stating it (who, when, why etc). It is only sensible to make sure they use a proper identifier. RDF standard reification makes it impossible to omit that step. PA’s latest proposal was that everybody has to define an occurrence first (with a specialized vocabulary even). This will not work out: too many people will just annotate the quoted triple directly, because they are lazy, don’t see the benefit, "optimize", didn’t get the message, don’t understand the vocabulary etc. Consequently we will again have to query for annotations both on the quoted triple as a type and on its occurrences, we will have to be aware of two idioms when navigating, updating or merging data. NOT GOOD AT ALL. Trying to avoid the complications of meta-modelling by basing the meta-modelling formalism on types doesn’t solve any semantic problems but they create huge usability problems. 
+
+Granted, annotations on statement identifiers have a problem too: how do they come into view when a query returns the annotated statement? Will query results always have to be checked for eventual anotations? Yes, it seems so: there is no free lunch. But isn’t this easier than querying for two alternative structures, direct annonations on the type and indirect one on occrrences? It seems so.
+
+And make no mistake about the relevance of this issue: it does not only occur in those cases where an the "same" relation occurs multiple times, like Burton and Taylor married twice, the same person being president for two non-consecutive terms etc. It also becomes an issue when multiple multi-part annotations on the same statement have to be recorded, e.g.
+[EXAMPLE]
+
+The situation reminds me a bit of blank nodes: the semantics defines them as existentials, but in practice leaning is performed only by specialists whereas practice gravitates towards counting semantics. Counting semantics is what we need for references to statements, and leaning (typing) can still be performed as an optimization, governed by the needs and rules of applications (I really wonder why Andy hasn’t realized this before me).
+
+
+Semantics (the fun part :-)
+
+I’m making (and hopefully proving) two claims:
+- monotonicity is not put at risk by qualification
+- sets will be sets will be sets… even with occurrences
+
+RDF is monotonic - no statememt can change the truth value of another statement - but RDF is also designed, destined even, to describe interpretations (one may call them possible worlds) and every new statement constrains the set of possible worlds that fit the interpretion the statements describe. In that regard RDF is not monotonic at all, quite to the contrary. Now, an example: 
+   :Burton :marriedTo :Taylor # id:1 .
+   id:1 :from 1964 # id:2 ;
+        :to 1972 # id:3 .
+Statements id:2 and id:3 refine the meaning of statememt id:1, but do they change it, do they rule into its truth value? No, they don’t: statement id:1 says that there exists a marriage relation between Burton and Taylor, and that assertion is not disputed by id:2 and id:3, just refined. In other words: while some people say that qualification can’t work on half empty glasses, I’m saying the glass is always half full. The only thing that is not allowed is to outright and explicitly change the truth value of another statement by e.g. calling it false (and even that wouldn’t jeopardize RDF as I recently learned at hand of the discussion about paradoxes). Everything else is fair game, and desirable even. The only danger is that people read too much into predicate names and assume more than is actually offered.
+Ergo: monotonicity is not an issue, qualification is just fine.
+
+The RDF semantics is based on sets and everything else would have been quite unusual, so this is a very hard constraint. A graph per the RDF semantics can’t contain the same statement multiple times and there is no way around that.
+However, what is the same and what is different is very much in the eye of the beholder. Citing two persons as the source of some statement may be understood as two annotations on the same statement. Watch yourself thinking and you might observe that you find this indeed a very natural interpretation: one fact, two sources. However, imagine now a kid crying "I’m thirsty" and a hardened athlet making the same exclamation: those two statements don’t feel like they are the same. Another example: Alice buys a house, annotated with the year. And then again, annotated with another year. Clearly those are two incident of Alice buying a house, and given the financial circumstances and ramifications of buying a house they represent two distinctly different events. Therefore they can and even should be understood as two different statement (they just happen to look the same if we lack further detail). This again has some similarity to the semantics of blank nodes and why their existential semantics is found unintuitive by non-logicians and in practice is often replaced by "counting semantics".
+To put this interpretation into a more solid form, lets construct a bridge from an annotated statement to plain RDF. Again Alice buying a house, in 2021:
+
+   :Alice :buys :House # id:1 .
+   id:1 :year 2021 .
+
+The annotation can be pulled inside the statement as a fluent:
+
+   :Alice :buys@2021 :House .
+
+There’s different ways to do this, e.g.
+
+   :Alice@2021 :buys@2021 :House@2021 .
+
+- the ramifications of which have to be discussed at a later time (for a more detailed discussion see Hayes 2003 and Gangemi 2013 on "trickledown semantics"). Let’s stay with the singleton property approach since it is nearer to annotating the whole statement. Let’s also assume blank nodes are allowed in predicate position. Then we might translate the homegrown annotation syntax Term@Annotation to something looking like traditional RDF:
+
+   :Alice _:p :House .
+   _:p rdfs:subPropertyOf :buys ;
+       :year 2021 .
+
+And this pretty much defines the semantics of annotating a statement via an identifier: there is only one statement with that blank node _:p, so set semantics is preserved. There still is the statement that :Alice :buys :House - at least it is easily entailable - so monotonicity is guaranteed - at least if this simple entailment is guaranteed to be executed. 
+
+If one encodes the statement identifier in the property, like so:
+
+   :Alice :buys#1 :House .
+   #1 :year 2021 .
+
+one not only saves one triple, but the connection between the annotated property and its un-annotated type is even more direct. Depending on the interpretation of the fragment identifier in RFC 3986 one might even argue that they are the same - a gray/grey zone that nicely captures the ambiguity of a term that is at the same time itself and a sub-term or instance of itself.
+
+I’ve checked some literature w.r.t. to the relation between a term and its fluent but I haven’t found a definitive solution. Hayes in 2003 calls it a "kind of reification", Nguyen in three different papers on Singleton Properties offers three different interpretations: rdf:type, rdf:subPropertyOf and some unspecified "having" relation. Zimmermann in 2017 talks about anchors, concepts, roles and individuals, Lassila in 2010 alludes to aspects (refering to Aspect Oriented Programming). This needs more discussion, but as a rough approach I think that rdf:type is good enough: an annotated term - edge and vertex alike - is then understood as an instance of the un-annotated type, being in its extension.
+Applying this to the verbose example above
+
+   :Alice@2021 :buys@2021 :House@2021 .
+
+one would get
+
+   _:a _:b _:h .
+   _:a a :Alice ;
+       :year 2021 .
+   _:b a :buys ;
+       :year 2021 .
+   _:h a :House ;
+       :year 2021 .
+
+I find that this translation of an annotation into plain RDF captures the intuitions behind an annotation very well. And it is plain RDF, without any change whatsoever to the current semantics. Annotations on statement idnetifiers are just syntactic sugar. Sets are respected, monotonicity is guaranteed. It can express anything an LPG can express, and more. What could possibly go wrong?
+
+One advantage of this approach is the precise connection between a statement and its annotations. Approaches that take the circumvention of first having to define an occurrence identifier through extra statements - RDF standard refication and RDF-star - don’t offer this, but I’m quite sure that this direct connection is what most users expect (I certainly did, back then, and quite fervently so).
+
+Another advantage is that this approach allows to take a principled stance with regard to unannotated and annotated statements alike:
+- unannotated statement have no identity. A hash of the statement may be used to refer to it but has the same meaning as the statement itself ### hmmmm ###
+- annotating a statement requires to mint a specific identifier, maybe apppended to the hash, that uniquely identifies the statement and becomes the subject of all annoattions on it. This is much like graph names in Carroll at al are defined (modulo referential opacity which I very strongly suggest to treat as a separate problem)
+Consequently ANY annotation only annotates an occurrence, not the type. The type can’t be annotated by definition. 
+### the occurrence is a new type - that has to be corrected above ###
+### this solves the slightly muddled design of Souri’s statement identifiers ### 
+
+THOUGHT 
+there is no way to annotate the asserted type. 
+	TRUE
+a reference to the hash is not allowed
+	FALSE
+(BUT how to enforce that?)
+	(EXACTLY)
+this is a rather radical take on annotation semantics: 
+	TRUE
+they are considered to always modify the meaning of the statement itself.
+	TRUE
+there is not annotated and at the same time unannotated statement
+	TRUE
+- there can’t be
+	TRUE
+is that a kind of heisenberg unschärfe relation?
+	TRUE 
+       (if an annotations target the unasserted type, it isn’t asserted
+        if it annotates the asserted occurrence it also modifies it)
+->
+there can be annotations on the type
+but they may be of limited value
+	it’s like describing a meal
+	but not eating it
+the type can only be described/annotated in an unasserted state
+       and as that not assertion is modified
+
+
+
+
+NOTE
+? query parameters are part of the URI, just like HOST and PATH
+# fragment identifiers have semantics depending on media type
+userinfo:
+https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1
+3.2.1.  User Information
+  The userinfo subcomponent may consist of a user name and, optionally,
+  scheme-specific information about how to gain authorization to access
+  the resource.  The user information, if present, is followed by a
+  commercial at-sign ("@") that delimits it from the host.
+
+     userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
+
+  Use of the format "user:password" in the userinfo field is
+  deprecated.  Applications should not render as clear text any data
+  after the first colon (":") character found within a userinfo
+  subcomponent unless the data after the colon is the empty string
+  (indicating no password).  Applications may choose to ignore or
+  reject such data when it is received as part of a reference and
+  should reject the storage of such data in unencrypted form.  The
+  passing of authentication information in clear text has proven to be
+  a security risk in almost every case where it has been used.
+
+  Applications that render a URI for the sake of user feedback, such as
+  in graphical hypertext browsing, should render userinfo in a way that
+  is distinguished from the rest of a URI, when feasible.  Such
+  rendering will assist the user in cases where the userinfo has been
+  misleadingly crafted to look like a trusted domain name
+  (Section 7.6).

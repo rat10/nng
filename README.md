@@ -7,25 +7,29 @@
   |_| \___/|____/ \___/ 
                         
 
-to anybody who visits this site now because i bragged that by monday it would be ready:
-it isn't, and i'm a bit under the weather.
-so please proceed with care and be prepared for bugs.
+Querying is still in a rather sorry state.
+The rest looks promising...
 
 ```
+<!--
+
+inheritance of annotations on transcluded graphs
+    mention
+    formalize
+
+how does annotating outside a nested graph propagate
+  putting annotations in an outer graph 
+        or even the default graph
+      would limit the load on reifying annotations
+      can we use that?
+  
+-->
+
 
 <!--
 CONSOLE
-  do fragment shortcuts get expanded 
-    :NNG1?subject :b :c    to   :NNG1 nng:subject [ :b :c]
-  is THIS not supported in the testbed?
   what is the LOG supposed to describe?
     <urn:dydra:default> <http://segraph.org/LOG> <http://example.org/X> .
-  do we still support property lists?
-    or dow we reserve the [] syntax for either
-    - blank node names
-    or
-    - semantics declarations, eg
-      [nng:APP]{ s p o }
 -->
 
 <!--
@@ -119,19 +123,6 @@ The underlying mechanism of configurable inclusion of [graph literals](graphLite
 
 [querying](querying.md)
 
-```sparql
-SELECT *
-WHERE ?g { ?s ?p ?o }
-
-```
-
-extensions to sparql
-- FROM ALL|DEFAULT|...
-- WITH LITERAL|INCLUDED|QUOTE|REPORT|RECORD
-
-changes to sparql
-
-result formats
 
 
 ## Public Notebook
@@ -145,7 +136,7 @@ The finer details of this proposal are discussed in separate sections:
 - [nesting graphs](transclusion.md)  
   the basic mechanism to nest graphs
 - [surface syntax](serialization.md)  
-  TODO syntactic sugar to nest and annotate graphs
+  syntactic sugar to nest and annotate graphs
 - [introduction by example](introexample.md)  
   a walkthrough illustrating core features
 - [more examples](examples.md)  

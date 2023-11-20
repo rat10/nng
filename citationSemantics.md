@@ -17,13 +17,13 @@ To prevent problems with monotonicity, specific inclusion properties for each se
 ```
 This provides an extra guarantee that no entailments are derived from the included graph before a semantics configuration has been retrieved that might forbid such an operation. 
 
-To provide even more comfort, specific semantic modifiers like eg. `nng:QUOTE` can be defined and prepended to a graph literal (also omitting the datatype declaration), creating a nested graph with the specified semantics: 
+To provide even more comfort, specific semantic modifiers like eg. `nng:Quote` can be defined and prepended to a graph literal (also omitting the datatype declaration), creating a nested graph with the specified semantics: 
 ```turtle
-:Alice :said [nng:QUOTE]":s :p :o. :a :b :c"
+:Alice :said [nng:Quote]":s :p :o. :a :b :c"
 ```
 To provide yet more comfort, special notations are provided, e.g.:
 ```turtle
-:Alice :said []":s :p :o. :a :b :c"  # quote signs without {} signify QUOTE
+:Alice :said []":s :p :o. :a :b :c"  # quote signs without {} signify nng:Quote
 ```
 The next section will present all pre-configured semantics with their keywords and notations. 
 
@@ -213,7 +213,7 @@ Note that while the graph literal is accompanying an assertion of the same type,
 #### Term Literal
 So far only graph literals have been discussed, but also term literals might provide interesting applications. The well known Superman-problem could be expressed as follows:
 ```turtle
-:LoisLane :loves [QUOTE]":Superman" .
+:LoisLane :loves [Quote]":Superman" .
 ```
 Note how references to Lois Lane and the concept of loving are still referentially transparent, as they should be. However, support for graph terms is still an open [issue](https://github.com/rat10/sg/issues/2).  
 [TODO] don't forget to update when this is decided
@@ -242,7 +242,7 @@ the statement `:Alice :buys :Car` is interpreted exactly as if stated in a regul
 
 ## Defining a Semantics
 
-A [vocabulary](configSemantics.md) is provided to define the precise semantics of `REPORT`, `RECORD`, `QUOTE`  
+A [vocabulary](configSemantics.md) is provided to define the precise semantics of `REPORT`, `RECORD`, `Quote`  
 [TODO] we should actually do that in the vocabulary definition above  
 and some other configurations like e.g. closed world and unique name assumption. We envision extensions of this mechanism towards e.g. lists and other shapes with more predictable properties than the open world semantics of RDF can provide, and also for close-to-the-metal applications like versioning, verifiable credentials, etc.
 

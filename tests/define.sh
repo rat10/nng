@@ -77,6 +77,7 @@ if [[ "" == "${ECHO_OUTPUT}" ]]
 then
   export ECHO_OUTPUT=/dev/null # /dev/tty # 
 fi
+
 export RESULT_OUTPUT="/tmp/$$.out"
 
 function 1cpl () {
