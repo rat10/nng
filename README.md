@@ -76,6 +76,8 @@ The design of Nested Named Graphs aims for the least surprise. Annotated or not,
 ## Syntax
 The main component of the proposal is a [syntactic extension](serialization.md) to TriG that adds the ability to nest named graphs inside each other. The following short example may give a first impression of its various virtues:
 ```turtle
+prefix :    <http://x.io/>
+prefix nng: <http://nng.io/nng/>
 :G1 {
     :G2 {
         :Alice :buys :Car .
@@ -94,6 +96,29 @@ The main component of the proposal is a [syntactic extension](serialization.md) 
 }                                               # then remove this level of nesting
                                                 # without changing the data topology
 ```
+The same as N-Quads:
+```n-quads
+<http://ex.org/G1>    <http://nng.io/transcludes> <http://ex.org/G2>                                <http://ex.org/G1> .
+<http://ex.org/Alice> <http://ex.org/buys>        <http://ex.org/Car>                               <http://ex.org/G2> .
+<http://ex.org/G2>    <http://nng.io/subject>     _:o-37                                            <http://ex.org/G2> .
+_:o-37                <http://ex.org/age>         "20"^^<http://www.w3.org/2001/XMLSchema#integer>  <http://ex.org/G2> .
+<http://ex.org/G2>    <http://nng.io/predicate>   _:o-38                                            <http://ex.org/G2> .
+_:o-38                <http://ex.org/payment>     <http://ex.org/Cash>                              <http://ex.org/G2> .
+<http://ex.org/G2>    <http://nng.io/object>      <http://nng.io/Interpretation>                    <http://ex.org/G2> .
+<http://ex.org/G2>    <http://nng.io/object>      _:o-39                                            <http://ex.org/G2> .
+_:o-39                <http://ex.org/color>       <http://ex.org/black>                             <http://ex.org/G2> .
+<http://ex.org/G2>    <http://ex.org/source>      <http://ex.org/Denis>                             <http://ex.org/G1> .
+<http://ex.org/G2>    <http://ex.org/purpose>     <http://ex.org/JoyRiding>                         <http://ex.org/G1> .
+<http://ex.org/G1>    <http://nng.io/transcludes> <http://ex.org/G3>                                <http://ex.org/G1> .
+<http://ex.org/G3>    <http://nng.io/transcludes> _:b41                                             <http://ex.org/G3> .
+_:b41                 <http://nng.io/subject>     _:o-42                                            _:b41 .
+<http://ex.org/Alice> <http://ex.org/buys>        <http://ex.org/Car>                               _:b41 .
+_:o-42                <http://ex.org/age>         "28"^^<http://www.w3.org/2001/XMLSchema#integer>  _:b41 .
+_:b41                 <http://ex.org/source>      <http://ex.org/Eve>                               <http://ex.org/G3> .
+<http://ex.org/G3>    <http://ex.org/todo>        <http://ex.org/AddDetail>                         <http://ex.org/G1> .
+```
+
+
 
 For a more extensive set of simple examples check out the [Introduction by Example](introexample.md)
 

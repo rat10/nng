@@ -1,0 +1,164 @@
+# test for
+#   nesting
+#   name
+#   semantics
+#   annotations
+#   THIS
+#   explicit name
+#   more annotations
+prefix : <http://ex.org/>
+prefix nng: <http://nng.io/>
+[]{
+  :s :p :o .
+  [:X nng:Test] 
+    { :a :b :c } 
+        :d :e.
+  THIS :g :h .
+  :Y { :u :v :w }
+        :p :q ;
+        :r :s , :t .
+}
+
+<urn:dydra:default> <http://nng.io/transcludes> _:b46 .
+<http://ex.org/s>   <http://ex.org/p>             <http://ex.org/o>   _:b46 .
+
+
+_:b46               <http://nng.io/transcludes>   <http://ex.org/Y>   _:b46 .
+_:b46               <http://ex.org/g>             <http://ex.org/h>   _:b46 .
+_:b46               <http://nng.io/Test>          <http://ex.org/X>   _:b46 .
+<http://ex.org/Y>   <http://ex.org/p>             <http://ex.org/q>   _:b46 .
+<http://ex.org/Y>   <http://ex.org/r>             <http://ex.org/s>   _:b46 .
+<http://ex.org/Y>   <http://ex.org/r>             <http://ex.org/t>   _:b46 .
+<http://ex.org/X>   <http://ex.org/d>             <http://ex.org/e>   _:b46 .
+<http://ex.org/u>   <http://ex.org/v>             <http://ex.org/w>   <http://ex.org/Y> .
+<http://ex.org/a>   <http://ex.org/b>             <http://ex.org/c>   <http://ex.org/X> .
+
+
+
+
+
+# more readable test
+prefix :    <http://ex.org/>
+prefix nng: <http://nng.io/>
+:G1 {
+    :G2 {
+        :Alice :buys :Car .
+        :G2 nng:subject [ :age 20 ] ;          
+            nng:predicate [ :payment :Cash ] ;  
+            nng:object nng:Interpretation ,    
+                       [ :color :black ].  
+    } :source :Denis ;                          
+      :purpose :JoyRiding .                     
+    :G3 {    
+        [] {                                    # _:b41
+            :Alice :buys :Car .                 
+            THIS nng:subject [ :age 28 ] .      # _:o-42
+        } :source :Eve .    
+    } :todo :AddDetail .                        
+}
+
+
+<urn:dydra:default>   <http://nng.io/transcludes> <http://ex.org/G1> .
+<http://ex.org/G1>    <http://nng.io/transcludes> <http://ex.org/G2>                                <http://ex.org/G1> .
+<http://ex.org/Alice> <http://ex.org/buys>        <http://ex.org/Car>                               <http://ex.org/G2> .
+<http://ex.org/G2>    <http://nng.io/subject>     _:o-37                                            <http://ex.org/G2> .
+_:o-37                <http://ex.org/age>         "20"^^<http://www.w3.org/2001/XMLSchema#integer>  <http://ex.org/G2> .
+<http://ex.org/G2>    <http://nng.io/predicate>   _:o-38                                            <http://ex.org/G2> .
+_:o-38                <http://ex.org/payment>     <http://ex.org/Cash>                              <http://ex.org/G2> .
+<http://ex.org/G2>    <http://nng.io/object>      <http://nng.io/Interpretation>                    <http://ex.org/G2> .
+<http://ex.org/G2>    <http://nng.io/object>      _:o-39                                            <http://ex.org/G2> .
+_:o-39                <http://ex.org/color>       <http://ex.org/black>                             <http://ex.org/G2> .
+<http://ex.org/G2>    <http://ex.org/source>      <http://ex.org/Denis>                             <http://ex.org/G1> .
+<http://ex.org/G2>    <http://ex.org/purpose>     <http://ex.org/JoyRiding>                         <http://ex.org/G1> .
+<http://ex.org/G1>    <http://nng.io/transcludes> <http://ex.org/G3>                                <http://ex.org/G1> .
+<http://ex.org/G3>    <http://nng.io/transcludes> _:b41                                             <http://ex.org/G3> .
+_:b41                 <http://nng.io/subject>     _:o-42                                            _:b41 .
+<http://ex.org/Alice> <http://ex.org/buys>        <http://ex.org/Car>                               _:b41 .
+_:o-42                <http://ex.org/age>         "28"^^<http://www.w3.org/2001/XMLSchema#integer>  _:b41 .
+_:b41                 <http://ex.org/source>      <http://ex.org/Eve>                               <http://ex.org/G3> .
+<http://ex.org/G3>    <http://ex.org/todo>        <http://ex.org/AddDetail>                         <http://ex.org/G1> .
+
+
+
+# test for property path
+
+
+
+
+# location of transclusion statement does matter
+
+
+
+
+# different ways to include garph literals
+
+
+
+# inheritance of annotations on graphs in nested graphs
+
+
+
+
+# inclusion 1
+prefix : <http://ex.org/>  
+prefix nng: <http://nng.org/>
+[]{:s :p :o .
+  [:MyG nng:Quote] { :a :b :c }  
+       :q :w .
+}
+
+## wrong
+
+_:b9                <http://nng.org/quotes>         <http://ex.org/MyG> _:b9 .
+<http://ex.org/s>   <http://ex.org/p>               <http://ex.org/o>   _:b9 .
+<http://ex.org/MyG> <http://ex.org/q>               <http://ex.org/w>   _:b9 .
+<http://ex.org/a>   <http://ex.org/b>               <http://ex.org/c>   <http://ex.org/MyG> .
+<urn:dydra:default> <http://nng.org/transcludes>    _:b9 .
+
+## right
+
+there is no right, because configurable semantics is only defined on included graph literals, but not on transcluded nested graphs (which always have standard semantics)
+
+
+# inclusion 2
+prefix : <http://ex.org/>  
+prefix nng: <http://nng.org/>
+
+[]{:s :p :o .
+  [] {" :a :b :c "}  
+       :q :w .
+}
+
+## wrong 
+
+<http://ex.org/s>    <http://ex.org/p>            <http://ex.org/o>                _:b29 .
+_:b30                <http://ex.org/q>            <http://ex.org/w>                _:b29 .
+_:b29                <http://nng.org/includes>    _:b30                            _:b29 .
+<http://ex.org/a>    <http://ex.org/b>            <http://ex.org/c>                _:b30 .
+<urn:dydra:default>  <http://nng.org/transcludes> _:b29 .
+
+## right
+               
+<http://ex.org/s>    <http://ex.org/p>            <http://ex.org/o>                _:b29 .
+_:b30                <http://ex.org/q>            <http://ex.org/w>                _:b29 .
+_:b30                <http://nng.org/records>      ":a :b :c"^^nng:GraphLiteral    _:b29 .
+
+### because
+
+:Bob :claims [ nng:includes ":s :p :o. :a :b :c"^^nng:GraphLiteral 
+               nng:semantics nng:App ] 
+
+:Bob :claims [nng:APP]":s :p :o. :a :b :c"^^nng:GraphLiteral
+
+:Bob :claims [ nng:apps ":s :p :o. :a :b :c"^^nng:GraphLiteral ]
+
+:Bob :claims _:b1 .
+_:b1 nng:apps ":s :p :o. :a :b :c"^^nng:GraphLiteral .
+
+### implementation detail
+
+<http://ex.org/s>    <http://ex.org/p>            <http://ex.org/o>                _:b29 .
+_:b30                <http://ex.org/q>            <http://ex.org/w>                _:b29 .
+_:b30                <http://nng.org/records>     _:intern                         _:b29 .
+<http://ex.org/a>    <http://ex.org/b>            <http://ex.org/c>                _:intern .
+_:intern             <nng:type>                   <nng:GraphLiteral>               _:intern .

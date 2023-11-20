@@ -57,7 +57,7 @@ QUOTE   unasserted type, referentially opaque
         (like verbatim quoted speech, but not endorsed)
 
 LITERAL last not least the bare graph literal
-        " :s :p :o "^^nng:Graph
+        ":s :p :o."^^nng:Graph
         since it's not included it is also not named by a blank node
             and the datatype declaration can't be omitted
         really just a datatyped string, but on demand accessible by a SPARQL engine
@@ -194,7 +194,7 @@ nng:statedAs a rdf:Property ;
 
 The following example shows how this can be used to document some normalization:
 ```
-[]{ :s :p :o } nng:statedAs ":S :p :O"^^nng:Graph
+[]{ :s :p :o } nng:statedAs ":S :p :O"^^nng:GraphLiteral .
 ```
 In the following example the literal is accompanied by a hash value to improve security:
 ```
