@@ -76,8 +76,8 @@ The design of Nested Named Graphs aims for the least surprise. Annotated or not,
 ## Syntax
 The main component of the proposal is a [syntactic extension](serialization.md) to TriG that adds the ability to nest named graphs inside each other. The following short example may give a first impression of its various virtues:
 ```turtle
-prefix :    <http://x.io/>
-prefix nng: <http://nng.io/nng/>
+prefix :    <http://ex.org/>
+prefix nng: <http://nng.io/>
 :G1 {
     :G2 {
         :Alice :buys :Car .
@@ -97,7 +97,7 @@ prefix nng: <http://nng.io/nng/>
                                                 # without changing the data topology
 ```
 The same as N-Quads:
-```n-quads
+```turtle
 <http://ex.org/G1>    <http://nng.io/transcludes> <http://ex.org/G2>                                <http://ex.org/G1> .
 <http://ex.org/Alice> <http://ex.org/buys>        <http://ex.org/Car>                               <http://ex.org/G2> .
 <http://ex.org/G2>    <http://nng.io/subject>     _:o-37                                            <http://ex.org/G2> .

@@ -1,7 +1,5 @@
 # test for
 #   nesting
-#   name
-#   semantics
 #   annotations
 #   THIS
 #   explicit name
@@ -10,8 +8,7 @@ prefix : <http://ex.org/>
 prefix nng: <http://nng.io/>
 []{
   :s :p :o .
-  [:X nng:Test] 
-    { :a :b :c } 
+  :X { :a :b :c }
         :d :e.
   THIS :g :h .
   :Y { :u :v :w }
@@ -19,19 +16,89 @@ prefix nng: <http://nng.io/>
         :r :s , :t .
 }
 
-<urn:dydra:default> <http://nng.io/transcludes> _:b46 .
-<http://ex.org/s>   <http://ex.org/p>             <http://ex.org/o>   _:b46 .
-
-
-_:b46               <http://nng.io/transcludes>   <http://ex.org/Y>   _:b46 .
-_:b46               <http://ex.org/g>             <http://ex.org/h>   _:b46 .
-_:b46               <http://nng.io/Test>          <http://ex.org/X>   _:b46 .
-<http://ex.org/Y>   <http://ex.org/p>             <http://ex.org/q>   _:b46 .
-<http://ex.org/Y>   <http://ex.org/r>             <http://ex.org/s>   _:b46 .
-<http://ex.org/Y>   <http://ex.org/r>             <http://ex.org/t>   _:b46 .
-<http://ex.org/X>   <http://ex.org/d>             <http://ex.org/e>   _:b46 .
-<http://ex.org/u>   <http://ex.org/v>             <http://ex.org/w>   <http://ex.org/Y> .
+<urn:dydra:default> <http://nng.io/transcludes>   _:b73 .
+<http://ex.org/s>   <http://ex.org/p>             <http://ex.org/o>   _:b73 .
+_:b73               <http://nng.io/transcludes>   <http://ex.org/X>   _:b73 .
 <http://ex.org/a>   <http://ex.org/b>             <http://ex.org/c>   <http://ex.org/X> .
+<http://ex.org/X>   <http://ex.org/d>             <http://ex.org/e>   _:b73 .
+_:b73               <http://ex.org/g>             <http://ex.org/h>   _:b73 .
+_:b73               <http://nng.io/transcludes>   <http://ex.org/Y>   _:b73 .
+<http://ex.org/u>   <http://ex.org/v>             <http://ex.org/w>   <http://ex.org/Y> .
+<http://ex.org/Y>   <http://ex.org/p>             <http://ex.org/q>   _:b73 .
+<http://ex.org/Y>   <http://ex.org/r>             <http://ex.org/s>   _:b73 .
+<http://ex.org/Y>   <http://ex.org/r>             <http://ex.org/t>   _:b73 .
+
+
+
+
+
+# test for
+#   nesting
+#   name                    <--- !!!
+#   annotations
+#   THIS
+#   explicit name
+#   more annotations
+prefix : <http://ex.org/>
+prefix nng: <http://nng.io/>
+[]{
+  :s :p :o .
+  [:X]                      <--- !!!
+    { :a :b :c }
+        :d :e.
+  THIS :g :h .
+  :Y { :u :v :w }
+        :p :q ;
+        :r :s , :t .
+}
+
+<urn:dydra:default> <http://nng.io/transcludes>   _:b69 .
+_:b69               <http://ex.org/X>             _:graph-70          _:b69 .               # ERROR
+_:b69               <http://nng.io/transcludes>   <http://ex.org/Y>   _:b69 .
+_:b69               <http://ex.org/g>             <http://ex.org/h>   _:b69 .
+<http://ex.org/s>   <http://ex.org/p>             <http://ex.org/o>   _:b69 .
+<http://ex.org/Y>   <http://ex.org/p>             <http://ex.org/q>   _:b69 .
+<http://ex.org/Y>   <http://ex.org/r>             <http://ex.org/s>   _:b69 .
+<http://ex.org/Y>   <http://ex.org/r>             <http://ex.org/t>   _:b69 .
+_:graph-70          <http://ex.org/d>             <http://ex.org/e>   _:b69 .
+<http://ex.org/u>   <http://ex.org/v>             <http://ex.org/w>   <http://ex.org/Y> .
+<http://ex.org/a>   <http://ex.org/b>             <http://ex.org/c>   _:graph-70 .
+
+
+
+
+# test for
+#   nesting
+#   name                    <--- !!!
+#   semantics               <--- !!!
+#   annotations
+#   THIS
+#   explicit name
+#   more annotations
+prefix : <http://ex.org/>
+prefix nng: <http://nng.io/>
+[]{
+  :s :p :o .
+  [:X nng:Test]              <--- !!!
+    " :a :b :c "^^nng:GraphLiteral
+        :d :e.
+  THIS :g :h .
+  :Y { :u :v :w }
+        :p :q ;
+        :r :s , :t .
+}
+
+<urn:dydra:default> <http://nng.io/transcludes> _:b63 .
+<http://ex.org/s>   <http://ex.org/p>           <http://ex.org/o>   _:b63 .
+_:b63               <http://nng.io/Test>        <http://ex.org/X>   _:b63 .               # ERROR
+<http://ex.org/a>   <http://ex.org/b>           <http://ex.org/c>   <http://ex.org/X> .
+<http://ex.org/X>   <http://ex.org/d>           <http://ex.org/e>   _:b63 .
+_:b63               <http://ex.org/g>           <http://ex.org/h>   _:b63 .
+_:b63               <http://nng.io/transcludes> <http://ex.org/Y>   _:b63 .
+<http://ex.org/u>   <http://ex.org/v>           <http://ex.org/w>   <http://ex.org/Y> .
+<http://ex.org/Y>   <http://ex.org/p>           <http://ex.org/q>   _:b63 .
+<http://ex.org/Y>   <http://ex.org/r>           <http://ex.org/s>   _:b63 .
+<http://ex.org/Y>   <http://ex.org/r>           <http://ex.org/t>   _:b63 .
 
 
 
@@ -162,3 +229,7 @@ _:b30                <http://ex.org/q>            <http://ex.org/w>             
 _:b30                <http://nng.org/records>     _:intern                         _:b29 .
 <http://ex.org/a>    <http://ex.org/b>            <http://ex.org/c>                _:intern .
 _:intern             <nng:type>                   <nng:GraphLiteral>               _:intern .
+
+
+
+

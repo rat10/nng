@@ -55,6 +55,11 @@ Others provide statement identifiers additionally to graph identifiers.
 
 
 
+## Citation via Inclusion
+[TODO]
+
+
+
 ## A simplistic application of a nested graph
 A bit like property graphs:
 ```turtle
@@ -90,6 +95,38 @@ A bit like property graphs:
 ]
 ```
 
+## A compact and less pedantic version
+Explicit, but tedious disambiguation doesn't need to become the new religion. The target of `:payment`, `:purpose` and `:source` is in most cases clear enough to make explicit disambiguation unnecessary.
+
+```turtle
+prefix : <http://ex.org/>
+prefix nng: <http://nng.io/>
+:X {
+    :Alice :buys :Car .
+} 
+    nng:subject [ :age 20 ] ;
+    nng:object [ :color :black ;
+                 :model :Coupe ] ;
+    :payment :Cash ;
+    :purpose :JoyRiding ;
+    :source :Denis .
+```
+
+As N-Quads:
+```turtle
+<http://ex.org/Alice>   <http://ex.org/buys>        <http://ex.org/Car>                                 <http://ex.org/X> .
+<http://ex.org/X>       <http://nng.io/subject>     _:o-78                                              .
+_:o-78                  <http://ex.org/age>         "20"^^<http://www.w3.org/2001/XMLSchema#integer>    .
+<http://ex.org/X>       <http://nng.io/object>      _:o-79                                              .
+_:o-79                  <http://ex.org/color>       <http://ex.org/black>                               .
+_:o-79                  <http://ex.org/model>       <http://ex.org/Coupe>                               .
+<http://ex.org/X>       <http://ex.org/payment>     <http://ex.org/Cash>                                .
+<http://ex.org/X>       <http://ex.org/purpose>     <http://ex.org/JoyRiding>                           .
+<http://ex.org/X>       <http://ex.org/source>      <http://ex.org/Denis>                               .
+```
+
+
+
 
 ## A mapping to RDF a la singleton properties
 ```turtle
@@ -111,24 +148,6 @@ A bit like property graphs:
     ]
 ```
 Two other mappings - fluents and n-ary relations - are provided in the section on [mappings](mappings.md)
-
-
-## A compact and less pedantic version
-Explicit, but tedious disambiguation doesn't need to become the new religion. The target of `:payment`, `:purpose` and `:source` is in most cases clear enough to make explicit disambiguation unnecessary.
-
-```turtle
-:X {
-    :Alice :buys :Car .
-} 
-    nng:subject [ :age 20 ] ;
-    nng:object [ :color :black ;
-                 :model :Coupe ] ;
-    :payment :Cash ;
-    :purpose :JoyRiding ;
-    :source :Denis .
-```
-
-
 
 
 

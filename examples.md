@@ -65,6 +65,9 @@ In the example below the central piece of information is that Alice visits the I
 ### Layers of Nesting Embedded in Named Graphs as we know them
 This example combines several orthogonal dimensions of annotation: application specific dimensions and unsound graph naming practices, administrative annotations intermixed with qualifying annotations.
 ```turtle
+prefix :    <http://ex.org/>
+prefix nng: <http://nng.io/>
+
 :Bob :source :Laptop ;
      :status :Unredacted ;
      :visibility :Private .
@@ -82,7 +85,7 @@ This example combines several orthogonal dimensions of annotation: application s
                          :model :Coupe ] ;
             nng:graph [ :source :Denis ] .
         }
-    } :FirstCarEvent ;
+    } :type :FirstCarEvent ;
       :source :GreenDiary ;
       :date :10_12_08 .
 }
@@ -90,6 +93,32 @@ This example combines several orthogonal dimensions of annotation: application s
 Imagine adding more levels of nesting for different accounts of Alice buying her first car,
 eg her parents helping fund it,
 the insurance company having yet a different view, etc. Nothing breaks, it's just adding more layers of nesting.
+
+```turtle
+<http://ex.org/Bob>     <http://ex.org/source>        <http://ex.org/Laptop> .
+<http://ex.org/Bob>     <http://ex.org/status>        <http://ex.org/Unredacted> .
+<http://ex.org/Bob>     <http://ex.org/visibility>    <http://ex.org/Private> .
+<http://ex.org/Bob>     <http://nng.io/transcludes>   <http://ex.org/Z>             <http://ex.org/Bob> .
+<http://ex.org/Z>       <http://nng.io/transcludes>   <http://ex.org/Y>             <http://ex.org/Z> .
+<http://ex.org/Y>       <http://nng.io/transcludes>   <http://ex.org/X>             <http://ex.org/Y> .
+<http://ex.org/Alice>   <http://ex.org/buys>          <http://ex.org/Car>           <http://ex.org/X> .
+<http://ex.org/X>       <http://nng.io/subject>       _:o-93                        <http://ex.org/Y> .
+_:o-93                  <http://ex.org/age>           "20"^^<http://www.w3.org/2001/XMLSchema#integer> 
+                                                                                    <http://ex.org/Y> .
+<http://ex.org/X>       <http://nng.io/predicate>     _:o-94                        <http://ex.org/Y> .
+_:o-94                  <http://ex.org/payment>       <http://ex.org/Cash>          <http://ex.org/Y> .
+_:o-94                  <http://ex.org/purpose>       <http://ex.org/JoyRiding>     <http://ex.org/Y> .
+<http://ex.org/X>       <http://nng.io/object>        _:o-95                        <http://ex.org/Y> .
+_:o-95                  <http://ex.org/color>         <http://ex.org/black>         <http://ex.org/Y> .
+_:o-95                  <http://ex.org/model>         <http://ex.org/Coupe>         <http://ex.org/Y> .
+<http://ex.org/X>       <http://nng.io/graph>         _:o-96                        <http://ex.org/Y> .
+_:o-96                  <http://ex.org/source>        <http://ex.org/Denis>         <http://ex.org/Y> .
+<http://ex.org/Z>       <http://ex.org/type>          <http://ex.org/FirstCarEvent> <http://ex.org/Bob> .
+<http://ex.org/Z>       <http://ex.org/source>        <http://ex.org/GreenDiary>    <http://ex.org/Bob> .
+<http://ex.org/Z>       <http://ex.org/date>          <http://ex.org/10_12_08>      <http://ex.org/Bob> .
+```
+
+
 
 
 ### Superman
@@ -174,7 +203,7 @@ A sloppy mapping to RDF-star:
                  :model :Coupe ] ;
     :payment :Cash ;
     :purpose :JoyRiding ;
-    :source Denis .
+    :source :Denis .
 ```
 
 An exact mapping:
