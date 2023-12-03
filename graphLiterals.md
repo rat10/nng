@@ -1,5 +1,67 @@
 # Graph Literals and Inclusion
 
+```
+TODO
+
+a graph literal always represents *at least* a quote
+i.e. per default it's
+     unasserted
+     referentially opaque
+consequently if a graph literal is included via an unknown property
+(which could be 
+    an unknown attempt on a formal semantics like ex:inAsThatNewSemantics, 
+    but just as well a pretty un-semantic ex:said )
+it can still be queried.
+to prevent even that, there's still xsd:string
+
+
+datatype
+    we should change that here and in a few other pages
+    graph literals can be of datatype 
+            rdf:ttl
+            rdf:json  (json-ld?)
+            rdf:nng
+            rdf:...   (is there more?)
+    term literals (if we get them) 
+            rdf:term  (or rdf:iri)
+datatype declarations can be omitted on included graph literals
+    if the datatype of the included literal is the same 
+    as of the including graph.
+so if you always work with nng, you never have to declare the type
+however, it has to be possible to specifically declare the type
+    as otherwise it would be impossible to preserve an
+    original encoding (which is a valid use case for literals)
+
+
+implementation
+    the essential aspect of graph literals is that they are 
+        queryable
+        but can not be part of the target graph
+            if a query does not explicitly add them
+    so they have to be kept separate from normal, asserted triples
+    there's many ways to implement that
+        standard reification + unstar mapping
+        un/folding of strings
+        profiles
+        extra bits per triple in the database
+        separate datasets
+        an extra step in the query process
+        new "system" graphs
+        etc
+    but that is implementation detail
+        and out of scope of this proposal
+
+
+define a relation between 
+    -   abstract graph type (ie a graph literal)
+    -   concrete graph token (ie a nested graph)
+    one indirection that bridges the gap between
+        the platonic ideal of the rdf model theory and
+        the semantic web as we know it
+```
+
+
+
 Graph literals enable use cases with non-standard semantics. They provide a way to
 - reference RDF graphs for purposes like documentation and quotation,
 - implement more specific arrangements different from the standard RDF semantics, and

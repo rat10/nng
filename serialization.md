@@ -140,6 +140,6 @@ However, some care is needed when using THIS together with fragment identifiers.
 ```turtle
 []{ 
    :Alice :buys :Car .
-   THIS nng:subject [ :age 20 ] .
+   THIS nng:domain [ :age 20 ] .
 }
 ```

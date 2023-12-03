@@ -98,6 +98,9 @@ what may happen to other strategies wrt blank node merging?
 
 ## Result Formats
 
+### how to retrieve the graph containing a result term together with the term
+
+### how to retrieve the semantics governing a result term together with the term
 
 
 ## Querying Nested Graphs

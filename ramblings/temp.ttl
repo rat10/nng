@@ -110,16 +110,16 @@ prefix nng: <http://nng.io/>
 :G1 {
     :G2 {
         :Alice :buys :Car .
-        :G2 nng:subject [ :age 20 ] ;          
-            nng:predicate [ :payment :Cash ] ;  
-            nng:object nng:Interpretation ,    
+        :G2 nng:domain [ :age 20 ] ;          
+            nng:relation [ :payment :Cash ] ;  
+            nng:range nng:Interpretation ,    
                        [ :color :black ].  
     } :source :Denis ;                          
       :purpose :JoyRiding .                     
     :G3 {    
         [] {                                    # _:b41
             :Alice :buys :Car .                 
-            THIS nng:subject [ :age 28 ] .      # _:o-42
+            THIS nng:domain [ :age 28 ] .      # _:o-42
         } :source :Eve .    
     } :todo :AddDetail .                        
 }
@@ -229,7 +229,5 @@ _:b30                <http://ex.org/q>            <http://ex.org/w>             
 _:b30                <http://nng.org/records>     _:intern                         _:b29 .
 <http://ex.org/a>    <http://ex.org/b>            <http://ex.org/c>                _:intern .
 _:intern             <nng:type>                   <nng:GraphLiteral>               _:intern .
-
-
 
 

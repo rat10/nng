@@ -10,6 +10,35 @@
 Querying is still in a rather sorry state.
 The rest looks promising...
 
+define principal relation
+    (not only in mappings.md)
+
+what about normalization
+    with quoting? rather not
+    with records, reports?
+    yet another type of graph literals?
+
+it's got to be    b/c 
+  tokens          qualification + administration
+  asserted        otherwise too many indirections
+  graphs          otherwise many use cases too tedious
+  explicit ids    for graph structure in annotations   
+  transparent     otherwise no harmony
+  nesting         resilience against updates, n dimensions
+
+
+THIS reference
+    more then just syntactic sugar
+    provides easy localization and concentration
+        to annotations
+
+sound graph naming semantics are provided by
+  - the transclusion relation 
+  - the fragment identifiers
+  because they all have as domain a graph source
+  this is a semantics fixing per usage
+    that doesn't interfere with any other usage
+  
 ```
 <!--
 
@@ -81,16 +110,16 @@ prefix nng: <http://nng.io/>
 :G1 {
     :G2 {
         :Alice :buys :Car .
-        :G2 nng:subject [ :age 20 ].            # Alice, not the car, is 20 years old
-            nng:predicate [ :payment :Cash ] .  
-            nng:object nng:Interpretation ;     # Alice buys a car, not a website
+        :G2 nng:domain [ :age 20 ].            # Alice, not the car, is 20 years old
+            nng:relation [ :payment :Cash ] .  
+            nng:range nng:Interpretation ;     # Alice buys a car, not a website
                        [ :color :black ].  
     } :source :Denis ;                          # an annotation on the graph
       :purpose :JoyRiding .                     # sloppy, but not too ambiguous
     :G3 {    
         [] {                                    # graphs may be named by blank nodes 
             :Alice :buys :Car .                 # probably a different car buying event
-            THIS nng:subject [ :age 28 ] .      # self reference
+            THIS nng:domain [ :age 28 ] .      # self reference
         } :source :Eve .    
     } :todo :AddDetail .                        # add detail
 }                                               # then remove this level of nesting

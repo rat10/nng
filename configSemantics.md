@@ -14,6 +14,7 @@ term semantics per annotation
 
 -->
 
+We present here a vocabulary to implement configurable semantics via the inclusion of graph literals. This is rather a proof of concept than a definite proposal, and predominantly meant to illustrate the potential of this approach.
 
 The semantics of RDF is designed to reflect the realities of a shared and decentralized information system spanning the whole world: no one ever has a complete grasp on the data, people use different names to refer to the same thing, no one is entitled to change the truth value of someone else's data, what is not in the data at hand may nonetheless be true, etc. Some of these criteria have names, like the Open World Assumption (OWA) or the No Unique Name Assumption (NUNA). Some, like referential transparency, are baked so deeply into the formalism that they a barely noticed. Some only become visible through the absence of certain constructs like e.g. negation.
 
@@ -21,8 +22,6 @@ Some of these semantic fixings are rather counter-intuitive to application devel
 
 This tension between data *integration* semantics for the open semantic web and *application* semantics for in-house use of such data has frustrated application developers since the start of the Semantic Web. At the time a popular intuition was that mechanisms should be added to the RDF semantics machinery that allowed to put into effect on demand more restrictive semantics, tailored to the needs of applications. However, such mechanisms have never materialized and one of the reasons might have been the problem of how to describe the boundaries of such a change of semantics regime, even more so after the RDF 1.1 WG failed to standardize a semantics of named graphs.
 Graph literals offer a chance to rectify this issue as they soundly discriminate between abstract graphs as literal types and their application via [inclusion](graphLiterals.md).
-
-We present here a vocabulary to implement configurable semantics via the inclusion of graph literals. This is rather a proof of concept than a definite proposal, and predominantly meant to illustrate the potential of this approach.
 
 
 
@@ -204,7 +203,7 @@ A popular example to motivate referential opacity is the Superman comic, with th
 ```
 Note how the references to Louis Lane and the concept of loving are still referentially transparent, as they should be, and solely the reference to Superman is constrained to refer only to that specific persona of the extra-terrestrial character Kal-El, but never to its alternative persona Clark Kent.
 
-Here the square bracket prefix notation is used not to name the term - there's no need for that - but to indicate a certain semantics. This syntax in combination with the literal guarantees that the reference to Superman is always interpreted with the appropriate semantics. In this special datatype declaration may be omitted.
+Here the square bracket prefix notation is used not to name the term - there's no need for that - but to indicate a certain semantics. This syntax in combination with the literal guarantees that the reference to Superman is always interpreted with the appropriate semantics. In this special case a datatype declaration may be omitted.
 
 > [TODO]
 >

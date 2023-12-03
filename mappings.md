@@ -99,9 +99,9 @@ Annotating individual nodes requires the use of `nng:domain`, `nng:relation` and
     [_:ag2]{ 
         :a :b :c 
     }   :d :e ;
-        nng:subject [ :s :t ] ;
-        nng:predicate [ :v :w ] ;
-        nng:object [ :x :y ] .
+        nng:domain [ :s :t ] ;
+        nng:relation [ :v :w ] ;
+        nng:range [ :x :y ] .
 }
 ```
 gets mapped to
@@ -168,9 +168,9 @@ Differences become apparent when individual nodes are annotated:
     [_:ag2]{ 
         :a :b :c 
     }   :d :e ;
-        nng:subject [ :s :t ] ;
-        nng:predicate [ :v :w ] ;
-        nng:object [ :x :y ] .
+        nng:domain [ :s :t ] ;
+        nng:relation [ :v :w ] ;
+        nng:range [ :x :y ] .
 }
 ```
 The fluents mapping doesn't require special properties: the same principle applies to any node. The predicate gates annotated with graph containment, but annotations on relation type and the whole triple are separate:
@@ -230,15 +230,15 @@ _:ag1 nng:transcludes _:ag2 .
 This modelling style is very close to regular RDF as we know it. In principle this mapping could be supported in RDF by a follow-your-nose behaviour that automagically follows any `nng:principal` relation, returns its value instead of the blank node from which it originates, and adds all other attributes to the originating blank node as additional annotations. 
 However, the intuitive semantics is a bit shaky, as an annotation on the object of a relation would by convention not be understood as referring to the whole relation, or even the enclosing graph: while application specific intuitions may interpret it as referring to the graph itself, it seems risky to make such an interpretation mandatory. This problem could again be solved by defining additional vocabulary to refer to individual nodes in the statement, as above.
 
-Annotating individual nodes re-uses the `nng:subject` and `nng:predicate` properties:
+Annotating individual nodes re-uses the `nng:domain` and `nng:relation` properties:
 ```turtle
 [_:ag1]{ 
     [_:ag2]{ 
         :a :b :c 
     }   :d :e ;
-        nng:subject [ :s :t ] ;
-        nng:predicate [ :v :w ] ;
-        nng:object [ :x :y ] .
+        nng:domain [ :s :t ] ;
+        nng:relation [ :v :w ] ;
+        nng:range [ :x :y ] .
 }
 ```
 gets mapped to
@@ -246,8 +246,8 @@ gets mapped to
 :a :b :c .
 :a :b [ nng:principal :c ;
         nng:containedIn _:ag2 ;
-        nng:subject [ :s :t ] ;
-        nng:predicate [ :v :w ] 
+        nng:domain [ :s :t ] ;
+        nng:relation [ :v :w ] 
 ]. 
 _:ag2 :d_1 :e ;
 :d_1 nng:principal :d ;

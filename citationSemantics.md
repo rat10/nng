@@ -215,8 +215,14 @@ So far only graph literals have been discussed, but also term literals might pro
 ```turtle
 :LoisLane :loves [Quote]":Superman" .
 ```
-Note how references to Lois Lane and the concept of loving are still referentially transparent, as they should be. However, support for graph terms is still an open [issue](https://github.com/rat10/sg/issues/2).  
+Note how references to Lois Lane and the concept of loving are still referentially transparent, as they should be. However, support for term literals is still an open [issue](https://github.com/rat10/sg/issues/2).  
 [TODO] don't forget to update when this is decided
+
+Also, as an alternative approach the transparent term may be annotated to indicate its special semantics. That can't prevent undesired entailments, but it still provides an account of the intended meaning.
+```turtle
+:S { :LoisLane :loves :Superman .
+      THIS nng:range :hasLexicalRepresentation ":Superman"^^xsd:string }
+```
 
 
 ### "Asserted assertions"

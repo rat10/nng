@@ -1,6 +1,19 @@
 # Nesting Graphs via Transclusion
 
 
+```
+TODO
+transclusion is not allowed to create circles
+    that can't happen in the nng syntax
+    but it can happen with explicit nesting statements
+
+transclusion semantics
+    it is transitive 
+        like owl:imports
+        unlike inclusion of graph literals
+
+```
+
 Transclusion is the mechanism driving graph nesting. It imports a graph into another graph. Transclusion is transitive: if the transcluded graph contains further transclusion directives, those are executed (i.e. transcluded) as well. A `TriG` example without extra syntactic support illustrates its application:
 
 ```turtle

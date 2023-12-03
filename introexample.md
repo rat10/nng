@@ -76,14 +76,14 @@ A bit like property graphs:
 ## Targeting fragments, verbosely
 ```turtle
 :X {:Alice :buys :Car} .
-:X nng:subject [
+:X nng:domain [
     :age 20
 ]
-:X nng:predicate [
+:X nng:relation [
     :payment :Cash ;
     :purpose :JoyRiding                     # ambivalence, could also be object property
 ]
-:X nng:object [
+:X nng:range [
     :color :black ;
     :model :Coupe
 ]
@@ -104,8 +104,8 @@ prefix nng: <http://nng.io/>
 :X {
     :Alice :buys :Car .
 } 
-    nng:subject [ :age 20 ] ;
-    nng:object [ :color :black ;
+    nng:domain [ :age 20 ] ;
+    nng:range [ :color :black ;
                  :model :Coupe ] ;
     :payment :Cash ;
     :purpose :JoyRiding ;

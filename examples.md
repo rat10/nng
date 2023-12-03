@@ -1,36 +1,195 @@
 # Examples
 
 
-## [WG Use Cases](https://github.com/w3c/rdf-ucr/wiki/Summary)
+## WG Use Cases
+[WG use case wiki](https://github.com/w3c/rdf-ucr/wiki)  
+[Summary](https://github.com/w3c/rdf-ucr/wiki/Summary)  
+[More use cases, yet un-redacted](https://github.com/w3c/rdf-ucr/wiki/Status-of--use-cases-submitted-to-community-group)
 
 
-### [CIDOC-CRM](https://github.com/w3c/rdf-ucr/wiki/RDF-star-for-CIDOC-CRM-events)
+### [Capturing triple origin in SPARQL-star](https://github.com/w3c/rdf-ucr/wiki/Capturing-triple-origin-in-SPARQL-star)
 
-A short example of how the CIDOC-CRM use case can be encoded with nested named graphs, modelled after Niklas' example on the [mailinglist](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Nov/0026.html).
+This is actually a querying use case, exploring how the annotation syntax can be used in WHERE clauses to capture the source of a result when the query runs over multiple datasets.
+```turtle
+SELECT * WHERE {
+   ?g { ?s ?p ?o } rdf:source ?source . 
+}
+```
+[TODO] check!
+
+
+### [Describing a Union of Changes to a Named Graph](https://github.com/w3c/rdf-ucr/wiki/Describing-a-Union-of-Changes-to-a-Named-Graph)
+
+The original example is as follows:
+```turtle
+prefix : <http://example.org/ns#>
+base <http://example.com/>
+
+graph <data?version=1> {
+  <7d5d0d651caa> a :Work .
+}
+graph <data?version=2> {
+  <7d5d0d651caa> a :Text .
+  << <7d5d0d651caa> :subject <semantics> >> :suggestedBy <classifyer> .
+}
+```
+
+The WG use case wiki argues that the use cases requires tokens, not types, if an outdated versions happens to have occurred multiple times but under differing circumstances. We choose `Quote` semantics to provide referential opacity for the inner unasserted statement in graph `data?version=2`. We could also apply that to the superseded graph `data?version=1`.
+```turtle
+<data?version=1> {
+  <7d5d0d651caa> a :Work .
+}
+<data?version=2> {
+  <7d5d0d651caa> a :Text .
+  [] " <7d5d0d651caa> :subject <semantics> " :suggestedBy <classifyer> .
+}
+```
+
+The WG use case wiki provides the following translation to RDF-star:
+```turtle
+<7d5d0d651caa> a :Text {| :statedIn <data?version=2> |} .
+<< <7d5d0d651caa> a :Work >> :statedIn <data?version=1> ; :retractedIn <data?version=2> .
+<< <7d5d0d651caa> :subject <semantics> >> :suggestedBy <classifyer> {| :statedIn <data?version=2> |} .
+```
+
+That we would translate to NNG in another way:
+```turtle
+[] { <7d5d0d651caa> a :Text }
+     :statedIn <data?version=2>
+
+[] " <7d5d0d651caa> a :Work "
+     :statedIn <data?version=1> ; 
+     :retractedIn <data?version=2> .
+
+[] { []" <7d5d0d651caa> :subject <semantics> "
+      :suggestedBy <classifyer> }
+      :statedIn <data?version=2> .   
+```
+
+
+### [CIDOC-CRM events](https://github.com/w3c/rdf-ucr/wiki/RDF-star-for-CIDOC-CRM-events)
+
+The use case centers around the need to represent a current version and two unasserted previous versions. The previous versions themselves are identical, but have different annotations. We use the `Report` type (referentially transparent and unasserted) to encode them.
 
 ```turtle
 ex:Ioannes_68 a crm:E21_Person , ex:Gender_Eunuch ;
     rdfs:label "John the Orphanotrophos" .
 
+# the current version
 <#assignment-1> { ex:Ioannes_68 a ex:Gender_Eunuch }
 	a crm:E17_Type_Assignment ;
 	crm:P14_carried_out_by ex:Paphlagonian_family ;
 	rdfs:label "Castration gender assignment" .
 
-[] { ex:Ioannes_68 a ex:Gender_Male }
+# a previous version, from one source
+[] "{ ex:Ioannes_68 a ex:Gender_Male }"
     a crm:E17_Type_Assignment ;
     crm:P14_carried_out_by ex:emperor ;
     crm:P182_inverse_starts_after_or_with_the_end_of <#assignment-1> ;
     rdfs:label "Gender assignment by decree" .
 
-[] { ex:Ioannes_68 a ex:Gender_Male }
+# the same previous version, but from another source
+[] "{ ex:Ioannes_68 a ex:Gender_Male }"
     a crm:E17_Type_Assignment ;
     crm:P14_carried_out_by ex:Paphlagonian_family ;
     crm:P183_ends_before_the_start_of <#assignment-1> ;
     rdfs:label "Birth gender assignment" .
-
 ```
 
+
+### [RDF star for explanation and provenance in biological data](https://github.com/w3c/rdf-ucr/wiki/RDF-star-for-explanation-and-provenance-in-biological-data)
+
+This is a use case from the UniProt project which until today uses RDF/XML because of its syntactic sugar for RDF standard reification. Converting it to NNG is straightforward. The WG UC wiki argues that the use case calls for referential transparency, despite it belonging to the provenance category, and that it is unclear if types or tokens are to be preferred. We would argue that a token-bases approach at least doesn't do any harm.
+```turtle
+[] { <Q14739#SIP9E6E0C5B850FBF4F> up:fullName "3-beta-hydroxysterol Delta (14)-reductase" }
+    up:attribution [ up:manual true ;
+     		         up:evidence ECO:0000303 ;
+ 		             up:source citation:16784888 ] .
+```
+
+
+### [RDF star for labelled property graphs](https://github.com/w3c/rdf-ucr/wiki/RDF-star-for-labelled-property-graphs)
+
+This use case is about one of the prime drivers of the RDF-star standardization effort: improving compatibility between RDF and LPG. 
+As with most use cases it favors tokens over types, in this case emphasized by the fact that LPGs support multi-edges. Contrary to the UC wiki, which argues for an unclear situation, we see a need for referential transparency (but could just as well employ e.g. quoting semantics).   
+The use case is also interesting in that it explicitly mentions that the annotation mechanism shouldn't interact with named graphs. So it conflates two important topics.   
+However, as no details are provided we can only make up a very synthetic example combining named graphs from the application domain with nested graphs from the annotation domain.
+```turtle
+:Application_1 {
+    :Annotation_1 { :a :b :c } :d 1 .
+    :Annotation_2 { :a :b :c } :d 2 .
+
+
+
+prefix : <http://example.org/> 
+
+:Application_1 {
+    :Annotation_x { :a :b :c } :d :x .
+    :Annotation_y { :a :b :c } :d :y .
+}
+
+}
+```
+Of course, an application that has strong assumptions about the named graphs in its dataset might be irritated about named graphs that actually represent annotations. However, it can only be speculated about if such assumptions are harder to cater for than incorporating a new term type.
+
+Dydra's implementation currently stores all nesting relations (here described via `http://nng.org/transcludes`) in a separate graph. This graph is consulted about the semantics of each named graph when constructing a target graph. 
+```turtle
+<urn:dydra:default>             <http://nng.org/transcludes>    <http://ex.org/Application_1>   <http://nng.org/embeddings> .
+<http://ex.org/Application_1>   <http://nng.org/transcludes>    <http://ex.org/Annotation_y>    <http://nng.org/embeddings> .
+<http://ex.org/Application_1>   <http://nng.org/transcludes>    <http://ex.org/Annotation_x>    <http://nng.org/embeddings> .
+<http://ex.org/Annotation_y>    <http://ex.org/d>               <http://ex.org/y>               <http://ex.org/Application_1> .
+<http://ex.org/Annotation_x>    <http://ex.org/d>               <http://ex.org/x>               <http://ex.org/Application_1> .
+<http://ex.org/a>               <http://ex.org/b>               <http://ex.org/c>               <http://ex.org/Annotation_y> .
+<http://ex.org/a>               <http://ex.org/b>               <http://ex.org/c>               <http://ex.org/Annotation_x> .
+```
+
+
+
+
+### [RDF star for recording commit deltas to an RDF graph](https://github.com/w3c/rdf-ucr/wiki/RDF-star-for-recording-commit-deltas-to-an-RDF-graph) 
+
+The WG wiki argues that the use case calls for lists of triples, not triples - and we would argue that graphs are even more helpful - and full opacity (also of blank nodes).
+```turtle
+r:47e1cf2 a :Commit ; 
+    :graph r:geneology;
+    :time "2002-05-30T09:00:00"^^xsd:dateTime;
+    :delete [] " a:bob b:age 23 . " ;
+    :add [] " a:bob b:age 24 . a:bob b:gender b:male . " .
+r:47a54ad a :Commit ; 
+    :graph r:geneology;
+    :time "2002-06-07T09:00:00"^^xsd:dateTime;
+    :add [] {                                          # TODO we can't have nested quotes
+        [] " a:bob b:gender b:male " b:certainty 0.1 
+    }.
+r:47a54ae a :Commit ; 
+     :graph r:geneology;
+     :time "2002-06-07T09:00:01"^^xsd:dateTime;
+     :add [] {                                          # TODO we can't have nested quotes
+        [] " a:bob b:gender b:male " b:support _:x .
+     	_:x b:source b:news-of-the-world  ;
+     	    b:date "1999-04-01"^^xsd:date  . 
+ 	    [] " a:bob b:gender b:male " b:support _:y  .
+     	_:y b:source b:weekly-world-news > ;
+     	    b:date "2001-08-09"^^xsd:date  .
+     }
+```
+
+
+### [RDF‐star for Wikidata](https://github.com/w3c/rdf-ucr/wiki/RDF%E2%80%90star-for-Wikidata)
+
+There are different ways to model Wikidata. The UC wiki choses one in which the a main relation (one could also call it a shortcut, see below) is represented as a standard RDF triple, and variants are represented unasserted statements with appropriate annotations. The UC wiki identifies those annotated and unasserted statements as tokens, not types. It argues that it is unclear if those unasserted statements should be considered referentially transparent or opaque. We follow the principle "In dubio pro Open World" and treat them as referentially transparent, but unasserted `Report`s.
+```turtle
+[] { wd:USA wd:president wd:JoeBiden . }
+     wikibase:rank wikibase:PreferredRank ;
+     wd:start_date "2021-01-20"^^xsd:dateTime ;
+     wd:predecessor wd:DonaldTrump ;
+     prov:wasDerivedFrom wdref:a_reference , wdref:an_other_reference .
+
+[]"{ wd:USA wd:president wd:DonaldTrump . }"
+     wikibase:rank wikibase:NormalRank ;
+     wd:start_date "2017-01-20"^^xsd:dateTime ;
+     wd:start_date "2021-01-20"^^xsd:dateTime .
+```
 
 
 
@@ -38,15 +197,15 @@ ex:Ioannes_68 a crm:E21_Person , ex:Gender_Eunuch ;
 
 ### Descriptions and Situations (DnS) shortcut relations
 
-Descriptions and Situations (DnS) is an ontology design patterns that distinguishes the description of objects and the relations between these objects - not un-similar to the way Labeled Property Graphs model information. A particularly interesting concept is that of a "shortcut relation": a basic relation that captures the essential information hidden in a much more complex n-ary relation.  
+Descriptions and Situations (DnS) is an ontology design patterns that distinguishes the description of objects and the relations between these objects - not un-similar to the way Labeled Property Graphs model information. A particularly interesting concept is that of a "shortcut relation": a basic relation that captures the essential information hidden in a much more complex n-ary relation. Different projects from the cultural heritage domain use this approach: they model data in ways amenable to OWL reasoners, but add such shortcut relations to help users navigate the resulting often very complex structures.
 In the example below the central piece of information is that Alice visits the ISWC conference. That statement is annotated with links to background information like a detailed travel schedule and what she plans to do at the conference. 
 
 
 ```turtle
 :T1 {
     :Alice :travelsTo :ISWC23 .
-    THIS nng:predicate [ rdfs:seeAlso :S1 ,    # THIS graph self reference
-                                      :P1 ] .
+    THIS nng:relation [ rdfs:seeAlso :S1 ,    # THIS graph self reference
+                                     :P1 ] .
 } a :Travel .
 :S1 {
     :Schedule :startsAt :Hamburg ;
@@ -59,11 +218,10 @@ In the example below the central piece of information is that Alice visits the I
              :topic :MetaVisualization ;
              ...
 }
-
 ```
 
 ### Layers of Nesting Embedded in Named Graphs as we know them
-This example combines several orthogonal dimensions of annotation: application specific dimensions and unsound graph naming practices, administrative annotations intermixed with qualifying annotations.
+This example combines several orthogonal dimensions of annotation: application specific dimensions and unsound graph naming practices, and also administrative annotations intermixed with qualifying annotations.
 ```turtle
 prefix :    <http://ex.org/>
 prefix nng: <http://nng.io/>
@@ -78,10 +236,10 @@ prefix nng: <http://nng.io/>
             :X {
                 :Alice :buys :Car .
             } 
-            nng:subject [ :age 20 ] ;
-            nng:predicate [ :payment :Cash ;
+            nng:domain [ :age 20 ] ;
+            nng:relation [ :payment :Cash ;
                             :purpose :JoyRiding ] ;
-            nng:object [ :color :black ;
+            nng:range [ :color :black ;
                          :model :Coupe ] ;
             nng:graph [ :source :Denis ] .
         }
@@ -132,30 +290,37 @@ Even a much more precise variant via a [term literal](citationSemantics.md) is t
 ```turtle
 :LoisLane :loves []{":Superman"} .
 ```
-Here only the reference to Superman himself is referentially opaque - no need to apply the same mechanism to Lois Lane or the concept of love. However, term literals are still "at risk".
+Here only the reference to Superman himself is referentially opaque - no need to apply the same mechanism to Lois Lane or the concept of love. However, term literals are still "at risk".  
+An already available alternative would be to use to annotate the object in the relation with the intended interpretation.
+```turtle
+:S { :LoisLane :loves :Superman .
+      THIS nng:range [ :hasLexicalRepresentation ":Superman"^^xsd:string ] }
+```
+ That of course can't prevent undesired entailments, but it might still prove helpful in practice.
 
 
 ### Related Approaches
 
 #### RDFn
-Souri Das' examples stress the RDFn approach's virtues w.r.t. to resilience against updates and change. We think that nested graphs provide these very desirable properties as well.
+
+Examples for RDFn stress the approach's virtues w.r.t. to resilience against updates and change. Nested graphs provide these indeed very desirable properties as well.
 
 Add a second AliceBuysCar event, and add detail to the first, without changing the data topology
 ```turtle
 :Y {
     :X {
         :Alice :buys :Car .
-    } nng:subject [ :age 20 ]
-      nng:predicate [ :payment :Cash ;
+    } nng:domain [ :age 20 ]
+      nng:relation [ :payment :Cash ;
                       :purpose :JoyRiding ] ;
-      nng:object [ :color :black ;
+      nng:range [ :color :black ;
                    :model :Coupe ] ; 
                  nng:Interpretation ;       # disambiguating identification
       :source :Denis .
     :W {
         :V {
             :Alice :buys :Car .
-        } nng:subject [ :age 28 ] ;
+        } nng:domain [ :age 28 ] ;
           :source :Eve .
     } :todo :AddDetail .                    # add detail, then remove this nesting
 }                                           # without changing the data topology
@@ -184,8 +349,8 @@ Repeating an example from he [introduction](introexample.md):
 :X {
     :Alice :buys :Car .
 } 
-    nng:subject [ :age 20 ] ;
-    nng:object [ :color :black ;
+    nng:domain [ :age 20 ] ;
+    nng:range [ :color :black ;
                  :model :Coupe ] ;
     :payment :Cash ;
     :purpose :JoyRiding ;
@@ -198,8 +363,8 @@ A sloppy mapping to RDF-star:
 :Alice :buys :Car .
 << :Alice :buys :Car >> 
     rdf-star:hasOccurrence :X .
-:X  nng:subject [ :age 20 ] ;
-    nng:object [ :color :black ;
+:X  nng:domain [ :age 20 ] ;
+    nng:range [ :color :black ;
                  :model :Coupe ] ;
     :payment :Cash ;
     :purpose :JoyRiding ;
@@ -258,18 +423,18 @@ Graph literals provide an easy way to document RDF state verbatim in the most un
 :Y {
     :X {
         :Alice :buys :Car .
-    } nng:subject [ :age 20 ]
-      nng:predicate [ :payment :Cash ;
+    } nng:domain [ :age 20 ]
+      nng:relation [ :payment :Cash ;
                       :purpose :JoyRiding ] ;
-      nng:object [ :color :black ;
+      nng:range [ :color :black ;
                    :model :Coupe ] ;
       :source :Denis .
       nng:statedAs ":X {                    # documenting the original source
                         :Alice :buys :Car .
-                    } nng:subject [ :age 20 ]
-                      nng:predicate [ :payment :Cash ;
+                    } nng:domain [ :age 20 ]
+                      nng:relation [ :payment :Cash ;
                                       :purpose :JoyRiding ] ;
-                      nng:object [ :color :black ;
+                      nng:range [ :color :black ;
                                    :model :Coupe ] ;
                       :source :Denis ."^^nng:GraphLiteral .
 }

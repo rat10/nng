@@ -225,3 +225,4 @@ FROM <urn:dydra:default>
 which in Dydra's case is just the default graph, but other databases take a different approach, merging all named graphs into the default graph. This default behaviour again should be described in a dataset service description by a vocabulary TBD, as hinted above.
 
 
+[TODO] can [sd:UnionDefaultGraph](https://www.w3.org/TR/sparql11-service-description/#sd-uniondefaultgraph) help?
