@@ -1,7 +1,6 @@
 # Graph Literals and Inclusion
 
-```
-TODO
+<!-- TODO  a lot...
 
 a graph literal always represents *at least* a quote
 i.e. per default it's
@@ -14,23 +13,6 @@ consequently if a graph literal is included via an unknown property
 it can still be queried.
 to prevent even that, there's still xsd:string
 
-
-datatype
-    we should change that here and in a few other pages
-    graph literals can be of datatype 
-            rdf:ttl
-            rdf:json  (json-ld?)
-            rdf:nng
-            rdf:...   (is there more?)
-    term literals (if we get them) 
-            rdf:term  (or rdf:iri)
-datatype declarations can be omitted on included graph literals
-    if the datatype of the included literal is the same 
-    as of the including graph.
-so if you always work with nng, you never have to declare the type
-however, it has to be possible to specifically declare the type
-    as otherwise it would be impossible to preserve an
-    original encoding (which is a valid use case for literals)
 
 
 implementation
@@ -58,7 +40,14 @@ define a relation between
     one indirection that bridges the gap between
         the platonic ideal of the rdf model theory and
         the semantic web as we know it
-```
+
+
+what about normalization
+    with quoting? rather not
+    with records, reports?
+    yet another type of graph literals?
+
+-->
 
 
 
@@ -75,7 +64,7 @@ The literal-based inclusion mechanism ensures that statements with special seman
 
 We define a graph literal datatype, e.g.
 ```turtle
-":s :p :o. :a :b :c"^^nng:GraphLiteral
+":s :p :o. :a :b :c"^^nng:ttl
 ```
 which represents the 
 - referentially opaque
@@ -85,19 +74,24 @@ of an RDF graph.
 
 It can be used like in the following, quite uninspiring example:
 ```turtle
-:Alice :said ":s :p :o. :a :b :c"^^nng:GraphLiteral .
-":s :p :o. :a :b :c"^^nng:GraphLiteral :assertedSoFar :zeroTimes .
+:Alice :said ":s :p :o. :a :b :c"^^nng:ttl .
+":s :p :o. :a :b :c"^^nng:ttl :assertedSoFar :zeroTimes .
 ```
 Graph literals are the basic building block from which any specific semantics configurations can be derived. The respective mechanism is called *inclusion* and will be presented below.
 
 
-### Encoding
-The encoding of the RDF data in the literal has to follow the enclosing RDF graph, so the datatype does not specifically mention Turtle, JSON-LD etc.  
-> [TODO] 
->
-> that might become a problem, e.g. when mapping to triples. also the literal should be syntactically immutable. why not go the explicit way? 
-> we could make the datatype declaration optional. then a literal with undeclared datatype has to follow the enclosing document (or be considered invalid).
+### Datatype Encoding
 
+Graph literals should be supported in common serialization formats like Turtle, JSON-LD, N-Triples, N-Quads, RDF/XML, NNG etc. We use a made up `nng:ttl` datatype declaration in examples throughout this proposal, but the details have still to be worked out. 
+
+When including graph literals, e.g. `[]" :a :b :c" :d :e ."` it should be possible to omit the datatype declaration as long as the datatype of includ*ing* graph and includ*ed* graph literal match.
+> [TODO] The prototype implementation does support this in some cases, but not all.
+<!-- 
+so if you always work with nng, you never have to declare the type
+however, it has to be possible to specifically declare the type
+    as otherwise it would be impossible to preserve an
+    original encoding (which is a valid use case for literals)
+-->
 
 ### Prior Work
 Graph literals have been proposed before, e.g. by [Herman](https://www.w3.org/2009/07/NamedGraph.html) and [Zimmermann](https://lists.w3.org/Archives/Public/public-rdf-star/2021May/0038.html), to encode RDF graphs as literals, typed by a to be defined RDF literal datatype, e.g.:
@@ -145,13 +139,13 @@ nng:includes a rdf:Property,
 The following example includes a graph literal into another graph (local or not):
 
 ```turtle
-ex:Graph_1 nng:includes ":s :p :o . :u :v :w ."^^nng:GraphLiteral .
+ex:Graph_1 nng:includes ":s :p :o . :u :v :w ."^^nng:ttl .
 ```
 
 To include a graph literal into the local graph a syntactically more elegant approach is available, using a self-referencing identifier, `THIS` (see the section on [mappings](mappimg.md)), to refer to the enclosing nested graph:
 
 ```turtle
-THIS nng:includes ":s :p :o . :u :v :w ."^^nng:GraphLiteral .
+THIS nng:includes ":s :p :o . :u :v :w ."^^nng:ttl .
 ```
 
 Inclusion means that the graph can be assumed to contain the statements from the included literal. Those statements therefore can not only be queried but also reasoned on, new entailments can be derived, etc. However, new entailments can not be written back into the graph literal. Therefore the only guarantee that this mechanism provides is a reference to an original state.

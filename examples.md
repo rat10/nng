@@ -15,7 +15,7 @@ SELECT * WHERE {
    ?g { ?s ?p ?o } rdf:source ?source . 
 }
 ```
-[TODO] check!
+[TODO] check query syntax!
 
 
 ### [Describing a Union of Changes to a Named Graph](https://github.com/w3c/rdf-ucr/wiki/Describing-a-Union-of-Changes-to-a-Named-Graph)
@@ -62,7 +62,7 @@ That we would translate to NNG in another way:
      :retractedIn <data?version=2> .
 
 [] { []" <7d5d0d651caa> :subject <semantics> "
-      :suggestedBy <classifyer> }
+        :suggestedBy <classifyer> } ;
       :statedIn <data?version=2> .   
 ```
 
@@ -118,16 +118,6 @@ However, as no details are provided we can only make up a very synthetic example
 :Application_1 {
     :Annotation_1 { :a :b :c } :d 1 .
     :Annotation_2 { :a :b :c } :d 2 .
-
-
-
-prefix : <http://example.org/> 
-
-:Application_1 {
-    :Annotation_x { :a :b :c } :d :x .
-    :Annotation_y { :a :b :c } :d :y .
-}
-
 }
 ```
 Of course, an application that has strong assumptions about the named graphs in its dataset might be irritated about named graphs that actually represent annotations. However, it can only be speculated about if such assumptions are harder to cater for than incorporating a new term type.
@@ -158,13 +148,13 @@ r:47e1cf2 a :Commit ;
 r:47a54ad a :Commit ; 
     :graph r:geneology;
     :time "2002-06-07T09:00:00"^^xsd:dateTime;
-    :add [] {                                          # TODO we can't have nested quotes
+    :add [] {                               # TODO we don't have nested quotes yet
         [] " a:bob b:gender b:male " b:certainty 0.1 
     }.
 r:47a54ae a :Commit ; 
      :graph r:geneology;
      :time "2002-06-07T09:00:01"^^xsd:dateTime;
-     :add [] {                                          # TODO we can't have nested quotes
+     :add [] {                              # TODO we don't have nested quotes yet
         [] " a:bob b:gender b:male " b:support _:x .
      	_:x b:source b:news-of-the-world  ;
      	    b:date "1999-04-01"^^xsd:date  . 
@@ -291,31 +281,29 @@ Even a much more precise variant via a [term literal](citationSemantics.md) is t
 :LoisLane :loves []{":Superman"} .
 ```
 Here only the reference to Superman himself is referentially opaque - no need to apply the same mechanism to Lois Lane or the concept of love. However, term literals are still "at risk".  
-An already available alternative would be to use to annotate the object in the relation with the intended interpretation.
+An already available alternative would be to annotate the object in the relation with the intended interpretation.
 ```turtle
 :S { :LoisLane :loves :Superman .
       THIS nng:range [ :hasLexicalRepresentation ":Superman"^^xsd:string ] }
 ```
- That of course can't prevent undesired entailments, but it might still prove helpful in practice.
+That of course can't prevent undesired entailments, but it might still prove helpful in practice.
 
 
 ### Related Approaches
 
 #### RDFn
-
-Examples for RDFn stress the approach's virtues w.r.t. to resilience against updates and change. Nested graphs provide these indeed very desirable properties as well.
-
-Add a second AliceBuysCar event, and add detail to the first, without changing the data topology
+Examples for RDFn stress the approach's virtues w.r.t. to its resilience against updates and change. Nested graphs provide these indeed very desirable properties as well.
+The following example adds a second AliceBuysCar event, and adds detail to the first, without changing the data topology or requiring a re-write of queries:
 ```turtle
 :Y {
     :X {
         :Alice :buys :Car .
     } nng:domain [ :age 20 ]
       nng:relation [ :payment :Cash ;
-                      :purpose :JoyRiding ] ;
+                     :purpose :JoyRiding ] ;
       nng:range [ :color :black ;
-                   :model :Coupe ] ; 
-                 nng:Interpretation ;       # disambiguating identification
+                  :model :Coupe ] ; 
+                  nng:Interpretation ;       # disambiguating identification
       :source :Denis .
     :W {
         :V {
@@ -327,23 +315,40 @@ Add a second AliceBuysCar event, and add detail to the first, without changing t
 ```
 
 #### OneGraph
-The OneGraph paper discusses a problem related to the type/token distinction. Annotations on types suffer from dangling link problems and unclear belonging when multiple occurrences have been annotated and some of them get removed from the data. We believe that our token-based approach provides a robust basis in which this problem can't occur.
-[TODO]
+The [OneGraph](https://www.semantic-web-journal.net/system/files/swj3273.pdf) paper in Section 3.1 discusses problems related to the type/token distinction. Annotations on types suffer from unclear belonging and dangling link problems when the same statement occurs multiple times (or rather: is annotated multiple times in different ways.
 
-#### Labelled Property Graph 
-Object attributes and relations between objects
-[TODO]
+The following example records two different sources for the statement that Alice knows Bob. Since both annotations are comprised of multiple parts it is impossible to attach them all to one statement (type), as e.g. in this case source and date would be intermixed. A sound solution requires to either create an occurrence identifier for each annotation, or - in case that step was omitted with the first annotation - a re-modelling of existing data or a 'raggy' annotation structure, sometimes with occurrence identifier, sometimes without. NNG avoids this problem because it always creates a token identifier. 
+```turtle
+:sid_1 { :Alice :knows :Bob . }
+    :since 2020 ;
+    :statedBy :NYTimes .
+:sid_2 { :Alice :knows :Bob . }
+    :since 2021 ;
+    :statedBy :TheGuardian .
+```
+The problem gets even more complex if an annotation occurrence aims to annotate the type without asserting it. NNG would model this via graph literals, whereas RDF-star provides no immediate solution.
+```turtle
+[] { :Bob :cooks :Good .}
+    :source :Denis .        # Denis likes Bob's cooking .
+[] "{ :Bob :cooks :Good .}"
+    :source :Daisy .        # Daisy at least wouldn't want to recommend him.
+```
+RDF-star would assert the statement and add two triple terms with the respective annotations. It would however remain unclear that Daisy did never intend to actually assert the statement. Even worse, it would require elaborate bookkeeping to ensure that in case Denis annotation is removed, also the asserted triple is removed - or, respectively, that it remains if only Daisy's annotation is deleted. 
+
+The token-based approach of NNG provides a basis on which these problems can't occur.
+
+#### Labelled Property Graph (LPG)
+LPGs employ a modelling style that differentiates between two kinds of relations: attribute relations that describe objects, and object relations that describe relations between objects. This has some similarity to the Descriptions and Situations (DnS) pattern described above.
+NNGs can help capture the LPG style of modelling in RDF by concentrating object descriptions in nested graphs. 
 
 #### N-Ary Relations
-N-ary relations have a tendency to get rather un-wieldy. Branching out requires to change existing statements. NNG can help with both.
-[TODO]
+N-ary relations have a tendency to get rather un-wieldy, branching out and providing the unfamiliar user with little help to find beginning, center and end. Ontology design patterns optimized for OWL reasoning are a notorious example, but any mildly complex piece of information will quickly suffer from how little structure and boundaries RDF provides beyond graphs and lists. Nested graphs can help to structure information into easily recognizable entities and still provide all the flexibility of the underlying graph formalism.  
 
 #### Singleton Properties
-With NNG the core of an annotated relation, its unannotated form, is front and center, providing a distinct usability advantage over the semantically very sound singleton properties approach.
-[TODO]
+With NNG the core of an annotated relation - its unannotated form - is front and center. This provides a distinct usability advantage over singleton properties approach. Singleton properties do indeed provide a semantically very sound alternative to NNG, but suffer from the lack of support for graphs and the fact that they make the relation type hard to identify.
 
 #### RDF-star 
-Repeating an example from he [introduction](introexample.md):
+Repeating an example from the [introduction](introexample.md):
 
 ```turtle
 :X {
@@ -351,7 +356,7 @@ Repeating an example from he [introduction](introexample.md):
 } 
     nng:domain [ :age 20 ] ;
     nng:range [ :color :black ;
-                 :model :Coupe ] ;
+                :model :Coupe ] ;
     :payment :Cash ;
     :purpose :JoyRiding ;
     :source :Denis .
@@ -365,7 +370,7 @@ A sloppy mapping to RDF-star:
     rdf-star:hasOccurrence :X .
 :X  nng:domain [ :age 20 ] ;
     nng:range [ :color :black ;
-                 :model :Coupe ] ;
+                :model :Coupe ] ;
     :payment :Cash ;
     :purpose :JoyRiding ;
     :source :Denis .
@@ -408,14 +413,8 @@ Graph literals provide an elegant solution to some hard problems.
 ```
 Less syntactic sugar, same meaning:
 ```turtle
-:Bob :says [ nng:reports ":Moon :madeOf :Cheese"^^nng:GraphLiteral ]
+:Bob :says [ nng:reports ":Moon :madeOf :Cheese"^^nng:ttl ]
 ```
-
-
-#### Notation3 formulas
-We hope that graph literals provide everything needed to properly support N3 formulas in standard RDF, but we await a comment from the experts :)
-[TODO]
-
 
 #### Warrants, Versioning, Verifiable Credentials, Explainable AI
 Graph literals provide an easy way to document RDF state verbatim in the most unambiguous way.
@@ -425,22 +424,22 @@ Graph literals provide an easy way to document RDF state verbatim in the most un
         :Alice :buys :Car .
     } nng:domain [ :age 20 ]
       nng:relation [ :payment :Cash ;
-                      :purpose :JoyRiding ] ;
+                     :purpose :JoyRiding ] ;
       nng:range [ :color :black ;
-                   :model :Coupe ] ;
+                  :model :Coupe ] ;
       :source :Denis .
       nng:statedAs ":X {                    # documenting the original source
                         :Alice :buys :Car .
                     } nng:domain [ :age 20 ]
                       nng:relation [ :payment :Cash ;
-                                      :purpose :JoyRiding ] ;
+                                     :purpose :JoyRiding ] ;
                       nng:range [ :color :black ;
-                                   :model :Coupe ] ;
-                      :source :Denis ."^^nng:GraphLiteral .
+                                  :model :Coupe ] ;
+                      :source :Denis ."^^nng:ttl .
 }
 ```
 
-
 #### Reasoning on Graphs
 Graph literals provide a clear distinction between an abstract graph - as a literal - and its application. Reasoning over abstract graphs can be performed on literal types, saving it from the ambiguities of graph instantiation in practice. This effectively introduces a level of indirection that makes the distinction between the two realms explicit, but also links them explicitly - to the benefit of both.
-[TODO]
+
+Thereby graph literals provide the basis to e.g. support rule-based reasoning with Notation3 formulas in standard RDF, especially when using quotes. Likewise they might be useful in the context of the [RDF surfaces](https://arxiv.org/abs/2305.08476) project that aims to facilitate FOL reasoning on the Semantic Web.

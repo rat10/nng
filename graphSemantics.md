@@ -1,5 +1,14 @@
 # Named Graph Semantics
 
+<!-- 
+sound graph naming semantics are provided by
+  - the transclusion relation 
+  - the fragment identifiers
+  because they all have as domain a graph source
+  this is a semantics fixing per usage
+    that doesn't interfere with any other usage
+-->
+
 Nested Named Graphs are designed as an extension to RDF 1.1 named graphs. However this approach comes with two caveats: named graphs as specified in RDF 1.1 have no standard semantics, and their syntax doesn't support nesting. The latter problem is easy to dispel via a mapping - [transclusion](transclusion.md) and some [syntactic sugar](serialization.md) -, the former however it seems is an issue with many facets and not possible to resolve in a general way.
 
  The RDF 1.1 Working Group did spend a lot of effort on trying to standardize a semantics of named graphs in RDF but ultimately failed, as it proved impossible to get the various intuitions and implementations of the different stakeholders under one hood - see the [RDF 1.1 WG Note on Dataset Semantics](https://www.w3.org/TR/2014/NOTE-rdf11-datasets-20140225/) for more detail. This is contaminated terrain, but we assert that the risks are manageable if we don't fall into the same trap as the RDF 1.1 WG and demand too much. To ease backwards compatibility and not step on anybody's toes, the Nested Named Graphs proposal is designed in a a way that it doesn’t *need* to touch the semantics, or rather the lack thereof, of named graphs as specified in RDF 1.1.
@@ -7,9 +16,9 @@ Nested Named Graphs are designed as an extension to RDF 1.1 named graphs. Howeve
 This proposal favors a specific semantics and provides several different ways to introduce it, but it doesn't make any assumptions about the semantics of an enclosing named graph or even the whole dataset. This leaves implementors free to continue to use named graphs in any application-specific way they desire - the status quo of named graphs in RDF remains untouched.
 
 There are different ways to provide a semantics to graphs: 
-- a SPARQL service description can define a semantics for individual named graphs or a default semantics for all named graphs in a dataset
-- a graph naming semantics can be defined for the domain and/or range of properties
-- annotating a statement that refers to a graph can clarify with which semantics the reference is used
+- defining a semantics for individual named graphs or a default semantics for all named graphs in a dataset via SPARQL service descriptions
+- defining a graph naming semantics for the domain and/or range of properties
+- annotating a statement that refers to a graph to clarify with which semantics the reference is used
 - encoding graph names that follow a certain semantics with a .well-known URI scheme.
 
 As the RDF 1.1 WG hinted at in the above mentioned note, it is possible to describe the semantics employed in the use of named graphs as a default semantics of all named graphs contained in some dataset or on a per case basis, e.g. per individual named graph. Our proposal provides such a vocabulary to describe the semantics of named graphs. One way these semantics can be described is as being exactly the same as that of nested graphs, aligning the two mechanisms as to make them virtually indistinguishable.
@@ -37,10 +46,10 @@ If e.g. an application chooses to overload the graph name with more meaning, tha
 
 The following vocabulary provides ways to describe the semantics of graphs. We hope that it not only provides the necessary means to integrate Nested Named Graphs into RDF 1.1 datasets, but also helps to advance sound semantics for RDF 1.1 named graphs themselves.
 
-Note that a vocabulary to tackle the related issue of quotation versus interpretation semantics is defined in the section on [Citation Semantics](citationSemantics.md).
-Another related vocabulary to resolve ambiguity in identification is discussed in the section on [Identification Semantics](identification.md). The issue of ambiguous identification does not only concern named graphs, but any IRI in RDF, i.e. the question if an IRI is meant to refer to a network retrievable resource itself or to something that that resource is about. This, and a possible approach to its resolve, 
-
 We first define vocabularies to describe *identity*, *naming* and *mutability* of graphs. Then we finally define some *graph types*, namely named and nested graphs, using these vocabularies.
+
+Note that a vocabulary to tackle the related issue of quotation versus interpretation semantics is defined in the section on [Citation Semantics](citationSemantics.md).   
+Another related vocabulary to resolve ambiguity in identification is discussed in the section on [Identification Semantics](identification.md). The issue of ambiguous identification does not only concern named graphs, but any IRI in RDF, i.e. the question if an IRI is meant to refer to a network retrievable resource itself or to something that that resource is about.
 
 
 ### Graph Identity
@@ -91,7 +100,7 @@ nng:GraphSource a rdfs:Class ;
     rdfs:comment "An RDF graph source, defined as a "persistent yet mutable" source of RDF triples, see [RDF 1.1](https://www.w3.org/TR/rdf11-concepts/#change-over-time)." .
 
 nng:GraphType a rdfs:Class ;
-    rdfs:subClassOf nng:Graph ;       # TODO or rather owl:equivalentClass ?
+    rdfs:subClassOf nng:Graph ;
     rdfs:comment "An immutable graph, its type defined by its content." .
 ```
 
@@ -206,23 +215,11 @@ The following example defines all named graphs to be of type `nng:NestedGraph`, 
 Last not least a reasonably complete approach to named graph semantics should provide some means to specify if a dataset is to be interpreted as the merge of all of its named (and therein nested) graphs, or if each named graph is to be interpreted separately.
 
 One way to implement this might again be an extension to the [SPARQL 1.1 Service Description](http://www.w3.org/TR/sparql11-service-description/) vocabulary that allows to describe the intended semantics.
+To that end the [NNG prototype implementation](https://observablehq.com/@datagenous/nested-named-graphs) does support keywords `ALL`, `NAMED` and `DEFAULT` in the `FROM` clause of a query.
 
-> [TODO]  develop a suitable set of vocabulary terms 
+> [TODO] If the prototype doesn't support them, try <urn:dydra:default>, <urn:dydra:named> and <urn:dydra:all> instead.
+<!-- 
+TODO keywords: check that the prototype actually supports these keywords
 
-The [Dydra](https://dydra.com/home) graph database to the same effect implements a small set of special terms used in the prologue of a query . 
-To get all named graphs without needing a graph clause in the query, the prologue uses:
-```sparql
-FROM <urn:dydra:named>
-```
-or, to include the default graph as well:
-```sparql
-FROM <urn:dydra:all>
-```
-It also permits to explicitly use what has already been defined as default
-```sparql 
-FROM <urn:dydra:default>
-```
-which in Dydra's case is just the default graph, but other databases take a different approach, merging all named graphs into the default graph. This default behaviour again should be described in a dataset service description by a vocabulary TBD, as hinted above.
-
-
-[TODO] can [sd:UnionDefaultGraph](https://www.w3.org/TR/sparql11-service-description/#sd-uniondefaultgraph) help?
+TODO keywords: can [sd:UnionDefaultGraph](https://www.w3.org/TR/sparql11-service-description/#sd-uniondefaultgraph) help?
+-->

@@ -31,34 +31,36 @@ Fragment identifiers for RDF statements are defined as a small vocabulary. As a 
 # VOCABULARY
 
 nng:domain a rdf:Property;
-  rdfs:domain nng:NestedGraph ;
-  rdfs:range rdfs:Class ;
-  rdfs:comment "Addresses the subject of a statement, or all subjects of all statements in a graph source" .
+    rdfs:subPropertyOf rdfs:domain ;
+    rdfs:domain nng:NestedGraph ;
+    rdfs:range rdfs:Class ;
+    rdfs:comment "Refers to the subject of a statement, or all subjects of all statements in a graph source" .
 
 nng:relation a rdf:Property;
-  rdfs:domain nng:NestedGraph ;
-  rdfs:range rdfs:Class ;
-  rdfs:comment "Addresses the predicate of a statement, or all predicate of all statements in a graph source" .
+    rdfs:domain nng:NestedGraph ;
+    rdfs:range rdfs:Class ;
+    rdfs:comment "Refers to the predicate of a statement, or all predicates of all statements in a graph source" .
 
 nng:range a rdf:Property;
-  rdfs:domain nng:NestedGraph ;
-  rdfs:range rdfs:Class ;
-  rdfs:comment "Addresses the object of a statement, or all object of all statements in a graph source" .
+    rdfs:subPropertyOf rdfs:range ;
+    rdfs:domain nng:NestedGraph ;
+    rdfs:range rdfs:Class ;
+    rdfs:comment "Refers to the object of a statement, or all objects of all statements in a graph source" .
 
 nng:triple a rdf:Property;
-  rdfs:domain nng:NestedGraph ;
-  rdfs:range rdfs:Class ;
-  rdfs:comment "Addresses all statements in a graph source" .
+    rdfs:domain nng:NestedGraph ;
+    rdfs:range rdfs:Class ;
+    rdfs:comment "Refers to all statements in a graph source" .
 
 nng:graph a rdf:Property;
-  rdfs:domain nng:NestedGraph ;
-  rdfs:range rdfs:Class ;
-  rdfs:comment "Addresses a graph source" .
+    rdfs:domain nng:NestedGraph ;
+    rdfs:range rdfs:Class ;
+    rdfs:comment "Refers to a graph source" .
 
 nng:tree a rdf:Property;
-  rdfs:domain nng:NestedGraph ;
-  rdfs:range rdfs:Class ;
-  rdfs:comment "Addresses a graph source and all graph sources nested inside, recursively" .
+    rdfs:domain nng:NestedGraph ;
+    rdfs:range rdfs:Class ;
+    rdfs:comment "Refers to a graph source and all graph sources nested inside, recursively" .
 ```
 > [TODO] 
 >
@@ -97,7 +99,7 @@ Annotating multiple fragments is possible in the same way:
 ```
 -->
 
-Identification via fragment identifiers is distributive, i.e. it addresses each node of that type in the annotated graph. An annotation of all triples in a nested graph, instead of the nested graph itself, can therefore be invoked via the triple fragment identifier, like so:
+Identification via fragment identifiers is distributive, i.e. it refers to each node of that type in the annotated graph. An annotation of all triples in a nested graph, instead of the nested graph itself, can therefore be invoked via the triple fragment identifier, like so:
 
 ```turtle
 :G2 { :a :b :c . 
@@ -111,14 +113,13 @@ In the following example an RDF container is embedded inside an RDF container an
 
 ```turtle
 :Alice :owns []{ 
-    [ rdf:Bag; 
+    [ a rdf:Bag; 
       rdf:_1 :Book ; 
       rdf:_2 :Car ; 
       rdf:_3 :House ] .
     THIS nng:range :Possession . 
   }
 ```
-<!-- TODO test -->
 
 > [NOTE] 
 >

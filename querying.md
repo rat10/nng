@@ -163,7 +163,7 @@ A query MUST return RDF literals *included with asserted semantics* and it MUST 
 Explicitly asking for literal data with un-asserted semantics can be performed in two ways: either use a WITH modifier to the query or explicitly ask for the content of a literal.
 Any query asking specifically for data from a literal will get those results without having to select the literal type in a WITH clause.
 A query using the 'WITH' modifier will include results from all literals of that type:
-- LITERAL will include all ":s :p :o"^^nng:GraphLiteral and ":s"^^nng:TermLiteral literals, included or not
+- LITERAL will include all ":s :p :o"^^nng:ttl and ":s"^^nng:TermLiteral literals, included or not
 - INCLUDED will include all included literals, asserted and un-asserted, but not their LITERAL source
 - REPORT will include all unasserted transparent types
 
@@ -192,9 +192,9 @@ In a TSV/CSV query result set a value returned from an unasserted statement has 
 prefix : <http://ex.org/>
 prefix nng: <http://rat.io/nng/>
 
-:X nng:includes ":Alice :likes :Skiing"^^nng:GraphLiteral .
-:Bob :says ":Moon :madeOf :Cheese"^^nng:GraphLiteral .
-:Alice :said ":s :p :o. :a :b :c"^^nng:GraphLiteral .
+:X nng:includes ":Alice :likes :Skiing"^^nng:ttl .
+:Bob :says ":Moon :madeOf :Cheese"^^nng:ttl .
+:Alice :said ":s :p :o. :a :b :c"^^nng:ttl .
 [nng:name :Y, nng:semantics QUOTE]":ThisGraph a :Quote" .
 :LoisLane :loves [QUOTE]":Superman", :Skiing, [REPORT]":ClarkKent" .
 :Kid :loves [REPORT]":Superman" .
@@ -275,7 +275,7 @@ because the respective candidate is a literal
 
 If a query addresses a graph literal explicitly, its results are rendered like regular RDF.
 ```turtle
-:Alice :said ":s :p :o. :a :b :c"^^nng:GraphLiteral .
+:Alice :said ":s :p :o. :a :b :c"^^nng:ttl .
 ```
 [HELP]  i'd like to address the graph literal
     but how do i do that?

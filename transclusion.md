@@ -1,20 +1,10 @@
 # Nesting Graphs via Transclusion
 
+<!-- TODO what does it MEAN to transclude -->
 
-```
-TODO
-transclusion is not allowed to create circles
-    that can't happen in the nng syntax
-    but it can happen with explicit nesting statements
+Transclusion is the mechanism driving graph nesting. It imports the statements from a graph into the including graph. In that way it is very similar to `owl:imports`.
 
-transclusion semantics
-    it is transitive 
-        like owl:imports
-        unlike inclusion of graph literals
-
-```
-
-Transclusion is the mechanism driving graph nesting. It imports a graph into another graph. Transclusion is transitive: if the transcluded graph contains further transclusion directives, those are executed (i.e. transcluded) as well. A `TriG` example without extra syntactic support illustrates its application:
+Transclusion is transitive: if the transcluded graph contains further transclusion directives, those are executed (i.e. transcluded) as well. A `TriG` example without extra syntactic support illustrates its application:
 
 ```turtle
 :NG_2 nng:transcludes :NG_1 .
@@ -22,11 +12,8 @@ Transclusion is the mechanism driving graph nesting. It imports a graph into ano
 :NG_2 { :d :e :f }
 ```
 
-The location of the transclusion statement does matter. In the preceding example the transclusion directive is not visible, and therefore not executed, when inspecting :NG_2 in isolation.  
-<!-- 
-[TODO] discuss this with james
--->
-In the following example :NG_2 always includes :NG_1:
+The location of the transclusion statement *does* matter. In the preceding example the transclusion directive is not visible, and therefore not executed, when inspecting :NG_2 in isolation.  
+In the following example :NG_2 always transcludes :NG_1:
 
 ```turtle
 
@@ -38,7 +25,7 @@ In the following example :NG_2 always includes :NG_1:
 ```
 
 
-### Syntactic Sugar
+## Syntactic Sugar
 
 Explicitly stating a transclusion via an `nng:transcludes` relation is not necessary when the [NNG syntax](serialization.md) is used, like in the following example:
 
@@ -52,16 +39,14 @@ Explicitly stating a transclusion via an `nng:transcludes` relation is not neces
 
 ## Inheritance of Annotations
 
-Annotations are inherited if they target the whole graph. 
-That is the case if they use:
+Transclusion doesn't mean that annotations are inherited, neither on terms, triples or graphs. The one exception is the `nng:tree` [fragment identifier](fragments.md): annotations using `nng:tree` annotate the graph and all transcluded graphs.
 
-- either no [fragment identifier](fragments.md) at all
-- or the `nng:graph` fragment identifier.
+## Circular Transclusion
 
-Annotations on individual nodes - subject, predicate, object or triples - in a nested graph are not inherited by graphs nested as such nodes.
+Transclusion relations are not allowed to create circular references. That can't happen in the NNG syntax, but when using explicit nesting statements.
 
 
-### Transclusion vs Inclusion vs owl:imports
+## Transclusion vs Inclusion vs owl:imports
 
 The differences to the [inclusion](graphLiterals.md) mechanism is that 
 - inclusion is defined on graph literals, whereas transclusion is defined on graph sources, and
@@ -80,7 +65,7 @@ Turtle Syntax
 -->
 
 
-### Vocabulary
+## Vocabulary
 
 The `nng:transcludes` property is defined as:
 ```turtle

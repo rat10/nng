@@ -1,11 +1,7 @@
 # Nested Named Graphs (NNG)
-```
- _____ ___  ____   ___  
-|_   _/ _ \|  _ \ / _ \ 
-  | || | | | | | | | | |
-  | || |_| | |_| | |_| |
-  |_| \___/|____/ \___/ 
-                        
+
+<!--
+TODO a lot...
 
 Querying is still in a rather sorry state.
 The rest looks promising...
@@ -13,10 +9,11 @@ The rest looks promising...
 define principal relation
     (not only in mappings.md)
 
-what about normalization
-    with quoting? rather not
-    with records, reports?
-    yet another type of graph literals?
+
+inheritance of annotations on transcluded graphs
+    mention
+    formalize
+
 
 it's got to be    b/c 
   tokens          qualification + administration
@@ -27,44 +24,19 @@ it's got to be    b/c
   nesting         resilience against updates, n dimensions
 
 
-THIS reference
-    more then just syntactic sugar
-    provides easy localization and concentration
-        to annotations
-
-sound graph naming semantics are provided by
-  - the transclusion relation 
-  - the fragment identifiers
-  because they all have as domain a graph source
-  this is a semantics fixing per usage
-    that doesn't interfere with any other usage
-  
-```
-<!--
-
-inheritance of annotations on transcluded graphs
-    mention
-    formalize
-
-how does annotating outside a nested graph propagate
+how does annotating outside a nested graph propagate?
   putting annotations in an outer graph 
         or even the default graph
       would limit the load on reifying annotations
-      can we use that?
-  
--->
+  can we use that?
+    no, this is a question of visibility
+    annotations located in the default graph are not necessarily 
+      visible inside a named graph
+      that depends on the query
 
 
-<!--
-CONSOLE
-  what is the LOG supposed to describe?
-    <urn:dydra:default> <http://segraph.org/LOG> <http://example.org/X> .
--->
 
-<!--
-TODO 
-where to put this note ?
-
+TODO  where to put this note ?
 > [NOTE] 
 >
 > Membership in a nested graph is understood here to be an annotation in itself. However, that means that in this paradigm there are no un-annotated types anymore (the RDF spec doesn't discuss graph sources in much detail and only gives an informal description; however, this seems to be a necessary consequence of the concept). Types are instead established on demand, through queries and other means of selection and focus, and their type depends on the constraints expressed in such operations. If no other constraints are expressed than on the content of the graph itself, i.e. if annotations on the graph are not considered, then a type akin to the RDF notion of a graph type is established. This approach to typing might be characterized as extremely late binding.
@@ -173,7 +145,7 @@ The underlying mechanism of configurable inclusion of [graph literals](graphLite
 
 
 ## Querying
-[TODO] 
+TODO querying
 
 [querying](querying.md)
 
@@ -208,7 +180,7 @@ The finer details of this proposal are discussed in separate sections:
 - [mappings to basic triples](mappings.md)  
   a lossless translation from NNG to standard triples
 - [querying](querying.md)  
-  TODO still a mess
+  TODO querying still a mess
 
 
 - [graph literals](graphLiterals.md)  
@@ -236,7 +208,7 @@ Our proposal defines the semantics of nested graphs in a way reflecting users in
 Note that a similar approach was already proposed by Hayes in 2011 [10] and in our opinion it not only makes sense but is a necessary step forward towards an RDF semantics that actually captures the intuitions and makes sense to non-logicians. It is in our proposal designed as *an additional layer*, that *doesn't change* the semantics of RDF *but extends* it towards actual practice.
 
 <!-- 
-[TODO] check the RDF 1.1 dataset note for which of the variants proposed there matches our intuitions the best. probably the one reflecting SPARQL semantics
+TODO check the RDF 1.1 dataset note for which of the variants proposed there matches our intuitions the best. probably the one reflecting SPARQL semantics
 -->
 
 
@@ -261,7 +233,7 @@ One thing we learned from this huge corpus of works is that the one magic trick 
 - *named graphs* are almost a topic of there own. The argument that they can't be used because they have no standardized semantics and different implementations use them in different ways has to be countered with the simple fact that we don't need them to all have the same semantics - it's enough if they describe their semantics in a standardized way. Some argue that graphs are a grouping device and can't be used for singleton graphs, but we disagree: proper indexing solves that problem on the technical level, and on the practical level we see not one aspect that is exclusively concerned with only single or only multiple statements. Then there's also the "but we use graphs for X, so it can't be used for Y" argument. This is only true as long as they are understood as a flat and one-dimensional structure, but that doesn't need to be the case as our nesting approach shows.
 - *separation of concerns*: don't try to solve all problems with only one mechanism. Many orthogonal needs concerning topics of knowledge representation, reasoning, implementation, etc have to be met. Trying to stuff everything in one device will only lead to more need for disambiguating triples, and more confusion. Instead an 80/20 approach is needed that caters for mainstream use cases first, but doesn't forget to serve outliers with proper extensions.
 - *monotonicity* and qualification: the Open World design of RDF requires that no statement can modify the truth value of another statement. This has long been considered as making it very risky, if not impossible, to annotate statements directly. Any indirections however will inevitably lead to subtle implications that make it very hard to pin down exactly the meaning of an annotation. We go the opposite route and claim that any annotation just adds more detail and is fair game as long as it doesn't outright call the annotated statement false - the former is indeed the whole point of describing the world in RDF, whereas the latter is still forbidden. 
-    [TODO] link to monotonicity.md ?
+<!-- TODO link to ramblings/monotonicity.md ? -->
 - *don't break user's intuitions*: this one is not new, but it can't be repeated often enough. Semantics is an elusive beast, exceptionally prone to misunderstandings and contextual shape-shifting. If a formalism doesn't manage to capture the most prevalent intuitions intuitively, it is almost guaranteed to be mis-used in practice. This has happened many times - see RDF standard reification, the Named Graph semantics by Carroll et al 2005, RDF-stars completely ignored TEP-mechanism - and it takes a lot of self-scrutiny to get right.
 
 <!--

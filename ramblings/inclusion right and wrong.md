@@ -42,21 +42,21 @@ _:b29                <http://nng.org/includes>    _:b30                         
 ## right
                
 <http://ex.org/s>    <http://ex.org/p>            <http://ex.org/o>                _:b29 .
-_:b30                <http://nng.org/records>      ":a :b :c"^^nng:GraphLiteral    _:b29 .
+_:b30                <http://nng.org/records>      ":a :b :c"^^nng:ttl    _:b29 .
 _:b30                <http://ex.org/q>            <http://ex.org/w>                _:b29 .
 
 ### herleitung: the following snippets are all equivalent
 
-:Bob :claims [ nng:includes ":s :p :o. :a :b :c"^^nng:GraphLiteral 
+:Bob :claims [ nng:includes ":s :p :o. :a :b :c"^^nng:ttl 
                nng:semantics nng:App ] 
 
-:Bob :claims [nng:APP]":s :p :o. :a :b :c"^^nng:GraphLiteral
+:Bob :claims [nng:APP]":s :p :o. :a :b :c"^^nng:ttl
 
-:Bob :claims [ nng:apps ":s :p :o. :a :b :c"^^nng:GraphLiteral ]
+:Bob :claims [ nng:apps ":s :p :o. :a :b :c"^^nng:ttl ]
     # inventing a property nng:apps analogous to nng:quotes|reports|etc
 
 :Bob :claims _:b1 .
-_:b1 nng:apps ":s :p :o. :a :b :c"^^nng:GraphLiteral . 
+_:b1 nng:apps ":s :p :o. :a :b :c"^^nng:ttl . 
 
 ### implementation detail
     # you might do the following to store graph literals as proper graphs

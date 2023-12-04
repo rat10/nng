@@ -80,7 +80,7 @@ prefix nng: <http://nng.io/>
 []{
   :s :p :o .
   [:X nng:Test]              <--- !!!
-    " :a :b :c "^^nng:GraphLiteral
+    " :a :b :c "^^nng:ttl
         :d :e.
   THIS :g :h .
   :Y { :u :v :w }
@@ -208,19 +208,19 @@ _:b29                <http://nng.org/includes>    _:b30                         
                
 <http://ex.org/s>    <http://ex.org/p>            <http://ex.org/o>                _:b29 .
 _:b30                <http://ex.org/q>            <http://ex.org/w>                _:b29 .
-_:b30                <http://nng.org/records>      ":a :b :c"^^nng:GraphLiteral    _:b29 .
+_:b30                <http://nng.org/records>      ":a :b :c"^^nng:ttl    _:b29 .
 
 ### because
 
-:Bob :claims [ nng:includes ":s :p :o. :a :b :c"^^nng:GraphLiteral 
+:Bob :claims [ nng:includes ":s :p :o. :a :b :c"^^nng:ttl 
                nng:semantics nng:App ] 
 
-:Bob :claims [nng:APP]":s :p :o. :a :b :c"^^nng:GraphLiteral
+:Bob :claims [nng:APP]":s :p :o. :a :b :c"^^nng:ttl
 
-:Bob :claims [ nng:apps ":s :p :o. :a :b :c"^^nng:GraphLiteral ]
+:Bob :claims [ nng:apps ":s :p :o. :a :b :c"^^nng:ttl ]
 
 :Bob :claims _:b1 .
-_:b1 nng:apps ":s :p :o. :a :b :c"^^nng:GraphLiteral .
+_:b1 nng:apps ":s :p :o. :a :b :c"^^nng:ttl .
 
 ### implementation detail
 

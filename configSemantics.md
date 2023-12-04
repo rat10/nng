@@ -1,19 +1,5 @@
 # Configurable Semantics
 
-<!--
-```
- _____ ___  ____   ___  
-|_   _/ _ \|  _ \ / _ \ 
-  | || | | | | | | | | |
-  | || |_| | |_| | |_| |
-  |_| \___/|____/ \___/ 
-                        
-
-semantics per property
-term semantics per annotation
-
--->
-
 We present here a vocabulary to implement configurable semantics via the inclusion of graph literals. This is rather a proof of concept than a definite proposal, and predominantly meant to illustrate the potential of this approach.
 
 The semantics of RDF is designed to reflect the realities of a shared and decentralized information system spanning the whole world: no one ever has a complete grasp on the data, people use different names to refer to the same thing, no one is entitled to change the truth value of someone else's data, what is not in the data at hand may nonetheless be true, etc. Some of these criteria have names, like the Open World Assumption (OWA) or the No Unique Name Assumption (NUNA). Some, like referential transparency, are baked so deeply into the formalism that they a barely noticed. Some only become visible through the absence of certain constructs like e.g. negation.
@@ -125,7 +111,7 @@ The practical problem that any approach on configurable semantics has to solve i
 The inclusion mechanism allows to import graph literals with extremely restricted semantics. Adding to the inclusion a semantics instruction allows to tailor the semantics of the included graph to the desired effect. We already gave the following example:
 ```turtle
 THIS nng:includes [
-    rdf:value ":s :p :o"^^nng:GraphLiteral ;
+    rdf:value ":s :p :o"^^nng:ttl ;
     nng:semantics nng:APP
 ] .
 ```
@@ -136,16 +122,16 @@ nng:includesAPP rdfs:subPropertyOf nng:includes ;
 ```
 This allows a streamlined inclusion of RDF data into a graph with very specific semantics.
 ```turtle
-THIS nng:includesAPP ":s :p :o"^^nng:GraphLiteral .
+THIS nng:includesAPP ":s :p :o"^^nng:ttl .
 ```
 Integrating such inclusions into regular RDF assertions is rather seamless as well, e.g.:
 ```turtle
-:Bob :claims [ nng:includesCIT ":s :p :o"^^nng:GraphLiteral ].
+:Bob :claims [ nng:includesCIT ":s :p :o"^^nng:ttl ].
 ```
 
 Tailored semantics can be defined from the building blocks provided so far. We might for example start from the following construct, which expresses that the list of Alice's things follows the usual application intuitions, i.e. it is not concerned with syntactic fidelity, it is complete and the unique name assumption applies. We call it `ClosedList`:
 ```turtle
-:Alice :has [ rdf:value "(:D :E :F)"^^nng:GraphLiteral ;
+:Alice :has [ rdf:value "(:D :E :F)"^^nng:ttl ;
               nng:semantics nng:Interpretation ,
                             nng:UNA ,
                             nng:CWA ]
@@ -159,7 +145,7 @@ ex:ClosedList a nng:SemanticsProfile ;
 ```
 And apply it:
 ```turtle
-:Alice :has [ rdf:value "( :D :E :F)"^^nng:GraphLiteral ;
+:Alice :has [ rdf:value "( :D :E :F)"^^nng:ttl ;
               nng:semantics ex:ClosedList ]
 ```
 That's still not very elegant, so let's define a property:
@@ -169,7 +155,7 @@ ex:includesClosedList rdfs:subPropertyOf nng:includes ;
 ```
 And apply that:
 ```turtle
-:Alice :has [ ex:includesClosedList "( :D :E :F )"^^nng:GraphLiteral ]
+:Alice :has [ ex:includesClosedList "( :D :E :F )"^^nng:ttl ]
 ```
 That's of course a lot of effort for one list, but it can pay off in an application context where we know that certain data sources are indeed complete and well kept and therefore it's safe to overrule the integration focused standard semantics of RDF.
 
@@ -210,3 +196,8 @@ Here the square bracket prefix notation is used not to name the term - there's n
 > This syntactic sugar is not solidly defined yet. It would be nice to have but still needs some work.
 > A slightly less daring, but also less succinct variant would be a simple property list combined with a term literal:
 >    [nng:semantics nng:Opaque]":Superman"
+
+<!-- 
+    TODO too may mentions of term literals 
+          at least three times
+          that needs some consolidation -->

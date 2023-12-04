@@ -4,7 +4,7 @@ RDF literals can be used to introduce RDF with non-standard semantics into the d
 
 To introduce a graph with specific semantics it is *included* from a graph literal, e.g.:
 ```turtle
-:Alice :said [ nng:includes ":s :p :o. :a :b :c"^^nng:GraphLiteral 
+:Alice :said [ nng:includes ":s :p :o. :a :b :c"^^nng:ttl 
                nng:semantics nng:Quote ] 
 ```
 If no semantics is specified, the graph literal is included according to regular RDF semantics, just like `owl:imports` includes an RDF ontology into a graph.
@@ -13,7 +13,7 @@ The semantics of the inclusion specify which operations may be performed on the 
 
 To prevent problems with monotonicity, specific inclusion properties for each semantics can be specified, e.g.
 ```turtle
-:Alice :said [ nng:quotes ":s :p :o. :a :b :c"^^nng:GraphLiteral ]
+:Alice :said [ nng:quotes ":s :p :o. :a :b :c"^^nng:ttl ]
 ```
 This provides an extra guarantee that no entailments are derived from the included graph before a semantics configuration has been retrieved that might forbid such an operation. 
 
@@ -138,14 +138,14 @@ nng:states a rdf:Property ;
 ```
 To safe us from discussions about what Bob said verbatim, but concentrate on the meaning of what he said, we would reformulate the above assertion as:
 ```
-:Bob nng:states ":Moon :madeOf :Cheese"^^nng:GraphLiteral .
+:Bob nng:states ":Moon :madeOf :Cheese"^^nng:ttl .
 ```
 Again, the graph literal is not asserted (and we have no intention to do so), but we are also not bound or even fixated on its syntactic accuracy. We just get along the fact.
 
 To be free in the choice of properties, the following modelling primitive can be used:
 ```
 :Bob :uttered [
-    rdf:value ":Moon :madeOf :Cheese"^^nng:GraphLiteral ;
+    rdf:value ":Moon :madeOf :Cheese"^^nng:ttl ;
     a nng:StatementGraph .
 ] 
 ```
@@ -178,7 +178,7 @@ In a more specific arrangement we might want to document the revision history of
 #### Literal
 The bare literal, besides its function as a building block for the inclusion mechanism, may find uses on its own, e.g. to keep graphs around that have not been properly defined yet
 ```turtle
-:G1 rdf:value " :x :y :z ."^^nng:GraphLiteral ;
+:G1 rdf:value " :x :y :z ."^^nng:ttl ;
     :status :Unconfirmed .
 ```
 
@@ -194,12 +194,12 @@ nng:statedAs a rdf:Property ;
 
 The following example shows how this can be used to document some normalization:
 ```
-[]{ :s :p :o } nng:statedAs ":S :p :O"^^nng:GraphLiteral .
+[]{ :s :p :o } nng:statedAs ":S :p :O"^^nng:ttl .
 ```
 In the following example the literal is accompanied by a hash value to improve security:
 ```
 []{ :s :p :o } nng:statedAs [
-    rdf:value ":S :p :O"^^nng:GraphLiteral ;
+    rdf:value ":S :p :O"^^nng:ttl ;
     nng:hash "4958b2dad87fef40b4b4c25ab9ae72b2"^^MD5
 ]
 ```
@@ -216,7 +216,8 @@ So far only graph literals have been discussed, but also term literals might pro
 :LoisLane :loves [Quote]":Superman" .
 ```
 Note how references to Lois Lane and the concept of loving are still referentially transparent, as they should be. However, support for term literals is still an open [issue](https://github.com/rat10/sg/issues/2).  
-[TODO] don't forget to update when this is decided
+<!-- 
+    TODO don't forget to update when term literal is decided -->
 
 Also, as an alternative approach the transparent term may be annotated to indicate its special semantics. That can't prevent undesired entailments, but it still provides an account of the intended meaning.
 ```turtle
@@ -248,8 +249,9 @@ the statement `:Alice :buys :Car` is interpreted exactly as if stated in a regul
 
 ## Defining a Semantics
 
-A [vocabulary](configSemantics.md) is provided to define the precise semantics of `REPORT`, `RECORD`, `Quote`  
-[TODO] we should actually do that in the vocabulary definition above  
+A [vocabulary](configSemantics.md) is provided to define the precise semantics of `REPORT`, `RECORD`, `QUOTE`  
+<!-- 
+    TODO we should actually do that in the vocabulary definition above -->
 and some other configurations like e.g. closed world and unique name assumption. We envision extensions of this mechanism towards e.g. lists and other shapes with more predictable properties than the open world semantics of RDF can provide, and also for close-to-the-metal applications like versioning, verifiable credentials, etc.
 
 Such semantics will not have the benefit of built-in syntactic sugar nor the pre-defined semantics indicators, but they can still be encoded quite concisely, using the square bracket syntactic sugar together with namespaced identifiers, e.g.
@@ -258,7 +260,7 @@ Such semantics will not have the benefit of built-in syntactic sugar nor the pre
 ```
 if an unabbreviated form
 ```turtle
-:Bob :claims [ nng:includes ":s :p :o. :a :b :c"^^nng:GraphLiteral 
+:Bob :claims [ nng:includes ":s :p :o. :a :b :c"^^nng:ttl 
                nng:semantics nng:App ] 
 ```
 is considered too verbose.

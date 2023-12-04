@@ -1,5 +1,9 @@
 # Introduction by Example
 
+<!-- 
+    TODO  an example with THIS
+-->
+
 The following examples aim to provide a quick introduction into the user facing mechanics of Nested Named Graphs.
 
 
@@ -7,24 +11,24 @@ The following examples aim to provide a quick introduction into the user facing 
 
 A nested graph, named by a blank node:
 ```turtle
-[] {:Alice :buys :Car}
+[] {:Alice :buys :Car} .
 ```
 A nested graph with an explicitly given name:
 ```turtle
-:X {:Alice :buys :Car}
+:X {:Alice :buys :Car} .
 ```
 Two (different) nested graphs, named by (different) blank nodes:
 ```turtle
-[] {:Alice :buys :Car}
-[] {:Alice :buys :Car}
+[] {:Alice :buys :Car} .
+[] {:Alice :buys :Car} .
 ```
 Some nested nested graphs, all with different names (they are tokens, not types):
 ```turtle
 :NG_1 {
     []{
         :Alice :buys :Car .
-        []{:Alice :buys :Car}
-        :Y {:Alice :buys :Car}
+        []{:Alice :buys :Car} .
+        :Y {:Alice :buys :Car} .
     }
 }
 ```
@@ -51,12 +55,12 @@ Others provide statement identifiers additionally to graph identifiers.
 
 
 ## Nesting via Transclusion
-[TODO]
+TODO transclusion example
 
 
 
 ## Citation via Inclusion
-[TODO]
+TODO inclusion example
 
 
 
@@ -78,21 +82,21 @@ A bit like property graphs:
 :X {:Alice :buys :Car} .
 :X nng:domain [
     :age 20
-]
+] .
 :X nng:relation [
     :payment :Cash ;
     :purpose :JoyRiding                     # ambivalence, could also be object property
-]
+] .
 :X nng:range [
     :color :black ;
     :model :Coupe
-]
+] .
 :X nng:triple [
-    ex:void ex:void                         # forEach semantics, not needed here
-]
+    rdf:nil rdf:nil                        # forEach semantics, not needed here
+] .
 :X nng:graph [
     :source :Denis
-]
+] .
 ```
 
 ## A compact and less pedantic version
@@ -114,15 +118,15 @@ prefix nng: <http://nng.io/>
 
 As N-Quads:
 ```turtle
-<http://ex.org/Alice>   <http://ex.org/buys>        <http://ex.org/Car>                                 <http://ex.org/X> .
-<http://ex.org/X>       <http://nng.io/subject>     _:o-78                                              .
-_:o-78                  <http://ex.org/age>         "20"^^<http://www.w3.org/2001/XMLSchema#integer>    .
-<http://ex.org/X>       <http://nng.io/object>      _:o-79                                              .
-_:o-79                  <http://ex.org/color>       <http://ex.org/black>                               .
-_:o-79                  <http://ex.org/model>       <http://ex.org/Coupe>                               .
-<http://ex.org/X>       <http://ex.org/payment>     <http://ex.org/Cash>                                .
-<http://ex.org/X>       <http://ex.org/purpose>     <http://ex.org/JoyRiding>                           .
-<http://ex.org/X>       <http://ex.org/source>      <http://ex.org/Denis>                               .
+<http://ex.org/Alice>  <http://ex.org/buys>     <http://ex.org/Car>                              <http://ex.org/X> .
+<http://ex.org/X>      <http://nng.io/subject>  _:o-78                                           .
+_:o-78                 <http://ex.org/age>      "20"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ex.org/X>      <http://nng.io/object>   _:o-79                                           .
+_:o-79                 <http://ex.org/color>    <http://ex.org/black>                            .
+_:o-79                 <http://ex.org/model>    <http://ex.org/Coupe>                            .
+<http://ex.org/X>      <http://ex.org/payment>  <http://ex.org/Cash>                             .
+<http://ex.org/X>      <http://ex.org/purpose>  <http://ex.org/JoyRiding>                        .
+<http://ex.org/X>      <http://ex.org/source>   <http://ex.org/Denis>                            .
 ```
 
 
@@ -147,7 +151,7 @@ _:o-79                  <http://ex.org/model>       <http://ex.org/Coupe>       
         :source :Denis
     ]
 ```
-Two other mappings - fluents and n-ary relations - are provided in the section on [mappings](mappings.md)
+Two other mapping, based on fluents and n-ary relations instead of singleton properties, are provided in the section on [mappings](mappings.md)
 
 
 
@@ -191,10 +195,10 @@ Two other mappings - fluents and n-ary relations - are provided in the section o
 <!--
 ## Records - literals as asserted opaque types
 
-TODO
+TODO records
 
 ## Quotes - literals as un-asserted opaque types
 
-TODO
+TODO quotes
 
 -->

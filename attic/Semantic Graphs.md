@@ -532,7 +532,7 @@ Again, but in tabular form (the two rightmost columns will make more sense in th
 
 |  semantics       |  INTERPRETED |  ASSERTED  |  abbr. |  syntax         |
 |------------------|--------------|------------|--------|-----------------|
-|  Quotation       |  no          |  no        |  QUT   |  "..."^^rdf:ttl |
+|  Quotation       |  no          |  no        |  QUT   |  "..."^^nng:ttl |
 |  Reification     |  yes         |  no        |  REI   |  []{"..."}      |
 |  Literalization  |  (sort of)   |  yes       |  LIT   |  []"..."        |
 |  Interpretation  |  yes         |  yes       |  INT   |  n/a            |
@@ -554,7 +554,7 @@ However, the semantics of existing approaches in this area, like RDF standard re
 
 The most straightforward use case of graph literals is documenting statements without endorsing them. 
 ```
-:Bob :proclaimed ":i :LOVE :pineapples'"^^rdf:ttl .
+:Bob :proclaimed ":i :LOVE :pineapples'"^^nng:ttl .
 ```
 A graph literal represents a quote, documenting with syntactic fidelity the assertion made (although the example somehow unrealistically assumes that Bob speaks in triples).
 In a more specific arrangement we might want to document the revision history of a graph or implement an explainable AI approach. Here we aim to actually assert a statement, but also to document its precise syntactic form before any transformations or entailments. Such transformations are common in RDF processes to improve interoperability, e.g. replacing external vocabulary with inhouse terms that refer to the same meaning, entailing super- or subproperty relations or even just some syntactic normalizations. However, sometimes it is desirable to retain the initial state of an assertion.
@@ -569,12 +569,12 @@ seg:statedAs a rdf:Property ;
 
 The following example shows how this can be used to document some normalization:
 ```
-[]{ :s :p :o } seg:statedAs ":S :p :O"^^rdf:ttl
+[]{ :s :p :o } seg:statedAs ":S :p :O"^^nng:ttl
 ```
 In the next example the literal is accompanied by a hash value to improve security:
 ```
 []{ :s :p :o } seg:statedAs [
-    rdf:value ":S :p :O"^^rdf:ttl ;
+    rdf:value ":S :p :O"^^nng:ttl ;
     seg:hash "72511fef12df97439b16ecda1415f98a"^^MD5
 ]
 ```
@@ -598,14 +598,14 @@ seg:states a rdf:Property ;
 ```
 To safe us from discussions about what Bob said verbatim, but concentrate on the meaning of what he said, we would reformulate the above assertion as:
 ```
-:Bob seg:states ":Moon :madeOf :Cheese"^^rdf:ttl .
+:Bob seg:states ":Moon :madeOf :Cheese"^^nng:ttl .
 ```
 Again, the graph literal is not asserted (and we have no intention to do so), but we are also not bound or even fixated on its syntactic accuracy. We just get along the fact.
 
 To be free in the choice of properties, the following modelling primitive can be used:
 ```
 :Bob :uttered [
-    rdf:value ":Moon :madeOf :Cheese"^^rdf:ttl ;
+    rdf:value ":Moon :madeOf :Cheese"^^nng:ttl ;
     a seg:StatementGraph .
 ] 
 ```
@@ -654,12 +654,12 @@ seg:statesLiterally a rdf:Property ;
 ```
 It would be used as:
 ```
-:Bob seg:statesLiterally ":Moon :madeOf :Cheese"^^rdf:ttl .
+:Bob seg:statesLiterally ":Moon :madeOf :Cheese"^^nng:ttl .
 ```
 or, to be more free in the use of vocabulary:
 ```
 :Bob :muttered [
-	rdf:value ":Moon :madeOf :Cheese"^^rdf:ttl ;
+	rdf:value ":Moon :madeOf :Cheese"^^nng:ttl ;
 	a seg:LiteralizedGraph.
 ] 
 ```
@@ -690,11 +690,11 @@ Importing a literal into a graph doesn't create a nested graph but includes the 
 
 The following example includes a graph literal into another graph (local or not):
 ```
-ex:Graph_1 seg:includes ":s :p :o . :u :v :w ."^^rdf:ttl .
+ex:Graph_1 seg:includes ":s :p :o . :u :v :w ."^^nng:ttl .
 ```
 To include a graph literal into the local graph a syntactically more elegant approach is available, using a self-referencing identifier, `<.>` (see [below](#mapping-to-named-graphs)), to refer to the enclosing nested graph:
 ```
-<.> seg:includes ":s :p :o . :u :v :w ."^^rdf:ttl .
+<.> seg:includes ":s :p :o . :u :v :w ."^^nng:ttl .
 ```
 Inclusion means that the graph can be assumed to contain the statements from the included literal. Those statements therefore can not only be queried but also reasoned on, new entailments can be derived, etc. However, new entailments can not be written back into the graph literal. Therefore the only guarantee that this mechanism provides is a reference to an original state.
 
@@ -717,13 +717,13 @@ seg:transcludes a rdf:Property,
 ```
 A usage example would be the following:
 ```
-_:thisGraph seg:transcludes ":s :p :o"^^rdf:ttl .
+_:thisGraph seg:transcludes ":s :p :o"^^nng:ttl .
 ```
 
 However, transclusion also makes it possible to configure the semantics of transcluded graph literals. Mediating access through the transclusion property guarantees that such semantics arrangements are obeyed and no unintended entailments can leak into transcluding graphs. Configurable semantics are discussed in detail only later [below](#configurable-semantics), so a simple example has to suffice here:
 ```
 <.> seg:transcludes [
-    rdf:value ":s :p :o"^^rdf:ttl ;
+    rdf:value ":s :p :o"^^nng:ttl ;
     seg:semantics seg:APP
 ] .
 ```
@@ -842,7 +842,7 @@ The practical problem that any approach on configurable semantics has to solve i
 The transclusion mechanism introduced [above](#import-via-transclusion) allows to import graph literals with extremely restricted semantics. Adding to the transclusion a semantics instruction allows to tailor the semantics of the transcluded graph to the desired effect. We already gave the following example:
 ```
 <.> seg:transcludes [
-    rdf:value ":s :p :o"^^rdf:ttl ;
+    rdf:value ":s :p :o"^^nng:ttl ;
     seg:semantics seg:APP
 ] .
 ```
@@ -853,16 +853,16 @@ seg:transcludesAPP rdfs:subPropertyOf seg:transcludes ;
 ```
 This allows a streamlined transclusion of RDF data into a graph with very specific semantics.
 ```
-<.> seg:transcludesAPP ":s :p :o"^^rdf:ttl .
+<.> seg:transcludesAPP ":s :p :o"^^nng:ttl .
 ```
 Integrating such transclusions into regular RDF assertions is rather seamless as well, e.g.:
 ```
-:Bob :claims [ seg:transcludesCIT ":s :p :o"^^rdf:ttl ].
+:Bob :claims [ seg:transcludesCIT ":s :p :o"^^nng:ttl ].
 ```
 
 It isn't hard to define tailored semantics solutions from the building blocks provided so far. We might for example start from the following construct, which expresses that the list of Alice's things follows the usual application intuitions (i.e. it is not concerned with syntactic fidelity, it is complete and the unique name assumption applies):
 ```
-:Alice :has [ rdf:value "(:D :E :F)"^^rdf:ttl ;
+:Alice :has [ rdf:value "(:D :E :F)"^^nng:ttl ;
               seg:semantics seg:Interpretation ,
                             seg:UNA ,
                             seg:CWA ]
@@ -876,7 +876,7 @@ ex:List a seg:SemanticsProfile ;
 ```
 And apply it:
 ```
-:Alice :has [ rdf:value "( :D :E :F)"^^rdf:ttl ;
+:Alice :has [ rdf:value "( :D :E :F)"^^nng:ttl ;
               seg:semantics ex:List ]
 ```
 That's still not very elegant, so let's define a property:
@@ -886,7 +886,7 @@ ex:transcludesList rdfs:subPropertyOf seg:transcludes ;
 ```
 And apply that:
 ```
-:Alice :has [ ex:transcludesList "( :D :E :F )"^^rdf:ttl ]
+:Alice :has [ ex:transcludesList "( :D :E :F )"^^nng:ttl ]
 ```
 That's of course a bit much for one list, but it may pay off in an application context where we know that certain data sources are indeed complete and well kept and therefore it's safe to overrule the integration focused standard semantics of RDF.
 
