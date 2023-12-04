@@ -1,38 +1,37 @@
 # Nested Named Graphs (NNG)
 
 <!--
-TODO a lot...
+TODO - MAYOR ISSUES
 
-Querying is still in a rather sorry state.
-The rest looks promising...
-
-define principal relation
-    (not only in mappings.md)
-
-
-inheritance of annotations on transcluded graphs
-    mention
-    formalize
-
-
-it's got to be    b/c 
-  tokens          qualification + administration
-  asserted        otherwise too many indirections
-  graphs          otherwise many use cases too tedious
-  explicit ids    for graph structure in annotations   
-  transparent     otherwise no harmony
-  nesting         resilience against updates, n dimensions
+    mappings.md   
+        check the logical problem
+        better promote the SP mapping
+    graphLiterals.md 
+        has the inclusion of literals as something transparent and asserted
+        but it should be quoted?!
+    citationSemantics.md
+    configSemantics.md
+    querying.md 
+        is still in a rather sorry state
+        also the reference to it on README.md
+    formalizations
+        transclusion
+        inclusion
+        principal relation
+        inherited annotations via nng:tree fragment identifier
+        propagation of annotations
 
 
-how does annotating outside a nested graph propagate?
-  putting annotations in an outer graph 
-        or even the default graph
-      would limit the load on reifying annotations
-  can we use that?
-    no, this is a question of visibility
-    annotations located in the default graph are not necessarily 
-      visible inside a named graph
-      that depends on the query
+  PROPAGATION OF ANNOTATIONS
+    how does annotating outside a nested graph propagate?
+      putting annotations in an outer graph 
+            or even the default graph
+          would limit the load on reifying annotations
+      can we use that?
+        no, this is a question of visibility
+        annotations located in the default graph are not necessarily 
+          visible inside a named graph
+          that depends on the query
 
 
 
@@ -40,6 +39,7 @@ TODO  where to put this note ?
 > [NOTE] 
 >
 > Membership in a nested graph is understood here to be an annotation in itself. However, that means that in this paradigm there are no un-annotated types anymore (the RDF spec doesn't discuss graph sources in much detail and only gives an informal description; however, this seems to be a necessary consequence of the concept). Types are instead established on demand, through queries and other means of selection and focus, and their type depends on the constraints expressed in such operations. If no other constraints are expressed than on the content of the graph itself, i.e. if annotations on the graph are not considered, then a type akin to the RDF notion of a graph type is established. This approach to typing might be characterized as extremely late binding.
+
 
 
 -->
@@ -152,7 +152,8 @@ TODO querying
 
 
 ## Public Notebook
-A prototype implementation in the Dydra graph store [6], including an appropriate extension to SPARQL, provides a public [notebook](https://observablehq.com/@datagenous/nested-named-graphs) that can be used to explore, test and play around with the proposal.
+A prototype implementation in the Dydra graph store [6], including an appropriate extension to SPARQL, provides a public [notebook](https://observablehq.com/@datagenous/nested-named-graphs) that can be used to explore, test and play around with the proposal.   
+Be aware however of a few caveats. The notebook is not multi-user enabled: if two users play with it at the same time, they may overwrite each others sample data. Also it doesn't yet support all syntactic sugar. Especially syntactic support for graph literals is still sketchy. 
 
 
 ## Details
@@ -224,6 +225,18 @@ Graph literals do not only provide a sound means to describe and reason about gr
 
 
 ## Design Considerations
+
+<!-- 
+
+it's got to be    b/c 
+  tokens          qualification + administration
+  asserted        otherwise too many indirections
+  graphs          otherwise many use cases too tedious
+  explicit ids    for graph structure in annotations   
+  transparent     otherwise no harmony
+  nesting         resilience against updates, n dimensions
+ 
+-->
 Metamodelling in RDF - annotating, contextualizing, reifying simple statements to better deal with complex knowledge representation needs - has been the focus of work as long as RDF itself exists. For an extensive treatment of the topic check the 300+ pages "Between Facts and Knowledge - Issues of Representation on the Semantic Web" ([PDF](sources/Between.pdf)).
 One thing we learned from this huge corpus of works is that the one magic trick to resolve all the problems around complex modelling tasks in RDF most probably doesn't exist: the needs and expectations w.r.t. meta-modelling in RDF are so diverse that probably only a clever combination of techniques can meet them all reasonably well. Consequently we need to get creative, and we need to break some rules:
 

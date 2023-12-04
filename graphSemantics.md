@@ -15,18 +15,30 @@ Nested Named Graphs are designed as an extension to RDF 1.1 named graphs. Howeve
 
 This proposal favors a specific semantics and provides several different ways to introduce it, but it doesn't make any assumptions about the semantics of an enclosing named graph or even the whole dataset. This leaves implementors free to continue to use named graphs in any application-specific way they desire - the status quo of named graphs in RDF remains untouched.
 
-There are different ways to provide a semantics to graphs: 
+The vocabulary defined below allows to specify graph naming semantics via SPARQL service descriptions. In addition to that this proposal also provides ways to disambiguate graph naming semantics per property via the [transclusion mechanism](transclusion.md) and individually per reference via [identification semantics](identification.md).
+
+
+## Two Ways to Define Graph Semantics
+
+There are different ways to provide a semantics to graphs, and they can be divided in two different approaches.  
+
+Per Graph Object:
 - defining a semantics for individual named graphs or a default semantics for all named graphs in a dataset via SPARQL service descriptions
+- encoding graph names that follow a certain semantics with a .well-known URI scheme.
+
+Per Graph Usage:
 - defining a graph naming semantics for the domain and/or range of properties
 - annotating a statement that refers to a graph to clarify with which semantics the reference is used
-- encoding graph names that follow a certain semantics with a .well-known URI scheme.
+
+The first approach - per graph - can be targeted on specific graphs, but that might be cumbersome in practice.
 
 As the RDF 1.1 WG hinted at in the above mentioned note, it is possible to describe the semantics employed in the use of named graphs as a default semantics of all named graphs contained in some dataset or on a per case basis, e.g. per individual named graph. Our proposal provides such a vocabulary to describe the semantics of named graphs. One way these semantics can be described is as being exactly the same as that of nested graphs, aligning the two mechanisms as to make them virtually indistinguishable.
 
 In that respect this proposal does indeed hope to change the status quo of named graphs in RDF: it claims to prove that a better world, in which RDF 1.1 named graphs have configurable semantics, is not only possible, but even quite practical. Standardizing *one* semantics for named graphs might have been an illusionary goal all along, given the many variants of graph semantics in the wild. However, standardizing a way to express such semantics is most probably *good enough* in any scenarios.
 
-The vocabulary defined below allows to specify graph naming semantics via SPARQL service descriptions. In addition to that this proposal also provides ways to disambiguate graph naming semantics per property via the [transclusion mechanism](transclusion.md) and individually per reference via [identification semantics](identification.md).
+The second approach - per usage - has no effect on the graph itself - it doesn't make any general assertion - but defines how the graph name is used in a given statement. This is a very targeted approach if the usage maps to only very specific properties, like nesting and fragment identifiers in NNG, and it is also very effective as those properties needed to be defined only once. 
 
+Both approaches don't exclude each other. The second one is implemented in the NNG vocabulary and hopefully is sufficient in practice. For the first approach a vocabulary is provided as well, so every use case should be covered.
 
 
 ## Nested Graph Semantics
@@ -216,9 +228,9 @@ Last not least a reasonably complete approach to named graph semantics should pr
 
 One way to implement this might again be an extension to the [SPARQL 1.1 Service Description](http://www.w3.org/TR/sparql11-service-description/) vocabulary that allows to describe the intended semantics.
 To that end the [NNG prototype implementation](https://observablehq.com/@datagenous/nested-named-graphs) does support keywords `ALL`, `NAMED` and `DEFAULT` in the `FROM` clause of a query.
-
-> [TODO] If the prototype doesn't support them, try <urn:dydra:default>, <urn:dydra:named> and <urn:dydra:all> instead.
 <!-- 
+> [TODO] If the prototype doesn't support them, try <urn:dydra:default>, <urn:dydra:named> and <urn:dydra:all> instead.
+
 TODO keywords: check that the prototype actually supports these keywords
 
 TODO keywords: can [sd:UnionDefaultGraph](https://www.w3.org/TR/sparql11-service-description/#sd-uniondefaultgraph) help?

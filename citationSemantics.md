@@ -1,27 +1,63 @@
 # Citation Semantics
 
-RDF literals can be used to introduce RDF with non-standard semantics into the data. Many such semantics are possible, like un-assertedness, referential opacity, closed world assumption, unique name assumption, combinations thereof, etc. In this section we will concentrate on different kinds of citation. The section on [Configurable Semantics](configSemantics.md) discusses other options.
+<!--
 
+TODO  at least a quote
+
+a graph literal always represents *at least* a quote
+i.e. per default it's
+     unasserted
+     referentially opaque
+consequently if a graph literal is included via an unknown property
+(which could be 
+    an unknown attempt on a formal semantics like ex:inAsThatNewSemantics, 
+    but just as well a pretty un-semantic ex:said )
+it can still be queried.
+to prevent even that, there's still xsd:string
+
+
+[]{...}                 include nested
+[]{"..."}               include record
+[]"{...}"               include report
+[]"..."                 include quote
+[ex:Yps]"..."           include Yps
+[rdf:nil]"..."          include undefined
+"..."^^nng:ttl          not included but queryable
+"..."^^xsd:string       don't bother
+
+-->
+
+
+
+RDF literals can be used to introduce RDF with non-standard semantics into the data. Many such semantics are possible, like un-assertedness, referential opacity, closed world assumption, unique name assumption, combinations thereof, etc. This section concentrates on different kinds of citation. The section on [Configurable Semantics](configSemantics.md) discusses other options.
+
+### Specifying Inclusion Semantics
+
+NNG provides maybe a bit too much different ways to specify the semantics of an inclusion.
+
+#### Separate nng:semantics Statement
 To introduce a graph with specific semantics it is *included* from a graph literal, e.g.:
 ```turtle
 :Alice :said [ nng:includes ":s :p :o. :a :b :c"^^nng:ttl 
                nng:semantics nng:Quote ] 
 ```
-If no semantics is specified, the graph literal is included according to regular RDF semantics, just like `owl:imports` includes an RDF ontology into a graph.
-
 The semantics of the inclusion specify which operations may be performed on the included graph. A quoted inclusion for example is not amenable to entailments and is not asserted either.
 
+#### Combined Inclusion+Semantics Statement
 To prevent problems with monotonicity, specific inclusion properties for each semantics can be specified, e.g.
 ```turtle
 :Alice :said [ nng:quotes ":s :p :o. :a :b :c"^^nng:ttl ]
 ```
 This provides an extra guarantee that no entailments are derived from the included graph before a semantics configuration has been retrieved that might forbid such an operation. 
 
+#### Specifying Inclusion Semantics Inline
 To provide even more comfort, specific semantic modifiers like eg. `nng:Quote` can be defined and prepended to a graph literal (also omitting the datatype declaration), creating a nested graph with the specified semantics: 
 ```turtle
 :Alice :said [nng:Quote]":s :p :o. :a :b :c"
 ```
-To provide yet more comfort, special notations are provided, e.g.:
+
+#### Ultimate Syntactic Sugar to Specify Citation Semantics
+To provide yet more comfort, special notations are provided to specify a select set of citation semantics, e.g.:
 ```turtle
 :Alice :said []":s :p :o. :a :b :c"  # quote signs without {} signify nng:Quote
 ```
@@ -31,34 +67,36 @@ The next section will present all pre-configured semantics with their keywords a
 
 ## Citation Configurations
 
+The RDF*/star Community Group was quite determined that an annotation device should also provide means to document unasserted assertions and that references to the annotated triples should be referentially opaque. Not all of this made sense to us and some of it we found indeed rather dangerous in the context of annotation, but the needs so expressed nonetheless make sense. We therefore strived to provide a sound mechanism to express the most common forms of citation in a succinct and well-structured way.
+
 Special keywords and notations are introduced to support the most common use cases:
 - reporting assertions without asserting them,
 - providing records of assertions with lexical accuracy and
-- the already introduced quotation semantics. 
+- quoting statements with lexical accuracy, but without asserting them. 
 This boils down to two aspects - an assertion may be asserted or not, and it may be interpreted or not - and four categories:
 
 ``` 
-                  | referentially    | referentially
-                  | transparent      | opaque
-------------------|------------------|---------------
-   asserted token | (NESTED) RDF     | RECORD      
-                  | []{ :s :p :o }   | []{" :s :p :o "}
-------------------|------------------|---------------
- unasserted type  | REPORT           | QUOTE    
-                  | []"{ :s :p :o }" | []" :s :p :o "
+                 | referentially    | referentially
+                 | transparent      | opaque
+-----------------|------------------|---------------
+  asserted token | (NESTED) RDF     | RECORD      
+                 | []{ :s :p :o }   | []{" :s :p :o "}
+-----------------|------------------|---------------
+ unasserted type | REPORT           | QUOTE    
+                 | []"{ :s :p :o }" | []" :s :p :o "
 
 NESTED  asserted token, referentially transparent 
         (a graph, nested or not, no literal involved, i.e. standard RDF)
 REPORT  unasserted type, referentially transparent 
-        (reported speech, akin to the use of RDF standard reification in the wild)
+        (reported speech, akin to RDF standard reification as used "in the wild")
 RECORD  asserted token, referentially opaque 
         (interpreted, but without co-denotation)
 QUOTE   unasserted type, referentially opaque
-        (like verbatim quoted speech, but not endorsed)
+        (like verbatim quoted speech, and not endorsed)
 
 LITERAL last not least the bare graph literal
-        ":s :p :o."^^nng:Graph
-        since it's not included it is also not named by a blank node
+        ":s :p :o."^^nng:ttl
+        since it is not included, it is also not named by a blank node
             and the datatype declaration can't be omitted
         really just a datatyped string, but on demand accessible by a SPARQL engine
 ```
@@ -94,18 +132,17 @@ nng:quotes a rdfs:Property ;
     rdfs:domain nng:Quote ;
     rdfs:range nng:GraphLiteral ;
     rdfs:comment "Includes a graph literal with quotation semantics: un-asserted and referentially opaque" .
-
 ```
 
 
 
 ## Examples
-A few examples may illustrate the use cases for these semantic configurations. All these configurations have one thing in common: they are [queryable](querying.md) in SPARQL (although, depending on configuration, a query might have to explicitly ask for them).
+A few examples may illustrate the use cases for these semantic configurations. All these configurations have one thing in common: they are [queryable](querying.md) in SPARQL. However, a query will have to explicitly include them so that unasserted quotes can't pop up in unassuming result sets.
 
 
 ### "Unasserted Assertion"
 
-Unasserted assertions are a niche but recurring use case that so far isn't properly supported in RDF. Some participants in the RDF-star CG strongly argued in its favour. The intent is to document assertions that for any reason one doesn't want to endorse, e.g. because they are outdated, represent a contested viewpoint, don't pass a given reliability threshold, etc.
+Unasserted assertions are a niche but recurring use case that so far isn't properly supported in RDF. Many participants of the RDF-star CG strongly argued in its favour. The intent is to document assertions that for some reason one doesn't want to endorse, e.g. because they are outdated, represent a contested viewpoint, don't pass a given reliability threshold, etc.
 
 The RDF standard reification vocabulary is often used to implement unasserted assertions, but the specified semantics don't support this interpretation and its syntactic verbosity is considered a nuisance. A semantically sound and at the same time easy to use and understand mechanism would be a useful addition to RDF's expressive capabilities.
 
@@ -113,15 +150,12 @@ However, the semantics of existing approaches in this area, like RDF standard re
 
 
 #### Report
-Reports resemble indirect speech in natural language. They don't claim verbatim equivalence but only document the meaning of some statements. Like quotes they are not actually asserted, but in any other respect they perform like regular RDF. We might for example neither want to endorse the following statement nor might we want to claim that this were verbatim Bob's words:
+Reports resemble indirect speech in natural language. The aim is not to reproduce a statement in verbatim equivalence, but only to document the meaning of it. Like quotes reports are not actually asserted, but in any other respect they perform like regular RDF. We might for example neither want to endorse the following statement nor might we want to claim that this were Bob's words verbatim:
 ```turtle
 :Bob :said []"{ :Moon :madeOf :Cheese }" .
 ``` 
-This reports but doesn't assert Bob's claim. However, the IRIs refer to things in the realm of interpretation, they are not a form of quotation. Bob may have a used an IRI from Wikipedia to refer to the moon and the report would still be correct.
-<!--
-In some cases the syntactic fidelity of straight graph literals can be problematic. We might want to document that Bob made the claim that the moon is a big cheese ball, but we don't know the exact terms he uttered. We don't know if he said `:Moon` or `:moon` and we don't want to give the impression that we do, nor do we want to be dragged into arguments about such detail.
-The semantics of RDF standard reification captures this intuition as it doesn't refer to the exact syntactic representation, it is not quotation. Instead it denotes the meaning, like any triple does per the RDF semantics: it refers not to the identifier `:Moon` but to Earth's moon itself. This intuition guides the definition of the following property:
--->
+This reports but doesn't assert Bob's claim. The IRIs refer to things in the realm of interpretation, they are not a form of quotation. Bob may have a used an IRI from Wikipedia to refer to the moon and the report would still be correct. This semantics is very similar to that of RDF standard reification.
+
 <!--
 
 ### reification
@@ -178,8 +212,8 @@ In a more specific arrangement we might want to document the revision history of
 #### Literal
 The bare literal, besides its function as a building block for the inclusion mechanism, may find uses on its own, e.g. to keep graphs around that have not been properly defined yet
 ```turtle
-:G1 rdf:value " :x :y :z ."^^nng:ttl ;
-    :status :Unconfirmed .
+:UC rdf:value " :x :y :z ."^^nng:ttl ;
+    :status :UnConfirmed .
 ```
 
 Graph literals can be used to document state, e.g. when implementing versioning, explainable AI or verifiable credentials.
@@ -207,25 +241,6 @@ Note that while the graph literal is accompanying an assertion of the same type,
 
 
 
-
-
-
-#### Term Literal
-So far only graph literals have been discussed, but also term literals might provide interesting applications. The well known Superman-problem could be expressed as follows:
-```turtle
-:LoisLane :loves [Quote]":Superman" .
-```
-Note how references to Lois Lane and the concept of loving are still referentially transparent, as they should be. However, support for term literals is still an open [issue](https://github.com/rat10/sg/issues/2).  
-<!-- 
-    TODO don't forget to update when term literal is decided -->
-
-Also, as an alternative approach the transparent term may be annotated to indicate its special semantics. That can't prevent undesired entailments, but it still provides an account of the intended meaning.
-```turtle
-:S { :LoisLane :loves :Superman .
-      THIS nng:range :hasLexicalRepresentation ":Superman"^^xsd:string }
-```
-
-
 ### "Asserted assertions"
 
 #### Record / Literalization
@@ -239,11 +254,17 @@ Literalization: an assertion is made, but IRIs are interpreted *verbatim* so to 
 -->
 
 #### Nested Named Graphs with Regular RDF Semantics
-For completeness lets establish that standard nested named graph have standard RDF semantics. So in the following nested named graph
+For completeness lets establish that standard nested named graphs have standard RDF semantics. So in the following nested named graph
 ```turtle
 []{ :Alice :buys :Car .}
 ```
 the statement `:Alice :buys :Car` is interpreted exactly as if stated in a regular RDF graph.
+
+And the following code includes a graph literal as nested graph:
+```turtle
+:Doug :knows [ nng:includes ":Earth a :Sphere"^^nng:ttl ;
+               nng:semantics nng:NestedGraph ]
+```
 
 
 
@@ -264,3 +285,4 @@ if an unabbreviated form
                nng:semantics nng:App ] 
 ```
 is considered too verbose.
+

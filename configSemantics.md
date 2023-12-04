@@ -179,25 +179,23 @@ Note that mixing semantics profiles is not advisable with the profiles suggested
 This syntactic sugar requires that the included literal is named by a bank node, not by an explicit name - a restriction that we consider sensible anyway.
 
 
+
 ### Term Semantics Syntactic Sugar
 
 To make the application of configurable semantics more precise we explore a variant of RDF literals that targets individual terms. 
 
 A popular example to motivate referential opacity is the Superman comic, with the reporter Lois Lane not being aware that her crush Superman is in fact the same person as her slightly dull colleague Clark Kent. This can precisely be modelled with a referentially opaque semantics applied only to the identifier for Superman: 
 ```turtle
-:LouisLane :loves []{":Superman"} .
+:LouisLane :loves [QUOTE]{":Superman"} .
 ```
 Note how the references to Louis Lane and the concept of loving are still referentially transparent, as they should be, and solely the reference to Superman is constrained to refer only to that specific persona of the extra-terrestrial character Kal-El, but never to its alternative persona Clark Kent.
 
 Here the square bracket prefix notation is used not to name the term - there's no need for that - but to indicate a certain semantics. This syntax in combination with the literal guarantees that the reference to Superman is always interpreted with the appropriate semantics. In this special case a datatype declaration may be omitted.
 
-> [TODO]
->
-> This syntactic sugar is not solidly defined yet. It would be nice to have but still needs some work.
-> A slightly less daring, but also less succinct variant would be a simple property list combined with a term literal:
->    [nng:semantics nng:Opaque]":Superman"
 
-<!-- 
-    TODO too may mentions of term literals 
-          at least three times
-          that needs some consolidation -->
+
+
+
+<!-- TODO ## Handling Undefined and Unknown Semantics -
+
+->

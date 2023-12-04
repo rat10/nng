@@ -25,7 +25,7 @@ Modelling data in this way also helps to keep the number of entity identifiers l
 
 This is quite involved and does require that either users or some helpful background machinery ensure that a query for `:Alice` also retrieves all existentials that have `:Alice` as their `rdf:value` (or, in the aforementioned variant, all of `:Alice`s sub-identifiers like `:Alice40`). In a more elaborate example this style of modelling will quickly become unpractical, whereas annotations nicely ensure that the main fact stays in focus.
 
-Fragment identifiers for RDF statements are defined as a small vocabulary. As a graph is composed of triples and triples are composed of subject, predicate and object, the following set of fragment identifiers is needed:
+Fragment identifiers for nested graphs are defined as a small vocabulary. As a graph is composed of triples and triples are composed of subject, predicate and object, the following set of fragment identifiers is needed:
 
 ```turtle
 # VOCABULARY
@@ -72,8 +72,9 @@ Applying that vocabulary can feel a bit tedious when the object isn't a class, a
 
 ```turtle
 :G1 { :Alice :buys :House }
-    nng:domain [ :age 40 ] ;
-    nng:range nng:Interpretation .       # Alice buys a house, not a webpage
+    nng:domain [ :age 40 ] ;             # blank node indirection unavoidable
+    nng:range nng:Interpretation .       # no indirection needed
+                                         # (Alice buys a house, not a webpage)
 ```
 
 <!--

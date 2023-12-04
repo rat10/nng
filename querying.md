@@ -282,7 +282,7 @@ If a query addresses a graph literal explicitly, its results are rendered like r
        maybe i need the following little helpers:
 ```turtle
 nng:hasSource rdfs:range nng:GraphLiteral .
-[]{:a :b :c} nng:hasSource ":A :b :C"^^nng:Graph
+[]{:a :b :c} nng:hasSource ":A :b :C"^^nng:ttl
 
 # select all objects in the literal
 # assuming that graph literals are graphs too (ie referenced per graph keyword) ???
