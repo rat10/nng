@@ -1,0 +1,13 @@
+<http://example.org/defaultSubject> <http://example.org/defaultPredicate> "default object" .
+<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:b16 <http://nested-named-graph.org/embeddings> .
+<http://example.org/nestedSubject> <http://example.org/nestedPredicate> "default nested anonymous object" _:b16 .
+<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:graph-18 <http://nested-named-graph.org/embeddings> .
+<http://example.org/nestedSubject> <http://example.org/nestedPredicate> "explicit nested anonymous object" _:graph-18 .
+<urn:dydra:default> <http://nested-named-graph.org/quotes> _:graph-19 <http://nested-named-graph.org/embeddings> .
+<http://example.org/quotedSubject> <http://example.org/quotedPredicate> "o" _:graph-19 .
+<urn:dydra:default> <http://nested-named-graph.org/reports> _:graph-20 <http://nested-named-graph.org/embeddings> .
+<http://example.org/reportSubject> <http://example.org/reportPredicate> "o" _:graph-20 .
+<urn:dydra:default> <http://nested-named-graph.org/records> _:graph-21 <http://nested-named-graph.org/embeddings> .
+<http://example.org/recordSubject> <http://example.org/recordPredicate> "o" _:graph-21 .
+<urn:dydra:default> <http://nested-named-graph.org/includes> _:graph-22 <http://nested-named-graph.org/embeddings> .
+<http://example.org/literalSubject> <http://example.org/literalPredicate> "o" _:graph-22 .
