@@ -1,6 +1,6 @@
 # Querying
 
-See an [example walk through with a synthetic use case](syntheticQueries.md) and teh accompanying [shell script](tests/syntheticQueries.sh).
+See an [example walk through with a synthetic use case](syntheticQueries.md) and the accompanying [shell script](tests/syntheticQueries.sh).
 
 
 <!-- 

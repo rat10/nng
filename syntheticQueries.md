@@ -1,6 +1,6 @@
 # Synthetic Queries
 
-To demonstrate querying with nested graphs take the following example NNG:
+The following examples demonstrate querying nested graphs:
 
 ```turtle
 :Z {
