@@ -1,19 +1,6 @@
 # Configurable Semantics
 
-<!--
-```
- _____ ___  ____   ___  
-|_   _/ _ \|  _ \ / _ \ 
-  | || | | | | | | | | |
-  | || |_| | |_| | |_| |
-  |_| \___/|____/ \___/ 
-                        
-
-semantics per property
-term semantics per annotation
-
--->
-
+We present here a vocabulary to implement configurable semantics via the inclusion of graph literals. This is rather a proof of concept than a definite proposal, and predominantly meant to illustrate the potential of this approach.
 
 The semantics of RDF is designed to reflect the realities of a shared and decentralized information system spanning the whole world: no one ever has a complete grasp on the data, people use different names to refer to the same thing, no one is entitled to change the truth value of someone else's data, what is not in the data at hand may nonetheless be true, etc. Some of these criteria have names, like the Open World Assumption (OWA) or the No Unique Name Assumption (NUNA). Some, like referential transparency, are baked so deeply into the formalism that they a barely noticed. Some only become visible through the absence of certain constructs like e.g. negation.
 
@@ -21,8 +8,6 @@ Some of these semantic fixings are rather counter-intuitive to application devel
 
 This tension between data *integration* semantics for the open semantic web and *application* semantics for in-house use of such data has frustrated application developers since the start of the Semantic Web. At the time a popular intuition was that mechanisms should be added to the RDF semantics machinery that allowed to put into effect on demand more restrictive semantics, tailored to the needs of applications. However, such mechanisms have never materialized and one of the reasons might have been the problem of how to describe the boundaries of such a change of semantics regime, even more so after the RDF 1.1 WG failed to standardize a semantics of named graphs.
 Graph literals offer a chance to rectify this issue as they soundly discriminate between abstract graphs as literal types and their application via [inclusion](graphLiterals.md).
-
-We present here a vocabulary to implement configurable semantics via the inclusion of graph literals. This is rather a proof of concept than a definite proposal, and predominantly meant to illustrate the potential of this approach.
 
 
 
@@ -126,7 +111,7 @@ The practical problem that any approach on configurable semantics has to solve i
 The inclusion mechanism allows to import graph literals with extremely restricted semantics. Adding to the inclusion a semantics instruction allows to tailor the semantics of the included graph to the desired effect. We already gave the following example:
 ```turtle
 THIS nng:includes [
-    rdf:value ":s :p :o"^^nng:GraphLiteral ;
+    rdf:value ":s :p :o"^^nng:ttl ;
     nng:semantics nng:APP
 ] .
 ```
@@ -137,16 +122,16 @@ nng:includesAPP rdfs:subPropertyOf nng:includes ;
 ```
 This allows a streamlined inclusion of RDF data into a graph with very specific semantics.
 ```turtle
-THIS nng:includesAPP ":s :p :o"^^nng:GraphLiteral .
+THIS nng:includesAPP ":s :p :o"^^nng:ttl .
 ```
 Integrating such inclusions into regular RDF assertions is rather seamless as well, e.g.:
 ```turtle
-:Bob :claims [ nng:includesCIT ":s :p :o"^^nng:GraphLiteral ].
+:Bob :claims [ nng:includesCIT ":s :p :o"^^nng:ttl ].
 ```
 
 Tailored semantics can be defined from the building blocks provided so far. We might for example start from the following construct, which expresses that the list of Alice's things follows the usual application intuitions, i.e. it is not concerned with syntactic fidelity, it is complete and the unique name assumption applies. We call it `ClosedList`:
 ```turtle
-:Alice :has [ rdf:value "(:D :E :F)"^^nng:GraphLiteral ;
+:Alice :has [ rdf:value "(:D :E :F)"^^nng:ttl ;
               nng:semantics nng:Interpretation ,
                             nng:UNA ,
                             nng:CWA ]
@@ -160,7 +145,7 @@ ex:ClosedList a nng:SemanticsProfile ;
 ```
 And apply it:
 ```turtle
-:Alice :has [ rdf:value "( :D :E :F)"^^nng:GraphLiteral ;
+:Alice :has [ rdf:value "( :D :E :F)"^^nng:ttl ;
               nng:semantics ex:ClosedList ]
 ```
 That's still not very elegant, so let's define a property:
@@ -170,7 +155,7 @@ ex:includesClosedList rdfs:subPropertyOf nng:includes ;
 ```
 And apply that:
 ```turtle
-:Alice :has [ ex:includesClosedList "( :D :E :F )"^^nng:GraphLiteral ]
+:Alice :has [ ex:includesClosedList "( :D :E :F )"^^nng:ttl ]
 ```
 That's of course a lot of effort for one list, but it can pay off in an application context where we know that certain data sources are indeed complete and well kept and therefore it's safe to overrule the integration focused standard semantics of RDF.
 
@@ -194,20 +179,23 @@ Note that mixing semantics profiles is not advisable with the profiles suggested
 This syntactic sugar requires that the included literal is named by a bank node, not by an explicit name - a restriction that we consider sensible anyway.
 
 
+
 ### Term Semantics Syntactic Sugar
 
 To make the application of configurable semantics more precise we explore a variant of RDF literals that targets individual terms. 
 
 A popular example to motivate referential opacity is the Superman comic, with the reporter Lois Lane not being aware that her crush Superman is in fact the same person as her slightly dull colleague Clark Kent. This can precisely be modelled with a referentially opaque semantics applied only to the identifier for Superman: 
 ```turtle
-:LouisLane :loves []{":Superman"} .
+:LouisLane :loves [QUOTE]{":Superman"} .
 ```
 Note how the references to Louis Lane and the concept of loving are still referentially transparent, as they should be, and solely the reference to Superman is constrained to refer only to that specific persona of the extra-terrestrial character Kal-El, but never to its alternative persona Clark Kent.
 
-Here the square bracket prefix notation is used not to name the term - there's no need for that - but to indicate a certain semantics. This syntax in combination with the literal guarantees that the reference to Superman is always interpreted with the appropriate semantics. In this special datatype declaration may be omitted.
+Here the square bracket prefix notation is used not to name the term - there's no need for that - but to indicate a certain semantics. This syntax in combination with the literal guarantees that the reference to Superman is always interpreted with the appropriate semantics. In this special case a datatype declaration may be omitted.
 
-> [TODO]
->
-> This syntactic sugar is not solidly defined yet. It would be nice to have but still needs some work.
-> A slightly less daring, but also less succinct variant would be a simple property list combined with a term literal:
->    [nng:semantics nng:Opaque]":Superman"
+
+
+
+
+<!-- TODO ## Handling Undefined and Unknown Semantics -
+
+->

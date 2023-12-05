@@ -140,7 +140,7 @@ The most common use case, documenting statements without stating them, is even s
 
 Other use cases are supported via a base mechanism that transcludes graph literals, and where the semantics of the transcluded graph can be freely configured. To that end the proposal provides a vocabulary defining various aspects of semantics and possible profiles combining them to accommodate application specific use cases [5], although its purpose is rather to illustrate possible applications than to be the actual solution to this complex area. The syntax however is pretty straightforward:
 
-    :X seg:transcludes [ rdf:value ":Moon :madeOf :Cheese"^^rdf:ttl ;
+    :X seg:transcludes [ rdf:value ":Moon :madeOf :Cheese"^^nng:ttl ;
                          seg:semantics seg:Citation ]
     :Bob :claims :X .
 

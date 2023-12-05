@@ -58,7 +58,7 @@ This is quite involved and does require that either users or some helpful backgr
 > 
 > The '#' syntax is failing in TriG (which is quite embarrassing TBH). Alternatives like '?' and '/' need escaping too. So either one breaks one's fingers when typing or one has to use a more explicit expression, e.g.
 >
->    :g1 nng:subject [ :age 40 ]
+>    :g1 nng:domain [ :age 40 ]
 >
 > Yes, that sucks.
 

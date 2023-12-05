@@ -20,10 +20,10 @@
 
 ```
 
-
-
+<!-- 
 A publicly accessible prototype implementation is available at 
 https://observablehq.com/@datagenous/nested-named-graphs.
+-->
 
 ## Basic Design
 
@@ -43,8 +43,10 @@ the target graph is the graph to match BGP against
 
 ### Depth First vs Breadth First Search of Nested Graphs
  
-[Olaf's formalization](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Nov/0027.html ) can be understood as the equivalent of a depth first search. Results for nested BGPs are to be expected, but not exactly intuitive.
-One way to work around that is to go breadth first.
+[Olaf's formalization](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Nov/0027.html ) can be understood as the equivalent of a depth first traversal of nested graphs. Results for nested BGPs are to be expected, but not exactly intuitive.
+We currently go breadth first but should be more explicit about it, and maybe provide both options.  
+[Issue #7](https://github.com/rat10/nng/issues/7)
+[TODO] tests for both Depth First and Breadth First behaviors
 
 
 ### querying with context
@@ -63,11 +65,11 @@ how to query inherited annotations on nested graphs?
 ## Extensions to SPARQL
 
 ### FROM NAMED|ALL|DEFAULT
-SPARQL leaves it unspecified if the context graph is the default graph or the union of all named graphs. This needs a solution.
+SPARQL leaves it unspecified if the context graph is the default graph or the union of all named graphs. This needs a solution, probably as a [Dataset Vocabulary](graphSemantics.md).
 
 ### WITH nng:Literal|nng:quote|nng:Report|nng:Record
 We introduce graph literals as a queryable datatype to implement non-default semantics. However, we need to control how matches against these graph literals get included in query results. By default they are not included. They can however be matched against by
-- either calling them in a WITH clause (WITH nng:Literal|nng:quote|nng:Report|nng:Record)
+- either calling them in a WITH clause (`WITH nng:Literal|nng:Quote|nng:Report|nng:Record`)
 - or by matching them explicitly in a query, using the appropriate inclusion property
 
 TODO examples
@@ -96,6 +98,9 @@ what may happen to other strategies wrt blank node merging?
 
 ## Result Formats
 
+### how to retrieve the graph containing a result term together with the term
+
+### how to retrieve the semantics governing a result term together with the term
 
 
 ## Querying Nested Graphs
@@ -158,7 +163,7 @@ A query MUST return RDF literals *included with asserted semantics* and it MUST 
 Explicitly asking for literal data with un-asserted semantics can be performed in two ways: either use a WITH modifier to the query or explicitly ask for the content of a literal.
 Any query asking specifically for data from a literal will get those results without having to select the literal type in a WITH clause.
 A query using the 'WITH' modifier will include results from all literals of that type:
-- LITERAL will include all ":s :p :o"^^nng:GraphLiteral and ":s"^^nng:TermLiteral literals, included or not
+- LITERAL will include all ":s :p :o"^^nng:ttl and ":s"^^nng:TermLiteral literals, included or not
 - INCLUDED will include all included literals, asserted and un-asserted, but not their LITERAL source
 - REPORT will include all unasserted transparent types
 
@@ -187,9 +192,9 @@ In a TSV/CSV query result set a value returned from an unasserted statement has 
 prefix : <http://ex.org/>
 prefix nng: <http://rat.io/nng/>
 
-:X nng:includes ":Alice :likes :Skiing"^^nng:GraphLiteral .
-:Bob :says ":Moon :madeOf :Cheese"^^nng:GraphLiteral .
-:Alice :said ":s :p :o. :a :b :c"^^nng:GraphLiteral .
+:X nng:includes ":Alice :likes :Skiing"^^nng:ttl .
+:Bob :says ":Moon :madeOf :Cheese"^^nng:ttl .
+:Alice :said ":s :p :o. :a :b :c"^^nng:ttl .
 [nng:name :Y, nng:semantics QUOTE]":ThisGraph a :Quote" .
 :LoisLane :loves [QUOTE]":Superman", :Skiing, [REPORT]":ClarkKent" .
 :Kid :loves [REPORT]":Superman" .
@@ -270,14 +275,14 @@ because the respective candidate is a literal
 
 If a query addresses a graph literal explicitly, its results are rendered like regular RDF.
 ```turtle
-:Alice :said ":s :p :o. :a :b :c"^^nng:GraphLiteral .
+:Alice :said ":s :p :o. :a :b :c"^^nng:ttl .
 ```
 [HELP]  i'd like to address the graph literal
     but how do i do that?
        maybe i need the following little helpers:
 ```turtle
 nng:hasSource rdfs:range nng:GraphLiteral .
-[]{:a :b :c} nng:hasSource ":A :b :C"^^nng:Graph
+[]{:a :b :c} nng:hasSource ":A :b :C"^^nng:ttl
 
 # select all objects in the literal
 # assuming that graph literals are graphs too (ie referenced per graph keyword) ???
