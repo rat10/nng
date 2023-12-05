@@ -1,6 +1,6 @@
-# Synthetic Queries
+# Querying Over Paths of Nested Graphs
 
-The following examples demonstrate querying nested graphs:
+The following examples demonstrate querying paths in nested graphs. This investigates the issue that Olaf raised in his [formalization](https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Nov/0027.html). The good news is that the issue seems under control. The bad news is it seems that it's not as easy as hoped for to query over multiple (nested) graphs. It's not hard - always the same pattern, e.g. in the second example below `{ graph nng:embeddings { ?root nng:transcludes* ?what . } }` - but it's not pretty either. To make it nicer requires an addition to SPARQL, and we haven't got a prototype for that yet.
 
 ```turtle
 :Z {
@@ -52,7 +52,7 @@ Notes:
 >
 > The [fragment identifier](fragmentIdentifiers.md) `nng:tree` is not implemented yet. Its purpose is to annotate a graph and all nested graphs recursively. 
 
-In the following some example queries are given, together with different versions of expected results and the respective query. A complete documentation of Dydra's implementation of the queries and their results plus some comments is available in the [query shell script](tests/syntheticQueries.sh).
+In the following some example queries are given, together with different versions of expected results and the respective query. A complete documentation of Dydra's implementation of the queries and their results plus some comments is available in the [query shell script](tests/queryingPaths.sh).
 
 Prefix declarations are always
 ```sparql
@@ -67,7 +67,8 @@ Expected results are:
 > :Alice                            # give me only the result(s) from the THIS level
 > :Alice :Bob :Carol :Zarathustra   # give me results on all levels of nesting
 > :Alice :Bob                       # give me results from the first n=2 levels of nesting
-                                    # nesting level count starts with THIS
+                                    # nesting level count starts inside a graph 
+                                    # (to account e.g. for self references like THIS)
 ```
 Respective queries are:
 
@@ -79,7 +80,7 @@ where {
   { :Dog :eats :Fish . } :says ?who .
 }
 ```
-See [query shell script](tests/syntheticQueries.sh) line  ff.
+See [query shell script](tests/queryingPaths.sh) line  ff.
 
 
 ### give me results on all levels of nesting
@@ -92,7 +93,7 @@ where {
   { graph ?venue { ?root :says ?orator } }
 }
 ```
-See [query shell script](tests/syntheticQueries.sh) starting from line 104 ff, ending in line 163 ff.
+See [query shell script](tests/queryingPaths.sh) starting from line 104 ff, ending in line 163 ff.
 
 
 
@@ -107,9 +108,9 @@ where {
   { graph ?root { ?about :says ?orator } }
 }
 ```
-See [query shell script](tests/syntheticQueries.sh) line 183 ff.
+See [query shell script](tests/queryingPaths.sh) line 183 ff.
 
-For the complete example see [query shell script](tests/syntheticQueries.sh) line 39 ff.
+For the complete example see [query shell script](tests/queryingPaths.sh) line 39 ff.
 
 
 ## 2) who *believes* ':Dog :eats :Fish .' ?
@@ -140,7 +141,7 @@ where {
 }
 
 ```
-See [query shell script](tests/syntheticQueries.sh) line 213 ff.
+See [query shell script](tests/queryingPaths.sh) line 213 ff.
 
 ### give me results from the first n=2 levels of nesting
 nesting level count starts with THIS
@@ -153,9 +154,9 @@ where {
   { graph ?venue { ?what :believes ?orator } }
 }
 ```
-See [query shell script](tests/syntheticQueries.sh) line 246 ff.
+See [query shell script](tests/queryingPaths.sh) line 246 ff.
 
-For the complete example see [query shell script](tests/syntheticQueries.sh) line 206 ff.
+For the complete example see [query shell script](tests/queryingPaths.sh) line 206 ff.
 
 
 ## 3) in which graph(s) occurs ':Goat :has ?o' ?
@@ -177,7 +178,7 @@ where {
   { graph ?what { :Goat :has ?o . ?what ?annotated ?with} }
 }
 ```
-See [query shell script](tests/syntheticQueries.sh) line 274 ff.
+See [query shell script](tests/queryingPaths.sh) line 274 ff.
 
 ### give me only the nearest graph
 ```sparql
@@ -187,7 +188,7 @@ where {
   { graph ?what { :Goat :has ?o . } }
 }
 ```
-See [query shell script](tests/syntheticQueries.sh) line 288 ff.
+See [query shell script](tests/queryingPaths.sh) line 288 ff.
 
 ### give me all enclosing graphs but NOT the DEFAULT graph
 ```sparql
@@ -198,10 +199,10 @@ where {
   { graph nng:embeddings { ?root nng:transcludes* ?what . } }
 }
 ```
-See [query shell script](tests/syntheticQueries.sh) line 302 ff.
+See [query shell script](tests/queryingPaths.sh) line 302 ff.
 
 
-For the complete example see [query shell script](tests/syntheticQueries.sh) line 264 ff.
+For the complete example see [query shell script](tests/queryingPaths.sh) line 264 ff.
 
 
 ## 4) what does Curt believe?

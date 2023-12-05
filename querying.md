@@ -1,17 +1,9 @@
 # Querying
 
-See an [example walk through with a synthetic use case](syntheticQueries.md) and the accompanying [shell script](tests/syntheticQueries.sh).
+See an [example walk through with a synthetic use case](queryingPaths.md) and the accompanying [shell script](tests/queryingPaths.sh). 
 
 
 <!-- 
-
-```
- _____ ___  ____   ___  
-|_   _/ _ \|  _ \ / _ \ 
-  | || | | | | | | | | |
-  | || |_| | |_| | |_| |
-  |_| \___/|____/ \___/ 
-                        
 
 > PLEASE EXCUSE THE CHAOS AROUND HERE !!!
 
@@ -23,7 +15,6 @@ See an [example walk through with a synthetic use case](syntheticQueries.md) and
 > - querying included graph literals
 > - displaying results with non-standard semantics, e.g. unasserted, opaque, etc
 
-```
 
 A publicly accessible prototype implementation is available at 
 https://observablehq.com/@datagenous/nested-named-graphs.
@@ -71,9 +62,9 @@ how to query inherited annotations on nested graphs?
 ### FROM NAMED|ALL|DEFAULT
 SPARQL leaves it unspecified if the context graph is the default graph or the union of all named graphs. This needs a solution, probably as a [Dataset Vocabulary](graphSemantics.md).
 
-### WITH nng:Literal|nng:quote|nng:Report|nng:Record
+### FROM nng:Literal|nng:quote|nng:Report|nng:Record
 We introduce graph literals as a queryable datatype to implement non-default semantics. However, we need to control how matches against these graph literals get included in query results. By default they are not included. They can however be matched against by
-- either calling them in a WITH clause (`WITH nng:Literal|nng:Quote|nng:Report|nng:Record`)
+- either calling them in a FROM clause (`FROM nng:Literal|nng:Quote|nng:Report|nng:Record`)
 - or by matching them explicitly in a query, using the appropriate inclusion property
 
 TODO examples
@@ -82,7 +73,7 @@ TODO examples
 expressions
 - 'SELECT [?g]?a …' to explicitly demand for the context of term
 - 'with CONTEXT' to ask for all contexts
-- 'WHERE [?g]{…' as you proposed
+- 'WHERE [?g]{…' 
 
 SELECT result sets as TSV
 	[:ng_a]:a1 :b2 :c3 [:ng_d]:d4 :e5
@@ -116,6 +107,8 @@ SELECT *
 WHERE ?g { ?s ?p ?o }
 ```
 
+
+<!--
 ### querying along nesting paths
 querying for an annotation on a nesting graph or any graph it is nested in
 
@@ -131,7 +124,7 @@ standard sparql feature, but slightly extended
   as they traverse graphs.
   standard sparql paths do not.
   see https://www.w3.org/TR/sparql11-query/#propertypaths
-
+-->
 
 ### querying for a report
 
