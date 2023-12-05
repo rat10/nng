@@ -29,7 +29,7 @@ curl -v -X PUT https://${STORE_HOST}/seg/test/service -H "Content-Type: applicat
                              :Larry a :Star . "} .
     } :says :Carol ; 
       :believes :Curt ; 
-      nng:nested :Example .
+      nng:tree :Example .
 } :says :Zarathustra ;
   :source :Source_1 .
 

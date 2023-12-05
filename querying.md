@@ -1,5 +1,10 @@
 # Querying
 
+See an [example walk through with a synthetic use case](syntheticQueries.md) and teh accompanying [shell script](tests/syntheticQueries.sh).
+
+
+<!-- 
+
 ```
  _____ ___  ____   ___  
 |_   _/ _ \|  _ \ / _ \ 
@@ -20,7 +25,6 @@
 
 ```
 
-<!-- 
 A publicly accessible prototype implementation is available at 
 https://observablehq.com/@datagenous/nested-named-graphs.
 -->
