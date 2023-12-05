@@ -60,6 +60,8 @@ fgrep -i true $RESULTS_OUTPUT
 
 
 cat > /dev/null <<EOF
+;;; below, follows a transcript of a listener internal to the query processor.
+;;; this can eventually be transformed into remote requests according to the pattern, above.
 
 (test-sparql "select ?s ?p ?o ?g
 where {
