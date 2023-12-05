@@ -1,6 +1,6 @@
 # Configurable Semantics
 
-We present here a vocabulary to implement configurable semantics via the inclusion of graph literals. This is rather a proof of concept than a definite proposal, and predominantly meant to illustrate the potential of this approach.
+We present here a vocabulary to implement configurable semantics via the inclusion of graph literals. This is rather a *proof of concept* than a definite proposal, and predominantly meant to illustrate the potential of this approach.
 
 The semantics of RDF is designed to reflect the realities of a shared and decentralized information system spanning the whole world: no one ever has a complete grasp on the data, people use different names to refer to the same thing, no one is entitled to change the truth value of someone else's data, what is not in the data at hand may nonetheless be true, etc. Some of these criteria have names, like the Open World Assumption (OWA) or the No Unique Name Assumption (NUNA). Some, like referential transparency, are baked so deeply into the formalism that they a barely noticed. Some only become visible through the absence of certain constructs like e.g. negation.
 
@@ -196,6 +196,28 @@ Here the square bracket prefix notation is used not to name the term - there's n
 
 
 
-<!-- TODO ## Handling Undefined and Unknown Semantics -
+<!-- TODO ## Handling Undefined and Unknown Semantics
 
-->
+
+a graph literal always represents *at least* a quote
+i.e. per default it's
+     unasserted
+     referentially opaque
+consequently if a graph literal is included via an unknown property
+(which could be 
+    an unknown attempt on a formal semantics like ex:inAsThatNewSemantics, 
+    but just as well a pretty un-semantic ex:said )
+it can still be queried.
+to prevent even that, there's still xsd:string
+
+
+[]{...}                 include nested
+[]{"..."}               include record
+[]"{...}"               include report
+[]"..."                 include quote
+[ex:Yps]"..."           include Yps
+[rdf:nil]"..."          include undefined
+"..."^^nng:ttl          not included but queryable
+"..."^^xsd:string       don't bother
+
+-->

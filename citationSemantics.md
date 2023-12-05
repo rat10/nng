@@ -1,33 +1,5 @@
 # Citation Semantics
 
-<!--
-
-TODO  at least a quote
-
-a graph literal always represents *at least* a quote
-i.e. per default it's
-     unasserted
-     referentially opaque
-consequently if a graph literal is included via an unknown property
-(which could be 
-    an unknown attempt on a formal semantics like ex:inAsThatNewSemantics, 
-    but just as well a pretty un-semantic ex:said )
-it can still be queried.
-to prevent even that, there's still xsd:string
-
-
-[]{...}                 include nested
-[]{"..."}               include record
-[]"{...}"               include report
-[]"..."                 include quote
-[ex:Yps]"..."           include Yps
-[rdf:nil]"..."          include undefined
-"..."^^nng:ttl          not included but queryable
-"..."^^xsd:string       don't bother
-
--->
-
-
 
 RDF literals can be used to introduce RDF with non-standard semantics into the data. Many such semantics are possible, like un-assertedness, referential opacity, closed world assumption, unique name assumption, combinations thereof, etc. This section concentrates on different kinds of citation. The section on [Configurable Semantics](configSemantics.md) discusses other options.
 
