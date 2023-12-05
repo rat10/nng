@@ -1,49 +1,5 @@
 # Nested Named Graphs (NNG)
 
-<!--
-TODO - MAYOR ISSUES
-
-    mappings.md   
-        check the logical problem
-        better promote the SP mapping
-    graphLiterals.md 
-        has the inclusion of literals as something transparent and asserted
-        but it should be quoted?!
-    citationSemantics.md
-    configSemantics.md
-    querying.md 
-        is still in a rather sorry state
-        also the reference to it on README.md
-    formalizations
-        transclusion
-        inclusion
-        principal relation
-        inherited annotations via nng:tree fragment identifier
-        propagation of annotations
-
-
-  PROPAGATION OF ANNOTATIONS
-    how does annotating outside a nested graph propagate?
-      putting annotations in an outer graph 
-            or even the default graph
-          would limit the load on reifying annotations
-      can we use that?
-        no, this is a question of visibility
-        annotations located in the default graph are not necessarily 
-          visible inside a named graph
-          that depends on the query
-
-
-
-TODO  where to put this note ?
-> [NOTE] 
->
-> Membership in a nested graph is understood here to be an annotation in itself. However, that means that in this paradigm there are no un-annotated types anymore (the RDF spec doesn't discuss graph sources in much detail and only gives an informal description; however, this seems to be a necessary consequence of the concept). Types are instead established on demand, through queries and other means of selection and focus, and their type depends on the constraints expressed in such operations. If no other constraints are expressed than on the content of the graph itself, i.e. if annotations on the graph are not considered, then a type akin to the RDF notion of a graph type is established. This approach to typing might be characterized as extremely late binding.
-
-
-
--->
-
 ## Overview
 
 Nested Named Graphs (NNG) is a proposal to the RDF 1.2 Working Group [0]. It provides a simple facility to enable annotations on RDF in RDF. 
@@ -145,15 +101,13 @@ The underlying mechanism of configurable inclusion of [graph literals](graphLite
 
 
 ## Querying
-TODO querying
-
-[querying](querying.md)
+The discussion of matters related to [querying](querying.md) is not quite polished yet. Simple querying tasks are pretty straightforward. For some of the more complicated questions w.r.t graph nesting and query traversal of nested graphs see an [example walk through with a synthetic use case](syntheticQueries.md) and the accompanying [shell script](tests/syntheticQueries.sh).
 
 
 
 ## Public Notebook
 A prototype implementation in the Dydra graph store [6], including an appropriate extension to SPARQL, provides a public [notebook](https://observablehq.com/@datagenous/nested-named-graphs) that can be used to explore, test and play around with the proposal.   
-Be aware however of a few caveats. The notebook is not multi-user enabled: if two users play with it at the same time, they may overwrite each others sample data. Also it doesn't yet support all syntactic sugar. Especially syntactic support for graph literals is still sketchy. 
+Be aware however of a few caveats. The notebook is not multi-user enabled: if two users play with it at the same time, they may overwrite each others sample data. Also it doesn't yet support all syntactic sugar; especially support of syntactic sugar for graph literals is still sketchy. And last not least it is not helpful w.r.t. syntax errors: it won't point out to you where you forgot a punctuation mark.
 
 
 ## Details
@@ -181,7 +135,7 @@ The finer details of this proposal are discussed in separate sections:
 - [mappings to basic triples](mappings.md)  
   a lossless translation from NNG to standard triples
 - [querying](querying.md)  
-  TODO querying still a mess
+  a still rudimentary discussion and some examples
 
 
 - [graph literals](graphLiterals.md)  
@@ -319,3 +273,44 @@ Discussions in the WG led to some modifications that resulted in this version he
 [9] [NdFluents](https://link.springer.com/chapter/10.1007/978-3-319-58068-5_39)
 [10] [Pat Hayes' mail to the RDF 1.1 WG](https://lists.w3.org/Archives/Public/public-rdf-wg/2011Feb/0060.html) (many thanks to Niklas for unearthing this!) 
 [11] [W3C Note Defining N-ary Relations on the Semantic Web](https://www.w3.org/TR/swbp-n-aryRelations/)
+
+
+
+
+<!--
+TODO - MAYOR ISSUES
+
+    mappings.md   
+        check the logical problem
+        better promote the SP mapping
+    querying.md 
+        is still in a rather sorry state
+    formalizations
+        transclusion
+        inclusion
+        principal relation
+        inherited annotations via nng:tree fragment identifier
+        propagation of annotations
+
+
+  PROPAGATION OF ANNOTATIONS
+    how does annotating outside a nested graph propagate?
+      putting annotations in an outer graph 
+            or even the default graph
+          would limit the load on reifying annotations
+      can we use that?
+        no, this is a question of visibility
+        annotations located in the default graph are not necessarily 
+          visible inside a named graph
+          that depends on the query
+
+
+
+TODO  where to put this note ?
+> [NOTE] 
+>
+> Membership in a nested graph is understood here to be an annotation in itself. However, that means that in this paradigm there are no un-annotated types anymore (the RDF spec doesn't discuss graph sources in much detail and only gives an informal description; however, this seems to be a necessary consequence of the concept). Types are instead established on demand, through queries and other means of selection and focus, and their type depends on the constraints expressed in such operations. If no other constraints are expressed than on the content of the graph itself, i.e. if annotations on the graph are not considered, then a type akin to the RDF notion of a graph type is established. This approach to typing might be characterized as extremely late binding.
+
+
+
+-->
