@@ -1,7 +1,7 @@
 # Querying
 
-See an [example walk through with a synthetic use case](queryingPaths.md) and the accompanying [shell script](tests/queryingPaths.sh). 
 
+> [UNDER CONSTRUCTION]
 
 <!-- 
 
@@ -20,6 +20,7 @@ A publicly accessible prototype implementation is available at
 https://observablehq.com/@datagenous/nested-named-graphs.
 -->
 
+<!-- 
 ## Basic Design
 
 ### entailment process
@@ -56,66 +57,32 @@ We currently go breadth first but should be more explicit about it, and maybe pr
 
 how to query inherited annotations on nested graphs?
 
-
-## Extensions to SPARQL
-
-### FROM NAMED|ALL|DEFAULT
-SPARQL leaves it unspecified if the context graph is the default graph or the union of all named graphs. This needs a solution, probably as a [Dataset Vocabulary](graphSemantics.md).
-
-### FROM nng:Literal|nng:quote|nng:Report|nng:Record
-We introduce graph literals as a queryable datatype to implement non-default semantics. However, we need to control how matches against these graph literals get included in query results. By default they are not included. They can however be matched against by
-- either calling them in a FROM clause (`FROM nng:Literal|nng:Quote|nng:Report|nng:Record`)
-- or by matching them explicitly in a query, using the appropriate inclusion property
-
-TODO examples
-
-### CONTEXT
-expressions
-- 'SELECT [?g]?a …' to explicitly demand for the context of term
-- 'with CONTEXT' to ask for all contexts
-- 'WHERE [?g]{…' 
-
-SELECT result sets as TSV
-	[:ng_a]:a1 :b2 :c3 [:ng_d]:d4 :e5
-
-
-
-### do we always union?
-  if we query for "FROM :Alice" then every graph transcluded into :Alice becomes part of the target graph as well (it is "union-ed" into the target graph)
-  we consider it sensible to union but it's not mandatory
-
-### union vs merge of blank nodes
-what are the consequences for blank graphs if we merge?
-what strategy do we recommend?
-what may happen to other strategies wrt blank node merging?
-
-
-
-## Result Formats
-
-### how to retrieve the graph containing a result term together with the term
-
-### how to retrieve the semantics governing a result term together with the term
+-->
 
 
 ## Querying Nested Graphs
 
-### querying as usual
+### Querying as Usual
+
+Querying for BGPs dependent on the properties of containing graphs doesn't differ from established practice.
 
 ```sparql
 SELECT *
 WHERE ?g { ?s ?p ?o }
+      ?g ?x ?y .
 ```
 
 
-<!--
-### querying along nesting paths
-querying for an annotation on a nesting graph or any graph it is nested in
+### Querying Along Nesting Paths
 
+Querying for an annotation on a nesting graph or any graph it is nested in is discussed in 
+an [example walk through](queryingPaths.md) and the accompanying [shell script](tests/queryingPaths.sh). 
+
+<!--
 ```sparql
 SELECT *
 WHERE ?g { ?s ?p ?o }
-      ?g annotated* ?q
+      ?g annotated* ?q   <--- that didn't work !!!
 ```
 
 
@@ -126,9 +93,8 @@ standard sparql feature, but slightly extended
   see https://www.w3.org/TR/sparql11-query/#propertypaths
 -->
 
-### querying for a report
 
-
+<!--
 
 ## The current implementation exhibits (at least) two idiosyncrasies:
 
@@ -137,6 +103,23 @@ standard sparql feature, but slightly extended
 
 a query for a BGP over all graphs will find it in any graph, also nested ones. as olaf's formalization illustrates it finds the same BGP again per nesting graph, not only in the innermost graph containing it. that is counterintuitive. what to do about it?
 
+-->
+
+
+## Result Formats
+
+### how to retrieve the graph containing a result term together with the term
+
+Since annotations on graphs may provide important detail about the statements they contain it is important that for each BGP match the containing graph can be easily retrieved. A result format should be provided that returns with each match the name of the garph from which it originates.
+
+[TODO]
+
+### how to retrieve the semantics governing a result term together with the term
+
+The same argument can be made about matches from included graph terms that are governed by non-standard semantics. More on this below.
+
+[TODO]
+
 
 
 
@@ -144,22 +127,27 @@ a query for a BGP over all graphs will find it in any graph, also nested ones. a
 
 ## Querying Included Literals
 
+> [Under Construction]
+
 We have to differentiate between 
-- regular RDF data and data included from literals.
-- data *in* graph literals and data included *from* graph literals with special semantics.
-- data with semantics defining it as asserted or un-asserted data.
+- regular RDF data
+- data *in* graph literals and 
+- data included *from* graph literals with special semantics
 
 
 A query MUST NOT return results *in* RDF literals or *included with un-asserted semantics* from RDF literals if not explicitly asked for (to prevent accidental confusion of asserted and un-asserted data).  
-This is guaranteed by the need to use specific keywords in a `WITH` clause to include literals in the context graph of a query. 
+This is guaranteed by the need to use specific keywords in a `FROM` clause to include literals in the context graph of a query. 
 
 A query MUST return RDF literals *included with asserted semantics* and it MUST annotate the returned data with those semantics (because asserted data has to be visible, but its specific semantics have to be visible too).   
-[TODO] this is not yet guaranteed, as it requires some modification to the query execution engine. Those modifications however will be beneficial to all queries on nested graphs, not just such including graphs with special semantics.
+
+> [TODO] 
+> 
+> this is not yet guaranteed, as it requires some modification to the query execution engine. Those modifications however will be beneficial to all queries on nested graphs, not just such including graphs with special semantics.
 
 
-Explicitly asking for literal data with un-asserted semantics can be performed in two ways: either use a WITH modifier to the query or explicitly ask for the content of a literal.
-Any query asking specifically for data from a literal will get those results without having to select the literal type in a WITH clause.
-A query using the 'WITH' modifier will include results from all literals of that type:
+Explicitly asking for literal data with un-asserted semantics can be performed in two ways: either use a `FROM` modifier to the query or explicitly ask for the content of a literal.
+Any query asking specifically for data from a literal will get those results without having to select the literal type in a `FROM` clause.
+A query using the `FROM` modifier will include results from all literals of that type:
 - LITERAL will include all ":s :p :o"^^nng:ttl and ":s"^^nng:TermLiteral literals, included or not
 - INCLUDED will include all included literals, asserted and un-asserted, but not their LITERAL source
 - REPORT will include all unasserted transparent types
@@ -168,21 +156,22 @@ Annotating the returned data with semantics is performed in a similar way as whe
 - a term in a result set is encoded as a term literal, e.g. [QUOTE]:Superman, [REPORT]":Superman"
 - a graph in a CONSTRUCT result is encoded as a graph term, e.g. [QUOTE]{:s :p :o}, [REPORT]":s :p :o"
 
-[TODO] no quotes around asserted literals - is that a good idea? and feasible?
+<!-- this is all wrong
+Just to clarify: graph literals that are included without semantics modifiers have undefined RDF semantics and when queried the results are displayed like regular RDF data - because that's what they are - without any prepended semantics modifier.
+-->
 
-Just to clarify: graph literals that are included without semantics modifiers have regular RDF semantics and when queried the results are displayed like regular RDF data - because that's what they are - without any prepended semantics modifier.
-
-PROBLEM: how will the query engine know that some semantics is asserted or un-asserted? Will it have t look up the semantics' definition on the web?
+<!-- TODO  how will the query engine know that some semantics is asserted or un-asserted? Will it have to look up the semantics' definition on the web?
+-->
 
 <!--
-
 Querying nested graph literals requires some extra arrangements: query engines should support querying these quotes, but must return results in the same syntax: as quoted graph literals. 
 
 In a TSV/CSV query result set a value returned from an unasserted statement has to be rendered as a singleton unasserted term, e.g. `{":a"}`. Note that we can by default omit the naming part `[]`, but it will be added if the query explicitly asks for it. 
 
 > [TODO] To ensure that unasserted values are not accidentally returned, a special `with UNASSERTED` parameter could be provided in the query. However, putting the query result in quotes might be just as effective and less troublesome. The opposite approach, a parameter `without UNASSERTED` that suppresses unasserted results on demand might also be an option. TBD
-
 -->
+
+<!--
 
 ### Example
 ```turtle
@@ -200,7 +189,12 @@ prefix nng: <http://rat.io/nng/>
 :ClarkKent owl:sameAs :Superman .
 :ClarkKent :loves :LoisLane .
 ```
-### what to expect without WITH clause or explicit addressing
+
+-->
+
+<!--
+
+### what to expect without FROM clause or explicit addressing
 ```sparql
 SELECT ?s
 WHERE  { ?s ?p :Superman }
@@ -230,13 +224,16 @@ here i would like to see
 - nothing
 because the respective candidate is a literal
 
-### what to expect with WITH clause
+-->
 
-Query modifiers are introduced by a 'WITH' clause and use the provided semantics identifiers, e.g. LITERAL, RECORD, REPORT, OPAQUE:
+<!--
+### what to expect with FROM clause
+
+Query modifiers are introduced in a 'FROM' clause and use the provided semantics identifiers, e.g. LITERAL, RECORD, REPORT, OPAQUE:
 ```sparql
 SELECT ?s 
+FROM   REPORT
 WHERE  { ?s ?p :Superman }
-WITH   REPORT
 ```
 here i would like to see
 - :LoisLane 
@@ -246,8 +243,8 @@ and the kid loves the reported Superman
 
 ```sparql
 SELECT ?o
+FROM   REPORT
 WHERE { :LoisLane :loves ?o }
-WITH   REPORT
 ```
 here i would like to see
 -  [QUOTE]:Superman (no quotes around this IRI because it's asserted)
@@ -256,8 +253,8 @@ here i would like to see
 
 ```sparql
 SELECT ?o
+FROM LITERAL
 WHERE { :moon ?p ?o}
-WITH LITERAL
 ```
 here i would like to see
 -  [LITERAL]":Cheese"
@@ -265,9 +262,9 @@ because the respective candidate is a literal
 
 
 [TODO]   what if also the name of the nested graph that this value originated from has to be recorded? then the syntax becomes quite convoluted.
-            
+ -->           
 
-
+<!--
 ### what to expect with Explicit Addressing
 
 If a query addresses a graph literal explicitly, its results are rendered like regular RDF.
@@ -288,13 +285,54 @@ WHERE ?a nng:hasSource ?src
         graph ?src { ?ss ?sp ?so }
 ```
 
+-->
 
+
+
+<!--
 ### what to expect when CONSTRUCTing results
 
 Currently that's future work, as result sets are the more immediate need. 
-However, I expect that constructed graphs will also contain
-    - terms from nested graphs with special semantics or 
-    - nested terms with special semantics
+However, we expect that constructed graphs will also contain
+- terms from nested graphs with special semantics or 
+- nested terms with special semantics
 so it will again be necessary to be able to encode semantics per term. In the case where  whole statements have the same semantics they have to be encoded as nested graphs.
+-->
 
 
+## Extensions to SPARQL
+
+### FROM NAMED|ALL|DEFAULT
+SPARQL leaves it unspecified if the context graph is the default graph or the union of all named graphs. This needs a solution, probably as a [Dataset Vocabulary](graphSemantics.md).
+
+### FROM nng:Literal|nng:Quote|nng:Report|nng:Record
+We introduce graph literals as a queryable datatype to implement non-default semantics. However, we need to control how matches against these graph literals get included in query results. By default they are not included. They can however be matched against by
+- either calling them in a FROM clause (`FROM nng:Literal|nng:Quote|nng:Report|nng:Record`)
+- or by matching them explicitly in a query, using the appropriate inclusion property
+
+TODO examples
+
+
+<!--
+
+### CONTEXT
+expressions
+- 'SELECT [?g]?a …' to explicitly demand for the context of term
+- 'with CONTEXT' to ask for all contexts
+- 'WHERE [?g]{…' 
+
+SELECT result sets as TSV
+	[:ng_a]:a1 :b2 :c3 [:ng_d]:d4 :e5
+
+
+
+### do we always union?
+  if we query for "FROM :Alice" then every graph transcluded into :Alice becomes part of the target graph as well (it is "union-ed" into the target graph)
+  we consider it sensible to union but it's not mandatory
+
+### union vs merge of blank nodes
+what are the consequences for blank graphs if we merge?
+what strategy do we recommend?
+what may happen to other strategies wrt blank node merging?
+
+-->

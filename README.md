@@ -101,8 +101,7 @@ The underlying mechanism of configurable inclusion of [graph literals](graphLite
 
 
 ## Querying
-The discussion of matters related to [querying](querying.md) is not quite polished yet. Simple querying tasks are pretty straightforward. For some of the more complicated questions w.r.t graph nesting and query traversal of nested graphs see an [example walk through](queryingPaths.md) and the accompanying [shell script](tests/queryingPaths.sh).
-
+The discussion of matters related to [querying](querying.md) is not finished yet. Simple querying tasks are pretty straightforward. For some of the more complicated questions w.r.t graph nesting and query traversal of nested graphs see an [example walk through](queryingPaths.md) and the accompanying [shell script](tests/queryingPaths.sh).
 
 
 ## Public Notebook
