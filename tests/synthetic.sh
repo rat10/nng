@@ -1,8 +1,7 @@
 #! /bin/bash
 
 # import/query examples demonstrate the synthetic use cases.
-#
-#   https://lists.w3.org/Archives/Public/public-rdf-star-wg/2023Oct/0108.html
+
 
 set -e
 if [[ -z $STORE_HOST ]]; then source ./define.sh; fi
@@ -21,12 +20,16 @@ curl -v -X PUT https://${STORE_HOST}/seg/test/service -H "Content-Type: applicat
     :Y {
         :X { 
             :Dog :eats :Fish .
-            THIS :says :Alice ;  nng:domain [ :name "Dodger"]
+            THIS :says :Alice ;  
+                 nng:domain [ :name "Dodger" ]
         } :says :Bob ;
           :believes :Ben .
         :Goat :has :Ideas .
-        :Beatrice :claims {":Jake :knows :Larry . :Larry a :Star ."} .
-    } :says :Carol ; :believes :Curt ; nng:nested :Example .
+        :Beatrice :claims {" :Jake :knows :Larry . 
+                             :Larry a :Star . "} .
+    } :says :Carol ; 
+      :believes :Curt ; 
+      nng:nested :Example .
 } :says :Zarathustra ;
   :source :Source_1 .
 
