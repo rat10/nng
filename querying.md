@@ -26,15 +26,15 @@ https://observablehq.com/@datagenous/nested-named-graphs.
 ### entailment process
 BGP matching is defined as an entailment process.
 Simple entailment is defined on the basis of (and is equivalent to) same term equality.
-entailment rules of graph transclusion
-- we define relations
-- and how they determine target graph construction
+This proposal extends that definition with entailment rules for graph transclusion:
+- graph relations
+- how they determine target graph construction
 
 ### terminology
-the context graph is the initial target graph
-  as defined in FROM and FROM NAMED
-the target graph is the graph to match BGP against
-  it can change over the course of a query
+The context graph is the initial target graph
+  as defined in FROM and FROM NAMED.  
+The target graph is the graph to match BGP against.
+  It can change over the course of a query
 
 
 ### Depth First vs Breadth First Search of Nested Graphs
@@ -46,16 +46,18 @@ We currently go breadth first but should be more explicit about it, and maybe pr
 
 
 ### querying with context
-  to return results with context (for each result the graph it was found in)
+  In order to return results with context (for each result, the graph it was found in)
     eg `:G1 :Car` instead of just `:Car`
-  one has to retain the name of the source graph
-  from which a matched graph pattern originates
-  that requires the target graph to become a QUAD graph
+  BGP statement patterns must provide means to retain the name of the source graph
+  from which a matched statement originates.
+  that requires the elments of the target graph which constitute QUADs must be avaiable
+  in the BGP.
+  A GRAPH form provides aspect of this, but its expressiveness is limited.
 
 
 ## inherited annotations
 
-how to query inherited annotations on nested graphs?
+It should be possible to query inherited annotations from nested graphs.
 
 -->
 
