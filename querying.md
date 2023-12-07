@@ -74,6 +74,93 @@ WHERE ?g { ?s ?p ?o }
       ?g ?x ?y .
 ```
 
+### Querying for Statements in a Graph and its Nested Graphs 
+Repeating the example from the start page:
+```turtle
+prefix :    <http://ex.org/>
+prefix nng: <http://nng.io/>
+:G1 {
+    :G2 {
+        :Alice :buys :Car .
+        :G2 nng:domain [ :age 20 ];           
+            nng:relation [ :payment :Cash ]; 
+            nng:range nng:Interpretation ,    
+                      [ :color :black ].  
+    } :source :Denis ;                        
+      :purpose :JoyRiding .                   
+    :G3 {    
+        [] {                                  
+            :Alice :buys :Car .               
+            THIS nng:domain [ :age 28 ] .     
+        } :source :Eve .    
+    } :todo :AddDetail .                      
+}                                             
+```
+
+In the background, a query to retrieve all nesting relations
+```sparql
+prefix : <http://ex.org/>
+prefix nng: <http://nested-named-graph.org/>
+SELECT ?s ?p ?o
+WHERE  {graph nng:embeddings { ?s ?p ?o } }
+```
+returns
+```turtle
+urn:dydra:default,http://nested-named-graph.org/transcludes,http://ex.org/G1
+http://ex.org/G1,http://nested-named-graph.org/transcludes,http://ex.org/G3
+http://ex.org/G1,http://nested-named-graph.org/transcludes,http://ex.org/G2
+http://ex.org/G3,http://nested-named-graph.org/transcludes,_:b29
+```
+
+A query to learn what :G1 itself contains
+```sparql
+prefix : <http://ex.org/>
+prefix nng: <http://nested-named-graph.org/>
+SELECT ?s ?p ?o
+WHERE { graph :G1 { ?s ?p ?o } }
+```
+returns
+```turtle
+http://ex.org/G3,http://ex.org/todo,http://ex.org/AddDetail
+http://ex.org/G2,http://ex.org/purpose,http://ex.org/JoyRiding
+http://ex.org/G2,http://ex.org/source,http://ex.org/Denis
+```
+
+A query for all nested content 
+```sparql
+prefix : <http://ex.org/>
+prefix nng: <http://nested-named-graph.org/>
+SELECT ?s ?p ?o
+FROM INCLUDED nng:NestedGraph
+WHERE { graph :G1 { ?s ?p ?o } }
+```
+returns
+```turtle
+_:b29,http://nng.io/domain,_:o-30
+http://ex.org/Alice,http://ex.org/buys,http://ex.org/Car
+_:o-30,http://ex.org/age,28
+_:b29,http://ex.org/source,http://ex.org/Eve
+http://ex.org/Alice,http://ex.org/buys,http://ex.org/Car
+_:o-25,http://ex.org/age,20
+_:o-26,http://ex.org/payment,http://ex.org/Cash
+_:o-27,http://ex.org/color,http://ex.org/black
+http://ex.org/G2,http://nng.io/domain,_:o-25
+http://ex.org/G2,http://nng.io/relation,_:o-26
+http://ex.org/G2,http://nng.io/range,_:o-27
+http://ex.org/G2,http://nng.io/range,http://nng.io/Interpretation
+http://ex.org/G3,http://ex.org/todo,http://ex.org/AddDetail
+http://ex.org/G2,http://ex.org/purpose,http://ex.org/JoyRiding
+http://ex.org/G2,http://ex.org/source,http://ex.org/Denis
+```
+
+<!-- fo the complete source see tests/whatsInTheGraph.sh -->
+
+
+#### Querying for Principal Statements Only
+The result above contains a lot of annotating statements. To get a quick overview of the central information we'd like to retrieve only the core facts, those that themselves are annotated with further detail. That would in the above example be two instances of `:Alice :buys :Car .` 
+
+> [TODO]
+
 
 ### Querying Along Nesting Paths
 
