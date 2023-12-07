@@ -42,16 +42,16 @@ prefix nng: <http://nng.io/>
             nng:relation [ :payment :Cash ] ;  
             nng:range nng:Interpretation ,     # Alice buys a car, not a website
                        [ :color :black ].  
-    } :source :Denis ;                          # an annotation on the graph
-      :purpose :JoyRiding .                     # sloppy, but not too ambiguous
+    } :source :Denis ;                         # an annotation on the graph
+      :purpose :JoyRiding .                    # sloppy, but not too ambiguous
     :G3 {    
-        [] {                                    # graphs may be named by blank nodes 
-            :Alice :buys :Car .                 # probably a different car buying event
+        [] {                                   # graphs may be named by blank nodes 
+            :Alice :buys :Car .                # probably a different car buying event
             THIS nng:domain [ :age 28 ] .      # self reference
         } :source :Eve .    
-    } :todo :AddDetail .                        # add detail
-}                                               # then remove this level of nesting
-                                                # without changing the data topology
+    } :todo :AddDetail .                       # add detail
+}                                              # then remove this level of nesting
+                                               # without changing the data topology
 ```
 The same as N-Quads:
 ```turtle
