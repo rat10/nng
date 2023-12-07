@@ -66,13 +66,22 @@ It should be possible to query inherited annotations from nested graphs.
 
 ### Querying as Usual
 
-Querying for BGPs dependent on the properties of containing graphs doesn't differ from established practice.
+Querying for BGPs dependent on the properties of containing graphs doesn't differ from established practice, like e.g. querying for what Alice said, and in which graph: 
 
 ```sparql
-SELECT *
-WHERE ?g { ?s ?p ?o }
-      ?g ?x ?y .
+SELECT ?g ?s ?p ?o
+WHERE { 
+ :Alice :said ?g .
+ { GRAPH ?g { ?s ?p ?o }}
+}
 ```
+Result:
+```turtle
+_:termgraph-15,http://example.org/a,http://example.org/b,http://example.org/c
+_:termgraph-15,http://example.org/s,http://example.org/p,http://example.org/o
+```
+
+
 
 ### Querying for Statements in a Graph and its Nested Graphs 
 Repeating the example from the start page:
@@ -153,7 +162,7 @@ http://ex.org/G2,http://ex.org/purpose,http://ex.org/JoyRiding
 http://ex.org/G2,http://ex.org/source,http://ex.org/Denis
 ```
 
-<!-- fo the complete source see tests/whatsInTheGraph.sh -->
+<!-- fo the complete source see tests/queryingWhatsInTheGraph.sh -->
 
 
 #### Querying for Principal Statements Only
@@ -194,20 +203,6 @@ a query for a BGP over all graphs will find it in any graph, also nested ones. a
 
 -->
 
-
-## Result Formats
-
-### how to retrieve the graph containing a result term together with the term
-
-Since annotations on graphs may provide important detail about the statements they contain it is important that for each BGP match the containing graph can be easily retrieved. A result format should be provided that returns with each match the name of the garph from which it originates.
-
-[TODO]
-
-### how to retrieve the semantics governing a result term together with the term
-
-The same argument can be made about matches from included graph terms that are governed by non-standard semantics. More on this below.
-
-[TODO]
 
 
 
@@ -260,101 +255,137 @@ In a TSV/CSV query result set a value returned from an unasserted statement has 
 > [TODO] To ensure that unasserted values are not accidentally returned, a special `with UNASSERTED` parameter could be provided in the query. However, putting the query result in quotes might be just as effective and less troublesome. The opposite approach, a parameter `without UNASSERTED` that suppresses unasserted results on demand might also be an option. TBD
 -->
 
-<!--
-
 ### Example
 ```turtle
-prefix : <http://ex.org/>
-prefix nng: <http://rat.io/nng/>
+@base <http://dydra.com/> .
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+prefix iana: <https://www.iana.org/assignments/media-types/application/>
+prefix owl: <http://www.w3.org/2002/07/owl#>
 
-:X nng:includes ":Alice :likes :Skiing"^^nng:ttl .
-:Bob :says ":Moon :madeOf :Cheese"^^nng:ttl .
-:Alice :said ":s :p :o. :a :b :c"^^nng:ttl .
-[nng:name :Y, nng:semantics QUOTE]":ThisGraph a :Quote" .
-:LoisLane :loves [QUOTE]":Superman", :Skiing, [REPORT]":ClarkKent" .
-:Kid :loves [REPORT]":Superman" .
+:Bob :says ':Moon :madeOf :Cheese'^^iana:trig .
+:Alice :said ':s :p :o. :a :b :c'^^iana:trig .
+[ :Y nng:Quote]':ThisGraph a :Quote'^^iana:trig .
+[nng:Quote]{:LoisLane :loves :Superman} .
+:LoisLane :loves :Skiing  .
+[nng:Report]{:LoisLane :loves :ClarkKent} .
+[nng:Report]{:Kid :loves :Superman }.
+:Kid :loves ':Superman' .
 :Carol :claims {":Denis :goes :Swimming"} .
-:Y {:Some :dubious :Thing}
+:Y {:Some :dubious :Thing} .
 :ClarkKent owl:sameAs :Superman .
 :ClarkKent :loves :LoisLane .
 ```
-
--->
-
-<!--
-
-### what to expect without FROM clause or explicit addressing
+Be aware of but let yourself not get irritated by the fact that the syntax in this example is not always reflecting exactly the description given in other parts of the documentation.    
+Prefixes in the following queries are always:
 ```sparql
-SELECT ?s
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+```
+
+
+A naive request for mentions of Superman only retrieves mentions in the default graph:
+```sparql
+SELECT ?s ?p
 WHERE  { ?s ?p :Superman }
 ```
-here i would like the result to include  
-- :LoisLane   
-because she loves the opaque (but asserted) version of :Superman  
-but not 
-- :Kid  
-because it loves an unasserted comic figure (poor kid) 
+Result:
+```turtle
+http://example.org/ClarkKent,http://www.w3.org/2002/07/owl#sameAs
+```
 
+Including also mentions in quoted statements requires to add a respective `FROM INCLUDED` instruction:
+```sparql
+SELECT ?s ?p
+FROM INCLUDED nng:Quote
+WHERE  { ?s ?p :Superman }
+```
+Result:
+```turtle
+http://example.org/LoisLane,http://example.org/loves
+http://example.org/ClarkKent,http://www.w3.org/2002/07/owl#sameAs
+```
+
+Asking for what or whom Lois Lane loves follows the same principle. A naive query returns only skiing:
 ```sparql
 SELECT ?o
 WHERE { :LoisLane :loves ?o }
 ```
-here i would like to see
-- [QUOTE]:Superman
-- :Skiing
-but not 
-- [REPORT]":ClarkKent"
-
+Result:
+```turtle
+http://example.org/Skiing
+```
+Asking also for quoted statements return also Superman.
 ```sparql
 SELECT ?o
-WHERE { :moon ?p ?o}
-```
-here i would like to see
-- nothing
-because the respective candidate is a literal
-
--->
-
-<!--
-### what to expect with FROM clause
-
-Query modifiers are introduced in a 'FROM' clause and use the provided semantics identifiers, e.g. LITERAL, RECORD, REPORT, OPAQUE:
-```sparql
-SELECT ?s 
-FROM   REPORT
-WHERE  { ?s ?p :Superman }
-```
-here i would like to see
-- :LoisLane 
-- :Kid       
-because she loves the opaque (but asserted) version of :Superman  
-and the kid loves the reported Superman
-
-```sparql
-SELECT ?o
-FROM   REPORT
+FROM INCLUDED nng:Quote
 WHERE { :LoisLane :loves ?o }
 ```
-here i would like to see
--  [QUOTE]:Superman (no quotes around this IRI because it's asserted)
-- :Skiing
-- [REPORT]":ClarkKent"
+Result:
+```turtle
+http://example.org/Superman
+http://example.org/Skiing
+```
 
+Here the same for reported statements (please ignore that the semantics in this example don't make much sense):
 ```sparql
 SELECT ?o
-FROM LITERAL
-WHERE { :moon ?p ?o}
+FROM INCLUDED nng:Report
+WHERE { :LoisLane :loves ?o }
 ```
-here i would like to see
--  [LITERAL]":Cheese"
-because the respective candidate is a literal
+Result:
+```turtle
+http://example.org/ClarkKent
+http://example.org/Skiing
+```
+
+And both: 
+```sparql
+SELECT ?o
+FROM INCLUDED nng:Quote
+FROM INCLUDED nng:Report
+WHERE { :LoisLane :loves ?o }
+```
+Result:
+```turtle
+http://example.org/ClarkKent
+http://example.org/Superman
+http://example.org/Skiing
+```
+
+Making assertions about the moon visible requires to include literal graphs (from a previous version of NNG). A naive query will not find them:
+```sparql
+SELECT ?o
+WHERE { :Moon ?p ?o}
+```
+Result:
+```turtle
+# no results
+```
+An explicit request does: 
+```sparql
+SELECT ?o
+FROM INCLUDED nng:GraphLiteral
+WHERE { :Moon ?p ?o}
+```
+Result:
+```turtle
+http://example.org/Cheese
+```
+<!-- for the complete source see tests/queryingIncludedGraphs.sh-->
 
 
-[TODO]   what if also the name of the nested graph that this value originated from has to be recorded? then the syntax becomes quite convoluted.
- -->           
+> TODO 
+> 
+> Queries should *always* return RECORDS, because they are asserted - but in a different way, indicating that they are *opaque*,
+> but REPORTS and QUOTES only when specifically asked for via FROM INCLUDED, because they are unasserted.
+> In general query results with non-standard semantics should be rendered differently. 
+
+
 
 <!--
-### what to expect with Explicit Addressing
+
+TODO ### what to expect with Explicit Addressing
 
 If a query addresses a graph literal explicitly, its results are rendered like regular RDF.
 ```turtle
@@ -389,17 +420,34 @@ so it will again be necessary to be able to encode semantics per term. In the ca
 -->
 
 
+
+## Result Formats
+
+### how to retrieve the graph containing a result term together with the term
+
+Since annotations on graphs may provide important detail about the statements they contain it is important that for each BGP match the containing graph can be easily retrieved. A result format should be provided that returns with each match the name of the garph from which it originates.
+
+[TODO]
+
+### how to retrieve the semantics governing a result term together with the term
+
+The same argument can be made about matches from included graph terms that are governed by non-standard semantics. More on this below.
+
+[TODO]
+
+
+
 ## Extensions to SPARQL
 
 ### FROM NAMED|ALL|DEFAULT
 SPARQL leaves it unspecified if the context graph is the default graph or the union of all named graphs. This needs a solution, probably as a [Dataset Vocabulary](graphSemantics.md).
 
-### FROM nng:Literal|nng:Quote|nng:Report|nng:Record
+### FROM INCLUDED nng:Literal|nng:Quote|nng:Report|nng:Record
 We introduce graph literals as a queryable datatype to implement non-default semantics. However, we need to control how matches against these graph literals get included in query results. By default they are not included. They can however be matched against by
-- either calling them in a FROM clause (`FROM nng:Literal|nng:Quote|nng:Report|nng:Record`)
+- either calling them in a FROM clause, introduced by an`INCLUDED` keyword and followed by the IRI referring to the respective semantics, e.g. `FROM INCLUDED nng:Literal|nng:Quote|nng:Report|nng:Record`
 - or by matching them explicitly in a query, using the appropriate inclusion property
 
-TODO examples
+Some examples are given above.
 
 
 <!--

@@ -15,22 +15,24 @@ prefix : <http://example.org/>
 prefix nng: <http://nested-named-graph.org/>
 prefix iana: <https://www.iana.org/assignments/media-types/application/>
 prefix owl: <http://www.w3.org/2002/07/owl#>
-# :X nng:includes ':Alice :likes :Skiing'^^nng:ttl nng:embeddings.
-# nng:embeddings { :X nng:includes ':Alice :likes :Skiing'^^iana:trig . }
+
 :Bob :says ':Moon :madeOf :Cheese'^^iana:trig .
 :Alice :said ':s :p :o. :a :b :c'^^iana:trig .
 [ :Y nng:Quote]':ThisGraph a :Quote'^^iana:trig .
-## :LoisLane :loves [QUOTE]':Superman', :Skiing, [REPORT]':ClarkKent' .
 [nng:Quote]{:LoisLane :loves :Superman} .
 :LoisLane :loves :Skiing  .
 [nng:Report]{:LoisLane :loves :ClarkKent} .
-## :Kid :loves [REPORT]':Superman' .
 [nng:Report]{:Kid :loves :Superman }.
 :Kid :loves ':Superman' .
 :Carol :claims {":Denis :goes :Swimming"} .
 :Y {:Some :dubious :Thing} .
 :ClarkKent owl:sameAs :Superman .
 :ClarkKent :loves :LoisLane .
+
+# :X nng:includes ':Alice :likes :Skiing'^^nng:ttl nng:embeddings.
+# nng:embeddings { :X nng:includes ':Alice :likes :Skiing'^^iana:trig . }
+## :LoisLane :loves [QUOTE]':Superman', :Skiing, [REPORT]':ClarkKent' .
+## :Kid :loves [REPORT]':Superman' .
 EOF
 
 cat > /dev/null <<EOF
