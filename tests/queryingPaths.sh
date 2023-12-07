@@ -35,13 +35,6 @@ curl -v -X PUT https://${STORE_HOST}/seg/test/service -H "Content-Type: applicat
 
 EOF
 
-#|
-1) who *says* ':Dog :eats :Fish .' ?
-    > :Alice                            # give me only the result(s) from the THIS level
-    > :Alice :Bob :Carol :Zarathustra   # give me results on all levels of nesting
-    > :Alice :Bob                       # give me results from the first n=2 levels of nesting
-                                        # nesting level count starts with THIS
-|#
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
@@ -60,6 +53,14 @@ fgrep -i true $RESULTS_OUTPUT
 
 
 cat > /dev/null <<EOF
+#|
+1) who *says* ':Dog :eats :Fish .' ?
+    > :Alice                            # give me only the result(s) from the THIS level
+    > :Alice :Bob :Carol :Zarathustra   # give me results on all levels of nesting
+    > :Alice :Bob                       # give me results from the first n=2 levels of nesting
+                                        # nesting level count starts with THIS
+|#
+
 ;;; below, follows a transcript of a listener internal to the query processor.
 ;;; this can eventually be transformed into remote requests according to the pattern, above.
 
