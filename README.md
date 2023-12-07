@@ -250,6 +250,9 @@ The RDF 1.2 WG is still consolidating use cases [7]. On an abstract level the NN
 The [examples](examples.md) illustrate how Nested Named Graphs meet those demands. 
 
 
+## Implementation
+
+For a rough impression about one way to implement this, check the [note](implementation/dydra/note.md) and the diffs in the `Dydra` directory
 
 
 ## Attic
