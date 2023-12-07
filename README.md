@@ -39,7 +39,7 @@ prefix nng: <http://nng.io/>
     :G2 {
         :Alice :buys :Car .
         :G2 nng:domain [ :age 20 ].            # Alice, not the car, is 20 years old
-            nng:relation [ :payment :Cash ] .  
+            nng:relation [ :payment :Cash ] ;  
             nng:range nng:Interpretation ;     # Alice buys a car, not a website
                        [ :color :black ].  
     } :source :Denis ;                          # an annotation on the graph

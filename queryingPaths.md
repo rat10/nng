@@ -70,6 +70,8 @@ Expected results are:
                                     # nesting level count starts inside a graph 
                                     # (to account e.g. for self references like THIS)
 ```
+For the complete example see [query shell script](tests/queryingPaths.sh) line 39 ff.
+
 Respective queries are:
 
 ### give me only the result(s) from the THIS level
@@ -80,7 +82,7 @@ where {
   { :Dog :eats :Fish . } :says ?who .
 }
 ```
-See [query shell script](tests/queryingPaths.sh) line  ff.
+See [query shell script](tests/queryingPaths.sh) line 87 ff.
 
 
 ### give me results on all levels of nesting
@@ -93,7 +95,7 @@ where {
   { graph ?venue { ?root :says ?orator } }
 }
 ```
-See [query shell script](tests/queryingPaths.sh) starting from line 104 ff, ending in line 163 ff.
+See [query shell script](tests/queryingPaths.sh) starting from line 106, in particular 167 ff.
 
 
 
@@ -108,9 +110,8 @@ where {
   { graph ?root { ?about :says ?orator } }
 }
 ```
-See [query shell script](tests/queryingPaths.sh) line 183 ff.
+See [query shell script](tests/queryingPaths.sh) line 185 ff.
 
-For the complete example see [query shell script](tests/queryingPaths.sh) line 39 ff.
 
 
 ## 2) who *believes* ':Dog :eats :Fish .' ?
@@ -121,6 +122,8 @@ Expected results are:
 > :Ben                              # give me results from the first n=2 levels of nesting
                                     # nesting level count starts with THIS
 ```
+For the complete example see [query shell script](tests/queryingPaths.sh) line 206 ff.
+
 Respective queries are:
 
 ### give me only the result(s) from the THIS level
@@ -141,7 +144,7 @@ where {
 }
 
 ```
-See [query shell script](tests/queryingPaths.sh) line 213 ff.
+See [query shell script](tests/queryingPaths.sh) line 215 ff.
 
 ### give me results from the first n=2 levels of nesting
 nesting level count starts with THIS
@@ -154,9 +157,8 @@ where {
   { graph ?venue { ?what :believes ?orator } }
 }
 ```
-See [query shell script](tests/queryingPaths.sh) line 246 ff.
+See [query shell script](tests/queryingPaths.sh) line 248 ff.
 
-For the complete example see [query shell script](tests/queryingPaths.sh) line 206 ff.
 
 
 ## 3) in which graph(s) occurs ':Goat :has ?o' ?
@@ -168,6 +170,8 @@ Expected results are:
                                     # BUT not the DEFAULT graph, because :Z is not nested 
                                     #   in the default graph
 ```
+For the complete example see [query shell script](tests/queryingPaths.sh) line 266 ff.
+
 Respective queries are:
 
 ### give me only results annotated with THIS
@@ -178,7 +182,7 @@ where {
   { graph ?what { :Goat :has ?o . ?what ?annotated ?with} }
 }
 ```
-See [query shell script](tests/queryingPaths.sh) line 274 ff.
+See [query shell script](tests/queryingPaths.sh) line 276 ff.
 
 ### give me only the nearest graph
 ```sparql
@@ -188,7 +192,7 @@ where {
   { graph ?what { :Goat :has ?o . } }
 }
 ```
-See [query shell script](tests/queryingPaths.sh) line 288 ff.
+See [query shell script](tests/queryingPaths.sh) line 290 ff.
 
 ### give me all enclosing graphs but NOT the DEFAULT graph
 ```sparql
@@ -199,10 +203,9 @@ where {
   { graph nng:embeddings { ?root nng:transcludes* ?what . } }
 }
 ```
-See [query shell script](tests/queryingPaths.sh) line 302 ff.
+See [query shell script](tests/queryingPaths.sh) line 304 ff.
 
 
-For the complete example see [query shell script](tests/queryingPaths.sh) line 264 ff.
 
 
 ## 4) what does Curt believe?
