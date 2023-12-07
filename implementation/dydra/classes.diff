@@ -1,0 +1,64 @@
+185d184
+<   "provide gspo order quad to the respective index keys"
+205a205
+> 
+219,232d218
+< ;;; reiterate the standard quad record definition for documentation purposes
+< (cffi:defcstruct gspo-quad
+<   "provide gspo order quad to the respective index keys"
+<   (context term-id)
+<   (subject term-id)
+<   (predicate term-id)
+<   (object term-id))
+< 
+< (defmacro %gspo-quad-context (q) `(cffi:foreign-slot-value ,q '(:struct gspo-quad) 'context))
+< (defmacro %gspo-quad-subject (q) `(cffi:foreign-slot-value ,q '(:struct gspo-quad) 'subject))
+< (defmacro %gspo-quad-predicate (q) `(cffi:foreign-slot-value ,q '(:struct gspo-quad) 'predicate))
+< (defmacro %gspo-quad-object (q) `(cffi:foreign-slot-value ,q '(:struct gspo-quad) 'object))
+< 
+< 
+819,823c805
+<     is prospective-revision, is-retrospective-revision, etc")
+<    (transclusion-cache
+<     :initform (make-hash-table :test 'eql)
+<     :reader revision-transclusion-cache
+<     :documentation "Collects the respective set of transcluded graphs for each graph-as-root.")))
+---
+>     is prospective-revision, is-retrospective-revision, etc")))
+2572,2579d2553
+< (defgeneric dataset-included-graphs (context)
+<   (:method ((context list))
+<     (getf context :included-graphs))
+<   (:method ((task data-task))
+<     (getf (task-dataset-graphs task) :included-graphs))
+<   (:method ((agp agp))
+<     (getf (agp-dataset-graphs agp) :included-graphs)))
+< 
+2585,2587c2559
+<                                  (default-graphs default)
+<                                  (included nil)
+<                                  (included-graphs included))
+---
+>                                  (default-graphs default))
+2589c2561
+<   `(:named-graphs ,named-graphs :default-graphs ,default-graphs :included-graphs ,included))
+---
+>   `(:named-graphs ,named-graphs :default-graphs ,default-graphs))
+2601,2602d2572
+<                    else if (member key '(:included-graph :include))
+<                    collect value into included
+2604,2605c2574,2575
+<                    finally (return (when (or default named included)
+<                                     (make-dataset-graphs :default default :named named :included included))))
+---
+>                    finally (return (when (or default named)
+>                                      (make-dataset-graphs :default default :named named))))
+2611,2612d2580
+<                    else if (member key '(:included-graph :include))
+<                    collect value into included
+2614,2615c2582,2583
+<                    finally (return (when (or default named included)
+<                                      (make-dataset-graphs :default default :named named :included included)))))))
+---
+>                    finally (return (when (or default named)
+>                                      (make-dataset-graphs :default default :named named)))))))

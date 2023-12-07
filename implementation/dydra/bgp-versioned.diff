@@ -1,0 +1,18 @@
+131c131
+<                                          (dataset-graphs (task-dataset-graphs *task*))
+---
+>                                          (dataset-graphs nil)
+133,134c133
+<                                          (default-graphs (dataset-default-graphs dataset-graphs))
+<                                          (included-graphs (dataset-included-graphs dataset-graphs))
+---
+>                                          (default-graphs (dataset-default-graphs dataset-graphs))        
+563d561
+<                                                                 :included-graphs ',included-graphs
+568,569c566
+<                                                                                           ,quad-pattern
+<                                                                                           :included-graphs ',included-graphs))))))))))
+---
+>                                                                                           ,quad-pattern))))))))))
+641d637
+<       (setf included-graphs (mapcar #'intern-graph-if-constant included-graphs))

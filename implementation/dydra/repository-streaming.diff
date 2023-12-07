@@ -1,0 +1,180 @@
+53a54,84
+> 
+> The mechanism devolves to the decision, whether to recurse on embedded graphs
+> when scanning the results of matching a statement pattern against an initial
+> target graph.
+> 
+> The decision is based on assertions about inter-graph visibility which
+> are held a metadata. This either in a distinct graph in a repository or
+> in a separate repository.
+> 
+> The assertions can be managed explicity or extracted from input data
+> - from iri query parameters form a graph name
+> - from a statement in either the initial target or the referenced graph
+> 
+> the assertions are merged according to precedence
+> - target graph
+> - source graph
+> - metadata 
+> 
+> and available through the embedding-semantics operator
+> 
+>   graphVisibility = ( urn:opaque urn:transparent )
+>   graphRelationVisibility = g1 -> g2 -> graphVisibility
+> 
+> the match/scan operators adds
+> - a set of graphs to target
+> - a set of graphs already scanned
+> for each matched statement which introduces a new graph, iff the
+> relation between the current target graph and the match result graph
+> is visible, then the target graph is added to the set to target
+> otherwise it is just added to those already visited.
+> 
+70c101,102
+< (defgeneric rlmdb:map-repository-statements (operator repository quad-pattern &key first last min max)
+---
+> (defgeneric rlmdb:map-repository-statements (operator repository quad-pattern &key first last min max &allow-other-keys)
+>   ;; allow for included-graphs, but do not require it
+105a138,180
+> 
+> 
+> (defparameter *graph-visibility* (make-hash-table :test 'equal))
+> 
+> (defgeneric read-graph-references (repository root-graph &optional relation-constraints)
+>   (:documentation "collect the visible references from a given graph.
+>     Rely on assertions in the nng:embeddings graph.
+>     This expects the constraints to be those associated with the embedding classes.
+>     It does not permit to enumerate specific graphs.")
+>   (:method ((repository rlmdb:repository)  (root-graph integer) &optional (relation-constraints (or (spocq.i::dataset-included-graphs *task*)
+>                                                                                                     (list (spocq.i::symbol-term-id nng:|transcludes|)))))
+>     (when (or (= -1 root-graph) (= #xffffffff root-graph))
+>       ;; the default graph as subject will use its true term number
+>       #+(or) (print (list :default root-graph spocq.i::*true-default-context-term-number*))
+>       (setf root-graph spocq.i::*true-default-context-term-number*)) ;; #x000004f6))
+>     (let ((references ())
+>           (embedding-graph-id (spocq.i::symbol-term-id nng:|embeddings|)))
+>       (labels ((collect-reference (raw-key raw-value)
+>                  (declare (ignore raw-value))
+>                  (let* ((%index-quad (cffi:foreign-slot-value raw-key '(:struct liblmdb:val) 'liblmdb:mv-data)))
+>                    #+(or)
+>                    (progn
+>                      (%print-quad %index-quad *trace-output*)
+>                      (print (list  (%spog-quad-subject %index-quad)  (%spog-quad-predicate %index-quad)
+>                                    (%spog-quad-object %index-quad)  (%spog-quad-context %index-quad))
+>                             *trace-output*)
+>                      (print (mapcar #'rdfcache::shard-term-value 
+>                                     (list  (%spog-quad-subject %index-quad)  (%spog-quad-predicate %index-quad)
+>                                            (%spog-quad-object %index-quad)  (%spog-quad-context %index-quad))))
+>                      (print (list '=? predicate-term-id (spocq.i::symbol-term-id 'nng:|transcludes|))))
+>                    ;;(print (list :collected (%spog-quad-object %index-quad) (rdfcache::shard-term-value (%spog-quad-object %index-quad))))
+>                    (push (%gspo-quad-object %index-quad) references)
+>                    t)))
+>         (declare (dynamic-extent #'collect-reference))
+>         ;; use the primitive index reader in order not to recurse - this does not recurse...!!!
+>         ;; the pattern relates the source graph as subject to embededed graphs - regardless of statement home graph
+>         ;; the scan is limited to the nng:embeddings graph 
+>         (loop for constraint in relation-constraints
+>           do (read-index repository (rlmdb::repository-gspo-database repository) :verbose-p nil
+>                          :quad-pattern (vector embedding-graph-id root-graph constraint 0)
+>                          :decode #'collect-reference)))
+>       references)))
+> 
+107c182,183
+<                                                      &key (min nil) (max nil) (first min) (last max))
+---
+>                                                      &key (min nil) (max nil) (first min) (last max)
+>                                                      included-graphs)
+113a190,192
+>            (all-graphs (case (graph quad-pattern)
+>                          ((0 |urn:dydra|:|all|) t)
+>                          (t nil)))
+116c195
+<            ;; find the position which maps tot he graph term
+---
+>            ;; find the position which maps to the graph term
+120c199,204
+<            (scan-count 0))
+---
+>            (scan-count 0)
+>            (graphs-noted (if spocq.i:*repository*
+>                            (spocq.i::revision-transclusion-cache spocq.i:*repository*)
+>                            (make-hash-table :test 'eql)))
+>            (graphs-pending '())
+>            (included-graph-term-ids included-graphs))
+124,126c208,252
+<       (cffi:with-foreign-objects ((%quad-pattern '(:struct rdfcache::quad))
+<                                   (%key-quad '(:struct rdfcache::quad))
+<                                   (%result-quad '(:struct rdfcache::quad)))
+---
+>       (labels ((note-graph (graph-term-id)
+>                  ;; this needs to have two modes. the toplevel graphs will already have been consrtained by from / from named
+>                  ;; the referenced graph need to observe the transclusion constraints.
+>                  ;; for each graph, iff it meets the inclusion criteria compute the transclusion closure
+>                  ;; starting with the match root, enumerate its relation(s) to other graphs
+>                  (multiple-value-bind (known-references known) (gethash graph-term-id graphs-noted)
+>                    (push graph-term-id graphs-pending)
+>                    (cond (known
+>                           ;; (print (list :old-references known-references))
+>                           (loop for reference in known-references
+>                             do (note-graph reference)))
+>                          (t
+>                           ;; at this point, the graph was weiter a root or was retrieved under the "from included" constraint
+>                           ;; record it an continue the process
+>                           (let* ((reference-predicates (mapcar #'spocq.i::nng-class-predicate included-graphs))
+>                                  (references (read-graph-references (database-repository index) graph-term-id reference-predicates)))
+>                             (setf (gethash graph-term-id graphs-noted) references)
+>                             ;;(print (list :new-references references))
+>                             (loop for reference in references
+>                               do (note-graph reference))))))
+>                  ;;(print (list :next-pending graphs-pending))
+>                  graphs-pending)
+>                (note-root-graph (graph-term-id)
+>                  ;; iff the root graph (termid) is an embendding relation, expand it into its set
+>                  ;; otherwise treat is as a normal discovered graph
+>                  (cond ((spocq.i::embedding-class-p graph-term-id)
+>                         (let* ((class-predicate-id (spocq.i::nng-class-predicate graph-term-id))
+>                                (expansion (read-graph-references (database-repository index) -1 (list class-predicate-id))))
+>                           (loop for embedding-root in expansion
+>                             do (note-root-graph embedding-root))))
+>                        (t
+>                         (push graph-term-id graphs-pending)
+>                         (let* ((reference-predicates (mapcar #'spocq.i::nng-class-predicate included-graphs))
+>                                (references (read-graph-references (database-repository index) graph-term-id reference-predicates)))
+>                           (setf (gethash graph-term-id graphs-noted) references)
+>                           (loop for reference in references
+>                             do (note-graph reference)))
+>                         graphs-pending)))
+>                (graph-is-included (graph-term-id)
+>                  ;; true iff 
+>                  (member graph-term-id included-graph-term-ids :test #'eql)))
+> 
+>         (cffi:with-foreign-objects ((%quad-pattern '(:struct rdfcache::quad))
+>                                     (%key-quad '(:struct rdfcache::quad))
+>                                     (%result-quad '(:struct rdfcache::quad)))
+204,212c326,341
+<           (typecase (graph quad-pattern) ;; if a set enumerate, other wise scan the single graph
+<             (cons (loop with single-graph-quad-pattern = (copy-quad-pattern quad-pattern)
+<                     for graph in (graph quad-pattern)
+<                     do (progn (setf (graph single-graph-quad-pattern) graph)
+<                          (map-for-graph single-graph-quad-pattern))))
+<             (t (when named-only ;; with special handling for named graphs
+<                  (setf (graph quad-pattern) 0))
+<                (map-for-graph quad-pattern)))))))
+<       ;; should happen in the bgp processor, not here (incf spocq.i::*match-responses* match-count)
+---
+> 
+>               ;; (print (list :initial-root (graph quad-pattern)))
+>               (typecase (graph quad-pattern) ;; if a set, enumerate otherwise scan the single graph
+>                 (cons (loop for graph in (graph quad-pattern) do (note-root-graph graph)))
+>                 (t (cond ((or all-graphs named-only) ;; with special handling for named graphs
+>                           (setf graphs-pending '(0)))
+>                          (t
+>                           (note-root-graph (graph quad-pattern))))))
+>               ;; (print (list :all-pending (mapcar #'(lambda (id) (cons id (rdfcache::shard-term-value id))) graphs-pending)))
+>               (loop with graph-quad-pattern = (copy-quad-pattern quad-pattern)
+>                 for next-graph in graphs-pending
+>                 ;;do (print (list :next-graph next-graph (rdfcache::shard-term-value next-graph)))
+>                 do (progn
+>                      (setf (graph graph-quad-pattern) next-graph)
+>                      (map-for-graph graph-quad-pattern))))))))
+> 
