@@ -74,6 +74,50 @@ LITERAL last not least the bare graph literal
 ```
 These configurations should cover most use cases that are not targeting specific semantic arrangements like Unique Name Assumption, Closed World Assumption, etc. Of course, there's always a way to advance even deeper into the rabbit hole...
 
+<!-- 
+
+;;; five variants
+;;; nested
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]{:s :p :o .}")
+
+;;; recorded
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]{':s :p :o .'}")
+
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]{\" :s :p :o . \"}")
+
+;;; reported
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]\"{ :s :p :o . }\"")
+
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]'{ :s :p :o . }'")
+
+;;; quoted
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]\" :s :p :o . \"")
+
+;;; literal
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]\" :s :p :o . \"^^<http://rdf>")
+
+-->
 
 ```turtle
 # VOCABULARY
@@ -257,4 +301,6 @@ if an unabbreviated form
                nng:semantics nng:App ] 
 ```
 is considered too verbose.
+
+
 

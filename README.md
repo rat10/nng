@@ -192,6 +192,23 @@ it's got to be    b/c
   nesting         resilience against updates, n dimensions
  
 -->
+
+<!-- 
+
+four arguments for (nested) graphs
+
+- no need to extend the abstract model and syntax with a new type
+- graphs already implemented in many places, 
+  not much effort required to extend to nesting
+- grouping of triples for annotation purposes
+  is a very natural demand
+- having all annotations available via one mechanism
+  instead of two (separate solutions for triples + graphs)
+  helps usability
+  and parsimony
+
+-->
+
 Metamodelling in RDF - annotating, contextualizing, reifying simple statements to better deal with complex knowledge representation needs - has been the focus of work as long as RDF itself exists. For an extensive treatment of the topic check the 300+ pages "Between Facts and Knowledge - Issues of Representation on the Semantic Web" ([PDF](sources/Between.pdf)).
 One thing we learned from this huge corpus of works is that the one magic trick to resolve all the problems around complex modelling tasks in RDF most probably doesn't exist: the needs and expectations w.r.t. meta-modelling in RDF are so diverse that probably only a clever combination of techniques can meet them all reasonably well. Consequently we need to get creative, and we need to break some rules:
 
