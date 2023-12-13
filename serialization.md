@@ -1,7 +1,5 @@
 # NNG - a Serialization for Nested Named Graphs based on TriG
 
-<!-- TODO proof read when awake -->
-
 The serialization of Nested Named Graphs, NNG, is defined as an extension of [TriG](https://www.w3.org/TR/trig/). Its datatype is `application/nng`. It provides the following functionality on top of TriG:
 - it supports the [nesting of named graphs](transclusion.md)
 - it adds syntactic sugar for graph literals with specific semantics to support three common variants of [citation semantics](citationSemantics.md)
@@ -15,13 +13,13 @@ While graph literals are a proposed new datatype, everything else is just syntac
 A nested named graph 
 ```turtle
 :Y { 
-   :X { :a :b :c } 
-        :d :e 
+   :X { :a :b :c . } 
+        :d :e .
 }
 ```
 maps to standard RDF 1.1 named graphs by applying the `nng:transcludes` property - e.g. in TriG:
 ```turtle
-:X { :a :b :c  }
+:X { :a :b :c . }
 :Y { :Y nng:transcludes :X .
      :X :d :e .
 }
@@ -30,11 +28,11 @@ See [Nesting Graphs via Transclusion](transclusion.md) for more detail about the
 
 Nested graphs are named like standard RDF 1.1 named graphs, either explicitly or by a blank node. The square brackets syntax doesn't support full property lists, but a succinct subset. It can encode either a semantics annotation to specify a semantics, like e.g.
 ```turtle
-[nng:APP] { :s :p :o }
+[nng:APP] { :s :p :o . }
 ```
 or it can encode a name and a semantics:
 ```turtle
-[ :X nng:APP] { :x :y :z }
+[ :X nng:APP] { :x :y :z . }
 ```
 
 Mapped to standard TriG the two preceding examples would be expressed as:
@@ -43,8 +41,8 @@ Mapped to standard TriG the two preceding examples would be expressed as:
                    :X .
 _:nng1 nng:semantics nng:APP .
 :X nng:semantics nng:APP .
-_:nng1 { :s :p :o }
-:X     { :x :y :z }
+_:nng1 { :s :p :o . }
+:X     { :x :y :z . }
 ```
 Note that specifying a semantics on a regular named graph is not advisable without support by out-of-band arrangements. Only graph literals, discussed below, support this mechanism with the necessary predictability with RDF proper.
 <!-- TODO serializing configurable semantics - revisit when that is properly defined -->
@@ -80,9 +78,9 @@ NNG provides an [RDF graph literal](graphLiterals.md) datatype and supports thre
 ```
 Three different kinds of [citation semantics](citationSemantics.md) are supported: records, reports and quotes. Prepending a name to a graph literal allows to omit the datatype declaration and makes the graph literal a quote (differentiating the two is necessary to support other semantics discussed in the next section). Adding curly braces inside or outside the quote signs modifies the semantics of the quote as described in the section on [citation semantics](citationSemantics.md).
 ```turtle
-:Alice :said [] ":a :b :c"     # Quote  - unasserted, referentially opaque
-:Alice :said [] {":a :b :c"}   # Record - asserted, referentially opaque
-:Alice :said [] "{:a :b :c}"   # Report - unasserted, referentially transparent
+:Alice :said [] << :a :b :c . >>   # Quote  - unasserted, referentially opaque
+:Alice :said [] {" :a :b :c . "}   # Record - asserted, referentially opaque
+:Alice :said [] "{ :a :b :c . }"   # Report - unasserted, referentially transparent
 ```
 > [TODO]
 >
@@ -101,19 +99,19 @@ This notation is syntactic sugar for the following expanded form which is valid 
 
 The different forms of quotation could as well be encoded, for anonymous graph, as follows:
 ```turtle
-:Alice :said [nng:Quote] ":a :b :c" .
-:Alice :said [nng:Record] ":a :b :c" .
-:Alice :said [nng:Report] ":a :b :c" .
+:Alice :said [nng:Quote] { :a :b :c . } .
+:Alice :said [nng:Record] { :a :b :c . } .
+:Alice :said [nng:Report] { :a :b :c . } .
 ```
 or, for named graphs: 
 ```turtle
-:Alice :said [:X nng:Quote] ":a :b :c" .  
-:Alice :said [:X nng:Record] ":a :b :c" .
-:Alice :said [:X nng:Report] ":a :b :c" .
+:Alice :said [:X nng:Quote] { :a :b :c . } .  
+:Alice :said [:X nng:Record] { :a :b :c . } .
+:Alice :said [:X nng:Report] { :a :b :c . } .
 ```
 From this follows a more general form, that allows to specify and apply any kind of semantics one may find useful:
 ```turtle
-:Alice :said [ex:MySemantics] ":s :p :o" .
+:Alice :said [ex:MySemantics] { :s :p :o . } .
 ```
 The section on [Configurable Semantics](configSemantics.md) sketches some use cases and an example vocabulary to that effect. [Notation3](https://w3c.github.io/N3/spec/) provides an arguably more mature approach that should be easy to implement with this mechanism.
 

@@ -76,7 +76,9 @@ Dydra's implementation stores literals like named graphs, annotates those graphs
 
 Graph literals should be supported in common serialization formats like Turtle, JSON-LD, N-Triples, N-Quads, RDF/XML, NNG etc. We use a made up `nng:ttl` datatype declaration in examples throughout this proposal, but the details have still to be worked out. 
 
-When including graph literals, e.g. `[]" :a :b :c" :d :e ."` it is possible to omit the datatype declaration as long as the datatype of includ*ing* graph and includ*ed* graph literal match. But it is possible to declare the datatype e.g. when faithful representation of a serialization is desired (as may well be the case when working with literals).
+When including graph literals, e.g. `[] << :a :b :c . >>` it is possible to omit the datatype declaration as long as the datatype of includ*ing* graph and includ*ed* graph literal match. But it is possible to declare the datatype e.g. when faithful representation of a serialization is desired (as may well be the case when working with literals).
+
+TODO this is WRONG - datatype encoding is ALWAYS OMITTED, otherwise it's not syntactic sugar for inclusion
 
 > [TODO] Is an option to normalize graph literals desirable?
 

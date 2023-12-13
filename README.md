@@ -102,7 +102,7 @@ The underlying mechanism of configurable inclusion of [graph literals](graphLite
 
 ## Querying
 The discussion of matters related to [querying](querying.md) is not finished yet. Simple querying tasks are pretty straightforward. Querying for statements with non-standard semantics is straightforward as well.   
-For some of the more complicated questions w.r.t graph nesting and query traversal of nested graphs see an [example walk through](queryingPaths.md) and the accompanying [shell script](tests/queryingPaths.sh).   
+For some of the more complicated questions w.r.t graph nesting and query traversal of nested graphs see an [example walk through](queryingPaths.md) and the accompanying [shell script](tests/queryingPaths.sh). See also [comparison to RDFn](queryingRDFnAsNNG.md)
 However, for querying of nested graphs to become as easy as authoring them the traversal of chains of nested graphs has to become easier than it is now. SPARQLs lack of support for queries across graphs is a problem here. The [example walk through](queryingPaths.md) provides a solution, but it's not easy enough yet. We are currently investigating what to do about that.
 
 
@@ -113,7 +113,6 @@ Be aware however of a few caveats. The notebook is not multi-user enabled: if tw
 
 ## Details
 
-The finer details of this proposal are discussed in separate sections:
 
 - [nesting graphs](transclusion.md)  
   the basic mechanism to nest graphs
@@ -146,6 +145,9 @@ The finer details of this proposal are discussed in separate sections:
 - [configurable semantics](configSemantics.md)  
   N3 formulas, closed world, unique name... you name it!
 
+
+- [formalization](formalizations.md)
+  not much to see here yet
 
 
 ## Semantics
