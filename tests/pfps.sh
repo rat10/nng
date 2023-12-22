@@ -49,7 +49,7 @@ EOF
 fgrep -i true $RESULTS_OUTPUT
 
 
-# as an annotated graph, embedded in the default graph
+# as an annotated anonymous graph, embedded in the default graph
 curl_graph_store_update -H "Content-Type: application/trig" <<EOF
 @base <http://dydra.com/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -157,7 +157,7 @@ echo ":Linköping a :City in two graphs" > $ECHO_OUTPUT
 # several variant queries are possible, but is is not clear how to formulate
 # one with a single subject "graph term" to match the
 # dataset which includes distinct statements - especially if the dataset were
-# to records different properties for the respective statements.
+# to record different properties for the respective statements.
 
 # first alternative : two annotated, nested graphs
 curl_clear_repository_content ;
@@ -174,7 +174,7 @@ EOF
 # this should then join with two instances of :saidBy john
 # it would not. however match something like
 #    []{ :Linköping a :City ; :in :Sweden . } :saidBy :john ; :deniedBy ::william .
-# as those two annotations both want the same subject.
+# as these two annotations both relate to the same subject, but that dataset annotates distinct subjects.
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
   --data-binary @- -o $RESULTS_OUTPUT <<EOF
@@ -191,7 +191,9 @@ EOF
 fgrep -i true $RESULTS_OUTPUT
 
 # second alternative : two annotated statements
-# i do not believe that this would be possible
+# where the datset is defined to include all nested graphs,
+# both statements appear in the effective target graph and
+# and the query returns true.
 curl_clear_repository_content ;
 
 curl_graph_store_update -H "Content-Type: application/trig" <<EOF
@@ -220,12 +222,12 @@ fgrep -i true $RESULTS_OUTPUT
 
 
 echo ":geography :truths" > $ECHO_OUTPUT
-# this demonstrates that entailment rules would apply for a graphs
+# this demonstrates that entailment rules would apply for a graph
 # which is embedded as a statement object.
-# where the query is reformulated to use a property path rathner then to presume
+# where the query is reformulated to use a property path rather then to presume
 # support for rdfs subclassof inference, it is a simple sparql expression.
-# as the embedded graph is then object of a statement in the default graph,
-# no dataset declaration is neceddayr
+# as the embedded graph is then the object of a statement in the default graph,
+# no dataset declaration is necessary
 #
 #:geography :truths { :Linköping a :City .
 #                   :City rdfs:subclassOf :Location . }
@@ -254,4 +256,5 @@ where {
 }
 EOF
 
+fgrep -i true $RESULTS_OUTPUT
 
