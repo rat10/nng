@@ -1,5 +1,89 @@
 # Citation Semantics
 
+```
+TODO define nng:asserts as a new subtype of includes, 
+     with the semantics of nng:transcludes, 
+     but for graph literals
+
+TODO define nng:Literal as an underspecified inclusion, 
+     an inclusion without semantics
+
+TODO the section on Literals is not correct
+     a section on Nested is missing
+
+TODO the plan to have literals of datatype rdf:ttl be searchable 
+     doesn't work. so we need another way to refer to the
+     abstract (and unasserted) type. 
+     maybe the rdf-star syntax - << :s :p :o >> - without a name prefix?
+     how often would the two be confused?
+
+        []<<:s :p :o>> :said :alice ;   # token _:b1
+                       :on :monday .
+        []<<:s :p :o>> :said :bob ;     # token _:b2
+                       :on :tuesday .
+
+     vs 
+
+        <<:s :p :o>> :said :alice ;     # type 
+                     :on :monday .
+        <<:s :p :o>> :said :bob ;       # same type
+                     :on :tuesday .
+
+     maybe it would be better to introduce a 
+     specific name for the abstract type
+     e.g. its hash value, or just a keyword
+     and  express that syntactically as
+        [#]<<:s :p :o>>
+     or
+        [TYPE]<<:s :p :o>>
+
+```
+
+<!-- 
+
+;;; five variants
+;;; nested
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]{:s :p :o .}")
+
+;;; recorded
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]{':s :p :o .'}")
+
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]{\" :s :p :o . \"}")
+
+;;; reported
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]\"{ :s :p :o . }\"")
+
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]'{ :s :p :o . }'")
+
+;;; quoted
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]<< :s :p :o . >>")
+
+;;; literal
+(parse-trig-star "
+prefix : <http://example.org/>
+prefix nng: <http://nested-named-graph.org/>
+[]\" :s :p :o . \"^^<http://rdf>")
+
+-->
+
 
 RDF literals can be used to introduce RDF with non-standard semantics into the data. Many such semantics are possible, like un-assertedness, referential opacity, closed world assumption, unique name assumption, combinations thereof, etc. This section concentrates on different kinds of citation. The section on [Configurable Semantics](configSemantics.md) discusses other options.
 
@@ -31,7 +115,7 @@ To provide even more comfort, specific semantic modifiers like eg. `nng:Quote` c
 #### Ultimate Syntactic Sugar to Specify Citation Semantics
 To provide yet more comfort, special notations are provided to specify a select set of citation semantics, e.g.:
 ```turtle
-:Alice :said []":s :p :o. :a :b :c"  # quote signs without {} signify nng:Quote
+:Alice :said [] << :s :p :o. :a :b :c . >>  # chevrons signify nng:Quote
 ```
 The next section will present all pre-configured semantics with their keywords and notations. 
 
@@ -48,14 +132,14 @@ Special keywords and notations are introduced to support the most common use cas
 This boils down to two aspects - an assertion may be asserted or not, and it may be interpreted or not - and four categories:
 
 ``` 
-                 | referentially    | referentially
-                 | transparent      | opaque
------------------|------------------|---------------
-  asserted token | (NESTED) RDF     | RECORD      
-                 | []{ :s :p :o }   | []{" :s :p :o "}
------------------|------------------|---------------
- unasserted type | REPORT           | QUOTE    
-                 | []"{ :s :p :o }" | []" :s :p :o "
+                 | referentially       | referentially
+                 | transparent         | opaque
+-----------------|---------------------|----------------------
+  asserted token | (NESTED) RDF        | RECORD      
+                 | [] { :s :p :o . }   | [] {" :s :p :o . "}
+-----------------|---------------------|----------------------
+ unasserted type | REPORT              | QUOTE    
+                 | [] "{ :s :p :o . }" | [] << :s :p :o . >>
 
 NESTED  asserted token, referentially transparent 
         (a graph, nested or not, no literal involved, i.e. standard RDF)
@@ -107,7 +191,6 @@ nng:quotes a rdfs:Property ;
 ```
 
 
-
 ## Examples
 A few examples may illustrate the use cases for these semantic configurations. All these configurations have one thing in common: they are [queryable](querying.md) in SPARQL. However, a query will have to explicitly include them so that unasserted quotes can't pop up in unassuming result sets.
 
@@ -124,7 +207,7 @@ However, the semantics of existing approaches in this area, like RDF standard re
 #### Report
 Reports resemble indirect speech in natural language. The aim is not to reproduce a statement in verbatim equivalence, but only to document the meaning of it. Like quotes reports are not actually asserted, but in any other respect they perform like regular RDF. We might for example neither want to endorse the following statement nor might we want to claim that this were Bob's words verbatim:
 ```turtle
-:Bob :said []"{ :Moon :madeOf :Cheese }" .
+:Bob :said [] "{ :Moon :madeOf :Cheese . }" .
 ``` 
 This reports but doesn't assert Bob's claim. The IRIs refer to things in the realm of interpretation, they are not a form of quotation. Bob may have a used an IRI from Wikipedia to refer to the moon and the report would still be correct. This semantics is very similar to that of RDF standard reification.
 
@@ -172,7 +255,7 @@ Mapped to RDF standard reification this would be equal to:
 #### Quote
 Quotes are used to document statements with lexical precision, but again without endorsing them. One may imagine a written statement issued to a court, or documenting a conversation where the precise account of the actual wording used is important. This may be useful for use cases like versioning, explainable AI, verifiable credentials, etc. The example somehow unrealistically assumes that Bob speaks in triples, but note the emphasis on `:LOVE` that the quote preserves:
 ```turtle
-:Bob :proclaimed []":i :LOVE :pineapples" .
+:Bob :proclaimed [] << :i :LOVE :pineapples . >> .
 ```
 Likewise, quotation semantics suppresses any transformations that are common in RDF processes to improve interoperability, e.g. replacing external vocabulary with inhouse terms that refer to the same meaning, entailing super- or subproperty relations or even just some syntactic normalizations.
 <!--
@@ -182,6 +265,11 @@ In a more specific arrangement we might want to document the revision history of
 
 
 #### Literal
+
+```
+TODO the following is not quite correct
+```
+
 The bare literal, besides its function as a building block for the inclusion mechanism, may find uses on its own, e.g. to keep graphs around that have not been properly defined yet
 ```turtle
 :UC rdf:value " :x :y :z ."^^nng:ttl ;
@@ -218,7 +306,7 @@ Note that while the graph literal is accompanying an assertion of the same type,
 #### Record / Literalization
 Records do introduce statements into the universe of interpretation, but they don't allow the interpretation to diverge from the lexical form. They are meant to be interpreted "literally". So like quotes they provide verbatim correctness, but they also are indeed asserted, not merely documented.
 ```turtle
-:Denis :called []{":Proposal :literally :Madness"}.
+:Denis :called [] {":Proposal :literally :Madness . "}.
 ```
 
 <!--  
@@ -228,7 +316,7 @@ Literalization: an assertion is made, but IRIs are interpreted *verbatim* so to 
 #### Nested Named Graphs with Regular RDF Semantics
 For completeness lets establish that standard nested named graphs have standard RDF semantics. So in the following nested named graph
 ```turtle
-[]{ :Alice :buys :Car .}
+[] { :Alice :buys :Car . }
 ```
 the statement `:Alice :buys :Car` is interpreted exactly as if stated in a regular RDF graph.
 
@@ -249,7 +337,7 @@ and some other configurations like e.g. closed world and unique name assumption.
 
 Such semantics will not have the benefit of built-in syntactic sugar nor the pre-defined semantics indicators, but they can still be encoded quite concisely, using the square bracket syntactic sugar together with namespaced identifiers, e.g.
 ```turtle
-:Bob :claims [nng:APP]":s :p :o.  :a :b :c"
+:Bob :claims [nng:APP] { :s :p :o.  :a :b :c . }
 ```
 if an unabbreviated form
 ```turtle
@@ -257,4 +345,6 @@ if an unabbreviated form
                nng:semantics nng:App ] 
 ```
 is considered too verbose.
+
+
 

@@ -48,6 +48,21 @@ Transclusion relations are not allowed to create circular references. That can't
 
 ## Transclusion vs Inclusion vs owl:imports
 
+> TODO 
+>
+> the following has an error:
+> owl:imports only imports the statements that a graph contains
+> inclusion and transclusion however import (named) graphs as a whole, not only the statements they contain (and nest them inside other graphs)
+> that needs to be made very clear
+>
+> also the difference between the following three idioms has to be clarified:
+> - just annotating a graph via reference to its name, 
+> - transcluding it via an explicit statement to that effect and
+> - defining and transcluding and maybe even annotating it in one stroke via syntactic sugar
+> - and then we also need to discuss the meaning of nesting, what it means for one graph to be nested inside another graph
+
+
+
 The differences to the [inclusion](graphLiterals.md) mechanism is that 
 - inclusion is defined on graph literals, whereas transclusion is defined on graph sources, and
 - inclusion is not transitive, but transclusion is.

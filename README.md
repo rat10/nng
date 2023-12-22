@@ -102,7 +102,7 @@ The underlying mechanism of configurable inclusion of [graph literals](graphLite
 
 ## Querying
 The discussion of matters related to [querying](querying.md) is not finished yet. Simple querying tasks are pretty straightforward. Querying for statements with non-standard semantics is straightforward as well.   
-For some of the more complicated questions w.r.t graph nesting and query traversal of nested graphs see an [example walk through](queryingPaths.md) and the accompanying [shell script](tests/queryingPaths.sh).   
+For some of the more complicated questions w.r.t graph nesting and query traversal of nested graphs see an [example walk through](queryingPaths.md) and the accompanying [shell script](tests/queryingPaths.sh). See also [comparison to RDFn](queryingRDFnAsNNG.md)
 However, for querying of nested graphs to become as easy as authoring them the traversal of chains of nested graphs has to become easier than it is now. SPARQLs lack of support for queries across graphs is a problem here. The [example walk through](queryingPaths.md) provides a solution, but it's not easy enough yet. We are currently investigating what to do about that.
 
 
@@ -113,7 +113,6 @@ Be aware however of a few caveats. The notebook is not multi-user enabled: if tw
 
 ## Details
 
-The finer details of this proposal are discussed in separate sections:
 
 - [nesting graphs](transclusion.md)  
   the basic mechanism to nest graphs
@@ -146,6 +145,9 @@ The finer details of this proposal are discussed in separate sections:
 - [configurable semantics](configSemantics.md)  
   N3 formulas, closed world, unique name... you name it!
 
+
+- [formalization](formalizations.md)
+  not much to see here yet
 
 
 ## Semantics
@@ -192,6 +194,23 @@ it's got to be    b/c
   nesting         resilience against updates, n dimensions
  
 -->
+
+<!-- 
+
+four arguments for (nested) graphs
+
+- no need to extend the abstract model and syntax with a new type
+- graphs already implemented in many places, 
+  not much effort required to extend to nesting
+- grouping of triples for annotation purposes
+  is a very natural demand
+- having all annotations available via one mechanism
+  instead of two (separate solutions for triples + graphs)
+  helps usability
+  and parsimony
+
+-->
+
 Metamodelling in RDF - annotating, contextualizing, reifying simple statements to better deal with complex knowledge representation needs - has been the focus of work as long as RDF itself exists. For an extensive treatment of the topic check the 300+ pages "Between Facts and Knowledge - Issues of Representation on the Semantic Web" ([PDF](sources/Between.pdf)).
 One thing we learned from this huge corpus of works is that the one magic trick to resolve all the problems around complex modelling tasks in RDF most probably doesn't exist: the needs and expectations w.r.t. meta-modelling in RDF are so diverse that probably only a clever combination of techniques can meet them all reasonably well. Consequently we need to get creative, and we need to break some rules:
 
@@ -250,6 +269,9 @@ The RDF 1.2 WG is still consolidating use cases [7]. On an abstract level the NN
 The [examples](examples.md) illustrate how Nested Named Graphs meet those demands. 
 
 
+## Implementation
+
+For a rough impression about one way to implement this, check the [note](implementation/dydra/note.md) and the diffs in the `Dydra` directory
 
 
 ## Attic

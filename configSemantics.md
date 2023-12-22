@@ -214,7 +214,7 @@ to prevent even that, there's still xsd:string
 []{...}                 include nested
 []{"..."}               include record
 []"{...}"               include report
-[]"..."                 include quote
+[]<<...>>               include quote
 [ex:Yps]"..."           include Yps
 [rdf:nil]"..."          include undefined
 "..."^^nng:ttl          not included but queryable

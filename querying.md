@@ -444,8 +444,9 @@ SPARQL leaves it unspecified if the context graph is the default graph or the un
 
 ### FROM INCLUDED nng:Literal|nng:Quote|nng:Report|nng:Record
 We introduce graph literals as a queryable datatype to implement non-default semantics. However, we need to control how matches against these graph literals get included in query results. By default they are not included. They can however be matched against by
-- either calling them in a FROM clause, introduced by an`INCLUDED` keyword and followed by the IRI referring to the respective semantics, e.g. `FROM INCLUDED nng:Literal|nng:Quote|nng:Report|nng:Record`
-- or by matching them explicitly in a query, using the appropriate inclusion property
+- either calling them visible for transclusion in a FROM clause, introduced by an`INCLUDED` keyword and followed by the IRI referring to the respective semantics, e.g. `FROM INCLUDED nng:Literal|nng:Quote|nng:Report|nng:Record`
+- or by targeting them as a class in a FROM or FROM NAMED clause,
+- or by matching them explicitly in a query, by specifying a class or an individual name in a GRAPH clause.
 
 Some examples are given above.
 

@@ -15,7 +15,7 @@ SELECT * WHERE {
    ?g { ?s ?p ?o } rdf:source ?source . 
 }
 ```
-[TODO] check query syntax!
+[TODO] check
 
 
 ### [Describing a Union of Changes to a Named Graph](https://github.com/w3c/rdf-ucr/wiki/Describing-a-Union-of-Changes-to-a-Named-Graph)
@@ -41,7 +41,7 @@ The WG use case wiki argues that the use cases requires tokens, not types, if an
 }
 <data?version=2> {
   <7d5d0d651caa> a :Text .
-  [] " <7d5d0d651caa> :subject <semantics> " :suggestedBy <classifyer> .
+  [] << <7d5d0d651caa> :subject <semantics> . >> :suggestedBy <classifyer> .
 }
 ```
 
@@ -57,11 +57,11 @@ That we would translate to NNG in another way:
 [] { <7d5d0d651caa> a :Text }
      :statedIn <data?version=2>
 
-[] " <7d5d0d651caa> a :Work "
+[] << <7d5d0d651caa> a :Work . >>
      :statedIn <data?version=1> ; 
      :retractedIn <data?version=2> .
 
-[] { []" <7d5d0d651caa> :subject <semantics> "
+[] { [] << <7d5d0d651caa> :subject <semantics> . >>
         :suggestedBy <classifyer> } ;
       :statedIn <data?version=2> .   
 ```
@@ -143,23 +143,23 @@ The WG wiki argues that the use case calls for lists of triples, not triples - a
 r:47e1cf2 a :Commit ; 
     :graph r:geneology;
     :time "2002-05-30T09:00:00"^^xsd:dateTime;
-    :delete [] " a:bob b:age 23 . " ;
-    :add [] " a:bob b:age 24 . a:bob b:gender b:male . " .
+    :delete [] << a:bob b:age 23 . >> ;
+    :add [] << a:bob b:age 24 . a:bob b:gender b:male . >> .
 r:47a54ad a :Commit ; 
     :graph r:geneology;
     :time "2002-06-07T09:00:00"^^xsd:dateTime;
     :add [] {                               # TODO we don't have nested quotes yet
-        [] " a:bob b:gender b:male " b:certainty 0.1 
+        [] << a:bob b:gender b:male . >> b:certainty 0.1 
     }.
 r:47a54ae a :Commit ; 
      :graph r:geneology;
      :time "2002-06-07T09:00:01"^^xsd:dateTime;
      :add [] {                              # TODO we don't have nested quotes yet
-        [] " a:bob b:gender b:male " b:support _:x .
+        [] << a:bob b:gender b:male . >> b:support _:x .
      	_:x b:source b:news-of-the-world  ;
      	    b:date "1999-04-01"^^xsd:date  . 
- 	    [] " a:bob b:gender b:male " b:support _:y  .
-     	_:y b:source b:weekly-world-news > ;
+ 	    [] << a:bob b:gender b:male . >> b:support _:y  .
+     	_:y b:source b:weekly-world-news ;
      	    b:date "2001-08-09"^^xsd:date  .
      }
 ```
@@ -175,7 +175,7 @@ There are different ways to model Wikidata. The UC wiki choses one in which the 
      wd:predecessor wd:DonaldTrump ;
      prov:wasDerivedFrom wdref:a_reference , wdref:an_other_reference .
 
-[]"{ wd:USA wd:president wd:DonaldTrump . }"
+[] "{ wd:USA wd:president wd:DonaldTrump . }"
      wikibase:rank wikibase:NormalRank ;
      wd:start_date "2017-01-20"^^xsd:dateTime ;
      wd:start_date "2021-01-20"^^xsd:dateTime .
@@ -273,7 +273,7 @@ _:o-96                  <http://ex.org/source>        <http://ex.org/Denis>     
 
 The notorious [Superman](https://www.w3.org/2001/12/attributions/#superman) problem can be addressed as an application of graph literals, for example using the proposed syntactic sugar for `nng:Record`s (asserted, but referentially opaque types):
 ```turtle
-[] {":LoisLane :loves :Superman"} .
+[] {" :LoisLane :loves :Superman . "} .
 ```
 
 Even a much more precise variant via a [term literal](citationSemantics.md) is thinkable:
@@ -413,7 +413,7 @@ Graph literals provide an elegant solution to some hard problems.
 ```
 Less syntactic sugar, same meaning:
 ```turtle
-:Bob :says [ nng:reports ":Moon :madeOf :Cheese"^^nng:ttl ]
+:Bob :says [ nng:reports ":Moon :madeOf :Cheese ."^^nng:ttl ]
 ```
 
 #### Warrants, Versioning, Verifiable Credentials, Explainable AI
