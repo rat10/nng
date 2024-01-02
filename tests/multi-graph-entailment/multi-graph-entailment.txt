@@ -1,0 +1,150 @@
+
+{ :Linköping a :City ; 
+             :in :Sweden . } :source :nyt .
+ Q/E?
+{ :Linköping a :City . } :source :nyt . 
+
+import subject graph dataset
+
+@base <http://dydra.com/> .
+@prefix : <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+ { :Linköping a :City ; :in :Sweden . } :source :nyt .
+
+<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:topgraph-13 <http://nested-named-graph.org/embeddings> .
+<http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City> _:topgraph-13 .
+<http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden> _:topgraph-13 .
+_:topgraph-13 <http://example.org/source> <http://example.org/nyt> .
+
+subject graph query
+
+prefix : <http://example.org/> 
+prefix nng: <http://nested-named-graph.org/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+ask
+where {
+  { :Linköping a :City . } :source :nyt .
+}
+
+(ask (bgp (triple _:nodeFORMULA-13
+                  <http://example.org/source>
+                  <http://example.org/nyt>)
+          (bgp (graph _:nodeFORMULA-13)
+               (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>))))
+
+{ "head": {}, "boolean": true }
+
+prefix : <http://example.org/> 
+prefix nng: <http://nested-named-graph.org/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+ask
+where {
+  { :Linköping a :City ; :in :Sweden . } :source :nyt .
+}
+
+(ask (bgp (triple _:nodeFORMULA-15
+                  <http://example.org/source>
+                  <http://example.org/nyt>)
+          (bgp (graph _:nodeFORMULA-15)
+               (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>)
+               (triple <http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden>))))
+
+{ "head": {}, "boolean": true }
+
+embedded graph query
+
+prefix : <http://example.org/> 
+prefix nng: <http://nested-named-graph.org/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+ask
+where {
+  { :Linköping a :City ; :in :Sweden . } .
+}
+
+(ask (bgp (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>)
+          (triple <http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden>)))
+
+{ "head": {}, "boolean": true }
+
+{ :cat :is :alive , :dead . } :logicalStatus :inconsistent .
+Q/E?
+{ :cat :is :alive . } :logicalStatus :inconsistent .
+
+import subject graph dataset
+
+@base <http://dydra.com/> .
+@prefix : <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+{ :cat :is :alive , :dead . } :logicalStatus :inconsistent .
+
+<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:topgraph-16 <http://nested-named-graph.org/embeddings> .
+<http://example.org/cat> <http://example.org/is> <http://example.org/alive> _:topgraph-16 .
+<http://example.org/cat> <http://example.org/is> <http://example.org/dead> _:topgraph-16 .
+_:topgraph-16 <http://example.org/logicalStatus> <http://example.org/inconsistent> .
+
+subject graph query
+prefix : <http://example.org/> 
+prefix nng: <http://nested-named-graph.org/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+ask
+where {
+  { :cat :is :alive . } :logicalStatus :inconsistent .
+}
+
+(ask (bgp (triple _:nodeFORMULA-19
+                  <http://example.org/logicalStatus>
+                  <http://example.org/inconsistent>)
+          (bgp (graph _:nodeFORMULA-19)
+               (triple <http://example.org/cat> <http://example.org/is> <http://example.org/alive>))))
+
+{ "head": {}, "boolean": true }
+
+import nested graph dataset
+
+@base <http://dydra.com/> .
+@prefix : <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+[]{ :cat :is :alive , :dead . } :logicalStatus :inconsistent .
+
+<http://example.org/cat> <http://example.org/is> <http://example.org/alive> _:b17 .
+<http://example.org/cat> <http://example.org/is> <http://example.org/dead> _:b17 .
+<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:b17 <http://nested-named-graph.org/embeddings> .
+_:b17 <http://example.org/logicalStatus> <http://example.org/inconsistent> .
+
+nested = subject graph query
+prefix : <http://example.org/> 
+prefix nng: <http://nested-named-graph.org/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+ask
+where {
+ { :cat :is :alive . } :logicalStatus :inconsistent .
+}
+
+(ask (bgp (triple _:nodeFORMULA-21
+                  <http://example.org/logicalStatus>
+                  <http://example.org/inconsistent>)
+          (bgp (graph _:nodeFORMULA-21)
+               (triple <http://example.org/cat> <http://example.org/is> <http://example.org/alive>))))
+
+{ "head": {}, "boolean": true }
+
+overconstrained query
+prefix : <http://example.org/> 
+prefix nng: <http://nested-named-graph.org/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+ask
+where {
+{ :cat :is :alive; :is :old . } :logicalStatus :inconsistent .
+}
+
+(ask (bgp (triple _:nodeFORMULA-23
+                  <http://example.org/logicalStatus>
+                  <http://example.org/inconsistent>)
+          (bgp (graph _:nodeFORMULA-23)
+               (triple <http://example.org/cat> <http://example.org/is> <http://example.org/alive>)
+               (triple <http://example.org/cat> <http://example.org/is> <http://example.org/old>))))
+
+{ "head": {}, "boolean": false }
