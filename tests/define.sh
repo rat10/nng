@@ -79,6 +79,8 @@ then
 fi
 
 export RESULT_OUTPUT="/tmp/$$.out"
+export QUERY_INPUT="/tmp/$$.rq"
+
 
 function 1cpl () {
  sed 's/[[:space:]]*//g' | sed 's/\(.\)/\1\
@@ -367,10 +369,8 @@ function curl_graph_store_update () {
   local repository=${STORE_REPOSITORY}
   local curl_url="${GRAPH_STORE_URL}"
   local url_args=()
-      echo "$@"
   curl_url="${STORE_URL}/${account}/${repository}/service"
   while [[ "$#" > 0 ]] ; do
-    echo "$@"
     case "$1" in
       --account) account="${2}"; shift 2; curl_url="${STORE_URL}/${account}/${repository}/service";;
       all|ALL) graph="all"; shift 1;;
@@ -452,5 +452,15 @@ export -f test_unauthorized
 export -f test_unauthorized_success
 export -f test_unsupported_media
 export -f test_updated
+
+function run_test() {
+  (cd `dirname "$1"`; bash -e "`basename \"$1\"`")
+  if [[ "0" == "$?" ]]
+  then
+    echo "$1" succeeded
+  else
+    echo "$1" failed
+  fi
+}
 
 
