@@ -23,63 +23,63 @@ echo "test from variants" > $ECHO_OUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from nng:NestedGraph
 where { ?s ?p ?o }
 EOF
-fgrep -s nestedPredicate $RESULTS_POUTPUT
-fgrep -vs defaultPredicate $RESULTS_POUTPUT
+fgrep -s nestedPredicate $RESULT_POUTPUT
+fgrep -vs defaultPredicate $RESULT_POUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from nng:Quote
 where { ?s ?p ?o }
 EOF
-fgrep -s quotedPredicate $RESULTS_POUTPUT
-fgrep -vs defaultPredicate $RESULTS_POUTPUT
+fgrep -s quotedPredicate $RESULT_POUTPUT
+fgrep -vs defaultPredicate $RESULT_POUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from nng:Report
 where { ?s ?p ?o }
 EOF
-fgrep -s reportedPredicate $RESULTS_POUTPUT
-fgrep -vs defaultPredicate $RESULTS_POUTPUT
+fgrep -s reportedPredicate $RESULT_POUTPUT
+fgrep -vs defaultPredicate $RESULT_POUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from nng:Record
 where { ?s ?p ?o }
 EOF
-fgrep -s recordedPredicate $RESULTS_POUTPUT
-fgrep -vs defaultPredicate $RESULTS_POUTPUT
+fgrep -s recordedPredicate $RESULT_POUTPUT
+fgrep -vs defaultPredicate $RESULT_POUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from nng:GraphLiteral ; 
 where { ?s ?p ?o }
 EOF
-fgrep -s literalPredicate $RESULTS_POUTPUT
-fgrep -vs defaultPredicate $RESULTS_POUTPUT
+fgrep -s literalPredicate $RESULT_POUTPUT
+fgrep -vs defaultPredicate $RESULT_POUTPUT
 
 
 echo "test included variants" > $ECHO_OUTPUT
@@ -87,60 +87,60 @@ echo "test included variants" > $ECHO_OUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from included nng:NestedGraph
 where { ?s ?p ?o }
 EOF
-fgrep -s nestedPredicate $RESULTS_POUTPUT
-fgrep -s defaultPredicate $RESULTS_POUTPUT
+fgrep -s nestedPredicate $RESULT_POUTPUT
+fgrep -s defaultPredicate $RESULT_POUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from included nng:Quote
 where { ?s ?p ?o }
 EOF
-fgrep -s quotedPredicate $RESULTS_POUTPUT
-fgrep -s defaultPredicate $RESULTS_POUTPUT
+fgrep -s quotedPredicate $RESULT_POUTPUT
+fgrep -s defaultPredicate $RESULT_POUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from included nng:Report
 where { ?s ?p ?o }
 EOF
-fgrep -s reportedPredicate $RESULTS_POUTPUT
-fgrep -s defaultPredicate $RESULTS_POUTPUT
+fgrep -s reportedPredicate $RESULT_POUTPUT
+fgrep -s defaultPredicate $RESULT_POUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from included nng:Record
 where { ?s ?p ?o }
 EOF
-fgrep -s recordedPredicate $RESULTS_POUTPUT
-fgrep -s defaultPredicate $RESULTS_POUTPUT
+fgrep -s recordedPredicate $RESULT_POUTPUT
+fgrep -s defaultPredicate $RESULT_POUTPUT
 
 curl -X POST https://${STORE_HOST}/seg/test/sparql -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-results+json" \
   -u ":${STORE_TOKEN}" \
-  --data-binary @- -o $RESULTS_OUTPUT <<EOF
+  --data-binary @- -o $RESULT_OUTPUT <<EOF
 prefix : <http://example.org/> 
 prefix nng: <http://nested-named-graph.org/>
 select ?s ?p ?o
 from included nng:GraphLiteral ; 
 where { ?s ?p ?o }
 EOF
-fgrep -s literalPredicate $RESULTS_POUTPUT
-fgrep -s defaultPredicate $RESULTS_POUTPUT
+fgrep -s literalPredicate $RESULT_POUTPUT
+fgrep -s defaultPredicate $RESULT_POUTPUT

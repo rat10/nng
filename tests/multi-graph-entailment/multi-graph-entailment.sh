@@ -409,6 +409,8 @@ curl_import <<EOF
                      :City rdfs:subClassOf :Location . } .
 EOF
 
+echo >> $TRANSCRIPT_OUTPUT
+curl_graph_store_get >> $TRANSCRIPT_OUTPUT
 
 curl_query <<EOF
 prefix : <http://example.org/> 

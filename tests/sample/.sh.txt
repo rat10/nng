@@ -1,0 +1,61 @@
+import simplified nng dataset.
+- vocabulary is limited to the defined terms
+- statement terms are anonymous
+
+import subject graph dataset
+
+@base <http://dydra.com/> .
+@prefix : <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix nng: <http://nested-named-graph.org/> .
+
+:G1 {
+   :G2 {
+       :Alice :buys :Car .
+       :G2 nng:domain [ :age 20 ] ;          
+           nng:relation [ :payment :Cash ] ; 
+           nng:range :Interpretation ,    
+                     [ :color :black ].  
+   } :source :Denis ;                        
+     :purpose :JoyRiding .                   
+   :G3 {    
+       [] {                                  
+           :Alice :buys :Car .               
+           THIS nng:domain [ :age 28 ] .
+       }
+    } :source :Eve .    
+} :todo { :a :b { :d :e :f . } . } .
+:G6 {  {:q :r :s .} {:u :v :w .} { :x :y :z .}  .}
+
+_:b207 <http://nested-named-graph.org/domain> _:o-208 _:b207 .
+<http://example.org/Alice> <http://example.org/buys> <http://example.org/Car> _:b207 .
+_:o-208 <http://example.org/age> "28"^^<http://www.w3.org/2001/XMLSchema#integer> _:b207 .
+<urn:dydra:default> <http://nested-named-graph.org/transcludes> <http://example.org/G1> <http://nested-named-graph.org/embeddings> .
+<urn:dydra:default> <http://nested-named-graph.org/transcludes> <http://example.org/G6> <http://nested-named-graph.org/embeddings> .
+<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:termgraph-218 <http://nested-named-graph.org/embeddings> .
+<http://example.org/G1> <http://nested-named-graph.org/transcludes> <http://example.org/G3> <http://nested-named-graph.org/embeddings> .
+<http://example.org/G1> <http://nested-named-graph.org/transcludes> <http://example.org/G2> <http://nested-named-graph.org/embeddings> .
+<http://example.org/G3> <http://nested-named-graph.org/transcludes> _:b207 <http://nested-named-graph.org/embeddings> .
+<http://example.org/G6> <http://nested-named-graph.org/transcludes> _:termgraph-220 <http://nested-named-graph.org/embeddings> .
+<http://example.org/G6> <http://nested-named-graph.org/transcludes> _:termgraph-222 <http://nested-named-graph.org/embeddings> .
+<http://example.org/G6> <http://nested-named-graph.org/transcludes> _:termgraph-224 <http://nested-named-graph.org/embeddings> .
+_:termgraph-218 <http://nested-named-graph.org/transcludes> _:termgraph-216 <http://nested-named-graph.org/embeddings> .
+<http://example.org/G3> <http://example.org/source> <http://example.org/Eve> <http://example.org/G1> .
+<http://example.org/G2> <http://example.org/source> <http://example.org/Denis> <http://example.org/G1> .
+<http://example.org/G2> <http://example.org/purpose> <http://example.org/JoyRiding> <http://example.org/G1> .
+<http://example.org/Alice> <http://example.org/buys> <http://example.org/Car> <http://example.org/G2> .
+<http://example.org/G2> <http://nested-named-graph.org/domain> _:o-202 <http://example.org/G2> .
+<http://example.org/G2> <http://nested-named-graph.org/relation> _:o-203 <http://example.org/G2> .
+<http://example.org/G2> <http://nested-named-graph.org/range> <http://example.org/Interpretation> <http://example.org/G2> .
+<http://example.org/G2> <http://nested-named-graph.org/range> _:o-204 <http://example.org/G2> .
+_:o-204 <http://example.org/color> <http://example.org/black> <http://example.org/G2> .
+_:o-203 <http://example.org/payment> <http://example.org/Cash> <http://example.org/G2> .
+_:o-202 <http://example.org/age> "20"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/G2> .
+_:termgraph-220 _:termgraph-222 _:termgraph-224 <http://example.org/G6> .
+<http://example.org/a> <http://example.org/b> _:termgraph-216 _:termgraph-218 .
+<http://example.org/d> <http://example.org/e> <http://example.org/f> _:termgraph-216 .
+<http://example.org/q> <http://example.org/r> <http://example.org/s> _:termgraph-220 .
+<http://example.org/u> <http://example.org/v> <http://example.org/w> _:termgraph-222 .
+<http://example.org/x> <http://example.org/y> <http://example.org/z> _:termgraph-224 .
+<http://example.org/G1> <http://example.org/todo> _:termgraph-218 .
