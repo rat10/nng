@@ -84,6 +84,80 @@ prefix nng: <http://nested-named-graph.org/>
 
 -->
 
+<!-- 
+On 12. Dec 2023, at 03:11, James Anderson <anderson.james.1955@gmail.com> wrote:
+the current trig bnf is
+
+[[3b]]	labeledGraph	::=	label citedGraph
+[[3c]]	labeledGraphPol	::=	label citedGraph predicateObjectList
+[[3d]]	termGraph	::=	citedGraph
+
+[[5]]	citedGraph	::=	nestedGraph | quotedGraph | recordGraph | reportGraph | literalGraph
+[[5a]]	literalGraph	::=	String '^^' graphDatatype
+[[5aa]]	graphDatatype	::=	'<' GRAPH_DATATYPE_NAMESTRING '>'
+[[5b]]	nestedGraph	::=	'{' nestedBlocks '}'
+[[5c]]	quotedGraph	::=	'<<' nestedBlocks '>>'
+[[5d]]	recordGraph	::=	( '{"' nestedBlocks '"}' ) // fails to parse : | ( "{'" nestedBlocks "'}" )
+[[5e]]	reportGraph	::=	( '"{' nestedBlocks '}"' ) // | ( "'{" nestedBlocks "}'" )
+
+[[7]]	label		::=	iri | BlankNode | ('[' class ']' ) | ( '[' ( iri | BlankNode ) class ']' )
+[[7a]]	class		::=	iri
+
+
+
+On 15. Dec 2023, at 01:53, James Anderson <anderson.james.1955@gmail.com> wrote:
+| the BNF is a moving target ;-)
+yes, and on thin ice, but still
+
+berlinnew:spocq-seg james$ git blame src/core/encoding/trig-star.bnf
+10edfbe5 (james anderson 2023-11-03 01:44:06 +0100 10) [[2a]]   topLevelTriples ::=     ( subject predicateObjectList ) | ( blankNodePropertyList  predicateObjectList? )
+c7fdec22 (james anderson 2023-12-07 23:57:08 +0100 11) [[2b]]   topLevelGraph   ::=     label? citedGraph predicateObjectList?
+c7fdec22 (james anderson 2023-12-07 23:57:08 +0100 12) [[3]]    nestedBlocks    ::=     ( nestedTriples | labeledGraphPol | labeledGraph ) ( '.' nestedBlocks? )?
+b303294a (james anderson 2023-11-03 00:47:35 +0100 13) [[3a]]   nestedTriples   ::=     ( subject predicateObjectList ) | (blankNodePropertyList predicateObjectList? )
+...
+(root           2023-08-31 23:17:08 +0200 37) [[14]]   predicateObjectList     ::=     verb objectList (';' predicateObjectList)?
+f0b3f8d3 (james anderson 2023-09-01 02:18:15 +0200 38) [[15]]   objectList      ::=     annotatedObject (',' annotatedObject)*
+f0b3f8d3 (james anderson 2023-09-01 02:18:15 +0200 39) [[15a]]  annotatedObject ::=     object annotation?
+...
+a92dfbd6 (root           2023-08-31 23:17:08 +0200 62) [[33]]   annotation      ::=     '{|' predicateObjectList '|}'
+
+
+
+On 17. Dec 2023, at 00:41, James Anderson <anderson.james.1955@gmail.com> wrote:
+| yet, the question remains: what’s the status on the syntax? last we talked about it the status of
+| 
+| ;;; literal
+| (parse-trig-star "
+| prefix : <http://example.org/>
+| prefix nng: <http://nested-named-graph.org/>
+| []\" :s :p :o . \"^^<http://rdf>")
+| 
+| was again unclear.
+
+the bnf production is
+
+   [[5a]]	literalGraph	::=	String '^^' graphDatatype
+
+the respective reduction operator parsed the string, constructs a graph instance, and specifies that its semantics in the absence of a [...] prefix will be *nng-literal-semantics*, which is nng:|includes| .
+
+(defun odts::|literalGraph-Constructor| (iri String)
+ (declare (ignore iri)) ;; could use it to control parse
+ (let ((name (cons-blank-node "graph-literal-"))
+       (statements (parse-trig-star String))) ;;; use the iri type?
+   ;; parse graph and return it with a name
+   (loop for statement in statements
+     collect (if (triple-form-p statement)
+                 `(spocq.a:|quad| ,@(rest statement) ,name)
+                 statement))
+   `(spocq.a:|graph| ,name ,(remove nil statements)
+             ((spocq.a:|quad| ,name nng:|semantics| ,*nng-literal-semantics* ,(nng-embedding-graph '|urn:dydra|:|default|)))
+             nil)))
+
+
+
+
+-->
+
 
 RDF literals can be used to introduce RDF with non-standard semantics into the data. Many such semantics are possible, like un-assertedness, referential opacity, closed world assumption, unique name assumption, combinations thereof, etc. This section concentrates on different kinds of citation. The section on [Configurable Semantics](configSemantics.md) discusses other options.
 
