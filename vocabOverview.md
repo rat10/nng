@@ -1,5 +1,33 @@
+# transclusion.md
 
-# citationSemantics
+```turtle
+nng:transcludes a rdf:Property,
+    rdfs:subPropertyOf owl:imports ;
+    rdfs:domain nng:NamedGraph ;
+    rdfs:range nng:NestedGraph ;
+    rdfs:comment "Includes a graph source into another graph source. Transclusion is transitive: if the transcluded source contains further transclusion directives, those are executed as well." .
+```
+
+
+# graphLiterals.md
+
+```turtle
+nng:GraphLiteral a rdfs:Class ;
+    rdfs:comment "An RDF literal whose datatype is either explicitly given, e.g. NNG, Turtle, TriG or JSON-LD or which matches the enclosing RDF document,".
+```
+
+## inclusion
+
+```turtle
+nng:includes a rdf:Property,
+    rdfs:subPropertyOf owl:imports ;
+    rdfs:domain nng:NestedGraph ;
+    rdfs:range nng:GraphLiteral ;
+    rdfs:comment "Includes a graph literal as regular RDF data into the current graph, like owl:imports does for RDF ontologies." .
+```
+
+
+# citationSemantics.md
 
 ```turtle
 nng:Record a rdfs:Class ;
@@ -35,70 +63,7 @@ nng:statedAs a rdf:Property ;
 ```
 
 
-# configSemantics
-
-```turtle
-nng:SemanticsAspect a rdf:Class ;
-    rdfs:comment "An aspect of a semantics that differs from RDF’s default." .
-	
-nng:UNA a nng:SemanticsAspect ;
-    rdfs:label "Unique Name Assumption" ;
-    rdfs:comment "Each entity is denoted by exactly one identifier." 
-
-nng:CWA a nng:SemanticsAspect ;
-    rdfs:label "Closed World Assumption" ;
-    rdfs:comment "The data is complete." 
-
-nng:HYP a nng:SemanticsAspect ;
-    rdfs:label "Hypothetical, unasserted Assertion" ;
-    rdfs:comment "A graph documented, but not asserted." 
-
-nng:OPA a nng:SemanticsAspect ;
-    rdfs:label "Referential Opacity" ;
-    rdfs:comment "All IRIs are interpreted to refer to entities in the real world, but only in the specific syntactic form provided (i.e. no co-denotation with other identifiers referring to the same entities)." .
-
-nng:NEG a nng:SemanticsAspect ;
-    rdfs:label "Negated" ;
-    rdfs:comment "A graph considered false." 
-```
-
-
-## profiles
-
-```turtle
-nng:SemanticsProfile  a rdf:Class ;
-    rdfs:comment "A combination of semantics aspects into a coherent whole." .
-
-nng:hasAspect a rdf:Property ;
-    rdfs:comment "Describes semantics aspects of a semantics profile" .
-
-
-nng:APP a nng:SemanticsProfile ;
-    rdfs:label "Application Profile" ;
-    rdfs:comment "A semantics profile capturing typical intuitions of in-house application development" ;
-    nng:hasAspect nng:UNA , 
-                  nng:CWA ,
-                  nng:Address ,      # we discourage overloading of graph names
-                  nng:Identifier ,
-                  nng:GraphSource .
-
-nng:CIT a nng:SemanticsProfile ;
-    rdfs:label "Citation Profile" ;
-    rdfs:comment "A semantics profile capturing the semantics of Named Graphs, Carroll et al 2005, with the purpose to faithfully record graph instances with syntactic precision." ;
-    nng:hasAspect nng:OPA ,
-                  nng:Address ,
-                  nng:Identifier ,
-                  nng:GraphType .
-
-nng:LOG a nng:SemanticsProfile ;
-    rdfs:label "Logic Profile" ;
-    rdfs:comment "A profile to enable reasoning over nested graphs" ;
-    nng:hasAspect nng:Address ,
-                  nng:Content ,
-                  nng:GraphType .
-```
-
-# fragments
+# fragments.md
 
 ```turtle
 nng:domain a rdf:Property;
@@ -134,22 +99,37 @@ nng:tree a rdf:Property;
     rdfs:comment "Refers to a graph source and all graph sources nested inside, recursively" .
 ```
 
-# graphLiterals
+
+# identification
 
 ```turtle
-nng:GraphLiteral a rdfs:Class ;
-    rdfs:comment "An RDF literal whose datatype is either explicitly given, e.g. NNG, Turtle, TriG or JSON-LD or which matches the enclosing RDF document,".
+nng:identifiedAs a rdf:Property ;
+    rdfs:label "Interpretation semantics ;
+    rdfs:comment "Specifies how an identifier should be interpreted." .
+
+nng:Interpretation a nng:SemanticsAspect ;
+    rdfs:label "Interpretation" ;
+    rdfs:comment "The identifier is interpreted to refer to an entity in the real world." .
+
+nng:Artifact a nng:SemanticsAspect ;
+    rdfs:label "Artifact" ;
+    rdfs:comment "The identifier is used to refer to a resource retrievable over the internet, i.e. an artifact." .
 ```
 
-## inclusion
+
+# mapping
 
 ```turtle
-nng:includes a rdf:Property,
-    rdfs:subPropertyOf owl:imports ;
-    rdfs:domain nng:NestedGraph ;
-    rdfs:range nng:GraphLiteral ;
-    rdfs:comment "Includes a graph literal as regular RDF data into the current graph, like owl:imports does for RDF ontologies." .
+nng:containedIn a rdfs:Property ;
+    rdfs:range nng:NestedGraph ;
+    rdfs:comment "The property `nng:containedIn` records the named graph (nested or not) that the statement occurs in." .
+
+nng:principal a rdfs:Property ;
+    rdfs:subPropertyOf rdf:type , 
+                       rdf:value ;
+    rdfs:comment "The property `nng:principal` records the principal value of a term, differentiating it from all other annotations that provide secondary detail." .
 ```
+
 
 # graphSemantics
 
@@ -245,33 +225,68 @@ nng:defaultGraphType a rdf:Property ;
     rdfs:comment "Defines the graph type for all graphs in a dataset."
 ```
 
-# identification
+
+# configSemantics
 
 ```turtle
-nng:identifiedAs a rdf:Property ;
-    rdfs:label "Interpretation semantics ;
-    rdfs:comment "Specifies how an identifier should be interpreted." .
+nng:SemanticsAspect a rdf:Class ;
+    rdfs:comment "An aspect of a semantics that differs from RDF’s default." .
+	
+nng:UNA a nng:SemanticsAspect ;
+    rdfs:label "Unique Name Assumption" ;
+    rdfs:comment "Each entity is denoted by exactly one identifier." 
 
-nng:Interpretation a nng:SemanticsAspect ;
-    rdfs:label "Interpretation" ;
-    rdfs:comment "The identifier is interpreted to refer to an entity in the real world." .
+nng:CWA a nng:SemanticsAspect ;
+    rdfs:label "Closed World Assumption" ;
+    rdfs:comment "The data is complete." 
 
-nng:Artifact a nng:SemanticsAspect ;
-    rdfs:label "Artifact" ;
-    rdfs:comment "The identifier is used to refer to a resource retrievable over the internet, i.e. an artifact." .
+nng:HYP a nng:SemanticsAspect ;
+    rdfs:label "Hypothetical, unasserted Assertion" ;
+    rdfs:comment "A graph documented, but not asserted." 
+
+nng:OPA a nng:SemanticsAspect ;
+    rdfs:label "Referential Opacity" ;
+    rdfs:comment "All IRIs are interpreted to refer to entities in the real world, but only in the specific syntactic form provided (i.e. no co-denotation with other identifiers referring to the same entities)." .
+
+nng:NEG a nng:SemanticsAspect ;
+    rdfs:label "Negated" ;
+    rdfs:comment "A graph considered false." 
 ```
 
-# mapping
+
+## profiles
 
 ```turtle
-nng:containedIn a rdfs:Property ;
-    rdfs:range nng:NestedGraph ;
-    rdfs:comment "The property `nng:containedIn` records the named graph (nested or not) that the statement occurs in." .
+nng:SemanticsProfile  a rdf:Class ;
+    rdfs:comment "A combination of semantics aspects into a coherent whole." .
 
-nng:principal a rdfs:Property ;
-    rdfs:subPropertyOf rdf:type , 
-                       rdf:value ;
-    rdfs:comment "The property `nng:principal` records the principal value of a term, differentiating it from all other annotations that provide secondary detail." .
+nng:hasAspect a rdf:Property ;
+    rdfs:comment "Describes semantics aspects of a semantics profile" .
+
+
+nng:APP a nng:SemanticsProfile ;
+    rdfs:label "Application Profile" ;
+    rdfs:comment "A semantics profile capturing typical intuitions of in-house application development" ;
+    nng:hasAspect nng:UNA , 
+                  nng:CWA ,
+                  nng:Address ,      # we discourage overloading of graph names
+                  nng:Identifier ,
+                  nng:GraphSource .
+
+nng:CIT a nng:SemanticsProfile ;
+    rdfs:label "Citation Profile" ;
+    rdfs:comment "A semantics profile capturing the semantics of Named Graphs, Carroll et al 2005, with the purpose to faithfully record graph instances with syntactic precision." ;
+    nng:hasAspect nng:OPA ,
+                  nng:Address ,
+                  nng:Identifier ,
+                  nng:GraphType .
+
+nng:LOG a nng:SemanticsProfile ;
+    rdfs:label "Logic Profile" ;
+    rdfs:comment "A profile to enable reasoning over nested graphs" ;
+    nng:hasAspect nng:Address ,
+                  nng:Content ,
+                  nng:GraphType .
 ```
 
 
@@ -280,14 +295,4 @@ nng:principal a rdfs:Property ;
 ```turtle
 THIS a rdfs:Resource ;
     rdfs:comment "A self-reference from inside a (nested) graph to itself" .
-```
-
-# transclusion
-
-```turtle
-nng:transcludes a rdf:Property,
-    rdfs:subPropertyOf owl:imports ;
-    rdfs:domain nng:NamedGraph ;
-    rdfs:range nng:NestedGraph ;
-    rdfs:comment "Includes a graph source into another graph source. Transclusion is transitive: if the transcluded source contains further transclusion directives, those are executed as well." .
 ```

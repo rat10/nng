@@ -158,43 +158,11 @@ NEW >>
           "graphType"
           "semantics"
           "name"
-          
+
           "transcludes"      ;; see transclusion.md
-          
-          "includes"         ;; see citationSemantics.md
-          "GraphLiteral"
-          
-         
-                             ;; see graphSemantics.md
-          "identifiedBy"     ;;     graph identity
-          "Identifier"
-          "Content"
 
-          "naming"           ;;     graph naming
-          "Address"
-          "Overloaded"
-          "overloading"
-
-          "mutability"       ;;     graph mutability
-          "GraphSource"
-          "GraphType"
-
-          "Undefined"        ;;     graph definition
-
-          "Graph"            ;;     graph types
-          "NamedGraph"
-          "NestedGraph"
-          "IdentGraph"
-
-          "defaultGraphType" ;;     extension to sd 
-
-
-          "identifiedAs"     ;; see identification.md
-          "Interpretation"
-          "Artifact"
-          
-          "containedIn"      ;; see mapping.md
-          "principal"
+          "GraphLiteral"     ;; see graphLiterals.md
+          "includes"
           
           "Record"           ;; see citationSemantics.md
           "records"
@@ -203,13 +171,38 @@ NEW >>
           "Quote"
           "quotes"
           "statedAs"
-          
+
           "domain"           ;; see fragments.md
           "relation"
           "range"
           "triple"
           "graph"
           "tree"
+
+          "identifiedAs"     ;; see identification.md
+          "Interpretation"
+          "Artifact"
+
+          "containedIn"      ;; see mapping.md
+          "principal"
+
+                             ;; see graphSemantics.md
+          "identifiedBy"     ;;     graph identity
+          "Identifier"
+          "Content"
+          "naming"           ;;     graph naming
+          "Address"
+          "Overloaded"
+          "overloading"
+          "mutability"       ;;     graph mutability
+          "GraphSource"
+          "GraphType"
+          "Undefined"        ;;     graph definition
+          "Graph"            ;;     graph types
+          "NamedGraph"
+          "NestedGraph"
+          "IdentGraph"
+          "defaultGraphType" ;;     extension to sd 
           
           "SemanticsAspect"  ;; see configSemantics.md
           "UNA"
@@ -217,7 +210,6 @@ NEW >>
           "HYP"
           "OPA"
           "NEG"
-          
           "SemanticsProfile" ;;     profiles
           "hasAspect"
           "APP"
