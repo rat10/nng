@@ -7,7 +7,25 @@ sound graph naming semantics are provided by
   because they all have as domain a graph source
   this is a semantics fixing per usage
     that doesn't interfere with any other usage
+
+
+add a distinction between 
+    - classes + properties that we need and
+    - what is added here only for "completeness" 
+        (to cover everything the RDF 1.1 Dataset note mentions)
+
+add
+    Assertion 
+        so NestedGraph is the superclass of 
+            Assertion
+            Report
+            Record
+            Quote
+    maybe move it to citationsemantics.md
+    maybe add ´"asserts"
+
 -->
+
 
 Nested Named Graphs are designed as an extension to RDF 1.1 named graphs. However this approach comes with two caveats: named graphs as specified in RDF 1.1 have no standard semantics, and their syntax doesn't support nesting. The latter problem is easy to dispel via a mapping - [transclusion](transclusion.md) and some [syntactic sugar](serialization.md) -, the former however it seems is an issue with many facets and not possible to resolve in a general way.
 
