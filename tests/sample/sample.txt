@@ -11,51 +11,114 @@ import subject graph dataset
 @prefix nng: <http://nested-named-graph.org/> .
 
 :G1 {
-   :G2 {
+    {:G2 |
        :Alice :buys :Car .
-       :G2 nng:domain [ :age 20 ] ;          
+       :THIS nng:domain [ :age 20 ] ;          
            nng:relation [ :payment :Cash ] ; 
            nng:range :Interpretation ,    
                      [ :color :black ].  
-   } :source :Denis ;                        
-     :purpose :JoyRiding .                   
-   :G3 {    
+   } :source :Denis ; :purpose :JoyRiding .
+   {:G3 |   
        [] {                                  
            :Alice :buys :Car .               
            THIS nng:domain [ :age 28 ] .
-       }
-    } :source :Eve .    
-} :todo { :a :b { :d :e :f . } . } .
-:G6 {  {:q :r :s .} {:u :v :w .} { :x :y :z .}  .}
+       } .
+    } :source :Eve .
+} .
+:G6 { {:G7 | :q :r :s .} { :G8 | :u :v :w .} { :G9 | :x :y :z .}  .} .
 
-_:b232 <http://nested-named-graph.org/domain> _:o-233 _:b232 .
-<http://example.org/Alice> <http://example.org/buys> <http://example.org/Car> _:b232 .
-_:o-233 <http://example.org/age> "28"^^<http://www.w3.org/2001/XMLSchema#integer> _:b232 .
-<urn:dydra:default> <http://nested-named-graph.org/transcludes> <http://example.org/G1> <http://nested-named-graph.org/embeddings> .
-<urn:dydra:default> <http://nested-named-graph.org/transcludes> <http://example.org/G6> <http://nested-named-graph.org/embeddings> .
-<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:termgraph-243 <http://nested-named-graph.org/embeddings> .
-<http://example.org/G1> <http://nested-named-graph.org/transcludes> <http://example.org/G3> <http://nested-named-graph.org/embeddings> .
-<http://example.org/G1> <http://nested-named-graph.org/transcludes> <http://example.org/G2> <http://nested-named-graph.org/embeddings> .
-<http://example.org/G3> <http://nested-named-graph.org/transcludes> _:b232 <http://nested-named-graph.org/embeddings> .
-<http://example.org/G6> <http://nested-named-graph.org/transcludes> _:termgraph-245 <http://nested-named-graph.org/embeddings> .
-<http://example.org/G6> <http://nested-named-graph.org/transcludes> _:termgraph-247 <http://nested-named-graph.org/embeddings> .
-<http://example.org/G6> <http://nested-named-graph.org/transcludes> _:termgraph-249 <http://nested-named-graph.org/embeddings> .
-_:termgraph-243 <http://nested-named-graph.org/transcludes> _:termgraph-241 <http://nested-named-graph.org/embeddings> .
+<urn:dydra:default> <http://nested-named-graph.org/asserts> <http://example.org/G1> <http://nested-named-graph.org/embeddings> .
+<urn:dydra:default> <http://nested-named-graph.org/asserts> <http://example.org/G6> <http://nested-named-graph.org/embeddings> .
+<http://example.org/G1> <http://nested-named-graph.org/asserts> <http://example.org/G3> <http://nested-named-graph.org/embeddings> .
+<http://example.org/G1> <http://nested-named-graph.org/asserts> <http://example.org/G2> <http://nested-named-graph.org/embeddings> .
+<http://example.org/G3> <http://nested-named-graph.org/asserts> _:b64_j9kdmzah_0xm70c8 <http://nested-named-graph.org/embeddings> .
+<http://example.org/G6> <http://nested-named-graph.org/asserts> <http://example.org/G7> <http://nested-named-graph.org/embeddings> .
+<http://example.org/G6> <http://nested-named-graph.org/asserts> <http://example.org/G8> <http://nested-named-graph.org/embeddings> .
+<http://example.org/G6> <http://nested-named-graph.org/asserts> <http://example.org/G9> <http://nested-named-graph.org/embeddings> .
 <http://example.org/G3> <http://example.org/source> <http://example.org/Eve> <http://example.org/G1> .
 <http://example.org/G2> <http://example.org/source> <http://example.org/Denis> <http://example.org/G1> .
 <http://example.org/G2> <http://example.org/purpose> <http://example.org/JoyRiding> <http://example.org/G1> .
 <http://example.org/Alice> <http://example.org/buys> <http://example.org/Car> <http://example.org/G2> .
-<http://example.org/G2> <http://nested-named-graph.org/domain> _:o-227 <http://example.org/G2> .
-<http://example.org/G2> <http://nested-named-graph.org/relation> _:o-228 <http://example.org/G2> .
-<http://example.org/G2> <http://nested-named-graph.org/range> <http://example.org/Interpretation> <http://example.org/G2> .
-<http://example.org/G2> <http://nested-named-graph.org/range> _:o-229 <http://example.org/G2> .
-_:o-229 <http://example.org/color> <http://example.org/black> <http://example.org/G2> .
-_:o-228 <http://example.org/payment> <http://example.org/Cash> <http://example.org/G2> .
-_:o-227 <http://example.org/age> "20"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/G2> .
-_:termgraph-245 _:termgraph-247 _:termgraph-249 <http://example.org/G6> .
-<http://example.org/a> <http://example.org/b> _:termgraph-241 _:termgraph-243 .
-<http://example.org/d> <http://example.org/e> <http://example.org/f> _:termgraph-241 .
-<http://example.org/q> <http://example.org/r> <http://example.org/s> _:termgraph-245 .
-<http://example.org/u> <http://example.org/v> <http://example.org/w> _:termgraph-247 .
-<http://example.org/x> <http://example.org/y> <http://example.org/z> _:termgraph-249 .
-<http://example.org/G1> <http://example.org/todo> _:termgraph-243 .
+_:o-61 <http://example.org/age> "20"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/G2> .
+<http://example.org/THIS> <http://nested-named-graph.org/domain> _:o-61 <http://example.org/G2> .
+<http://example.org/THIS> <http://nested-named-graph.org/relation> _:o-62 <http://example.org/G2> .
+<http://example.org/THIS> <http://nested-named-graph.org/range> <http://example.org/Interpretation> <http://example.org/G2> .
+<http://example.org/THIS> <http://nested-named-graph.org/range> _:o-63 <http://example.org/G2> .
+_:o-63 <http://example.org/color> <http://example.org/black> <http://example.org/G2> .
+_:o-62 <http://example.org/payment> <http://example.org/Cash> <http://example.org/G2> .
+<http://example.org/G7> <http://example.org/G8> <http://example.org/G9> <http://example.org/G6> .
+<http://example.org/q> <http://example.org/r> <http://example.org/s> <http://example.org/G7> .
+<http://example.org/u> <http://example.org/v> <http://example.org/w> <http://example.org/G8> .
+<http://example.org/x> <http://example.org/y> <http://example.org/z> <http://example.org/G9> .
+<http://example.org/Alice> <http://example.org/buys> <http://example.org/Car> _:b64_j9kdmzah_0xm70c8 .
+_:o-65 <http://example.org/age> "28"^^<http://www.w3.org/2001/XMLSchema#integer> _:b64_j9kdmzah_0xm70c8 .
+_:b64_j9kdmzah_0xm70c8 <http://nested-named-graph.org/domain> _:o-65 _:b64_j9kdmzah_0xm70c8 .
+
+
+prefix : <http://example.org/> prefix : <http://example.org/> prefix nng: <http://nested-named-graph.org/>
+:a :s :d .
+
+<http://example.org/a> <http://example.org/s> <http://example.org/d> .
+
+
+prefix : <http://example.org/> prefix : <http://example.org/> prefix nng: <http://nested-named-graph.org/>
+{ :a :s :d . } .
+
+<http://example.org/a> <http://example.org/s> <http://example.org/d> .
+
+
+prefix : <http://example.org/> prefix : <http://example.org/> prefix nng: <http://nested-named-graph.org/>
+:a :s :d ; :s2 :d2 , :d3 .
+
+<http://example.org/a> <http://example.org/s2> <http://example.org/d3> .
+<http://example.org/a> <http://example.org/s2> <http://example.org/d2> .
+<http://example.org/a> <http://example.org/s> <http://example.org/d> .
+
+
+prefix : <http://example.org/> prefix : <http://example.org/> prefix nng: <http://nested-named-graph.org/>
+{ :a :s :d ; :s2 :d2 , :d3 . } .
+
+<http://example.org/a> <http://example.org/s2> <http://example.org/d3> .
+<http://example.org/a> <http://example.org/s2> <http://example.org/d2> .
+<http://example.org/a> <http://example.org/s> <http://example.org/d> .
+
+
+prefix : <http://example.org/> prefix : <http://example.org/> prefix nng: <http://nested-named-graph.org/>
+:g { :a :s :d . } .
+
+<urn:dydra:default> <http://nested-named-graph.org/asserts> <http://example.org/g> <http://nested-named-graph.org/embeddings> .
+<http://example.org/a> <http://example.org/s> <http://example.org/d> <http://example.org/g> .
+
+
+prefix : <http://example.org/> prefix : <http://example.org/> prefix nng: <http://nested-named-graph.org/>
+:g { :a :s :d ; :s2 :d2 , :d3 . } .
+
+<urn:dydra:default> <http://nested-named-graph.org/asserts> <http://example.org/g> <http://nested-named-graph.org/embeddings> .
+<http://example.org/a> <http://example.org/s2> <http://example.org/d3> <http://example.org/g> .
+<http://example.org/a> <http://example.org/s2> <http://example.org/d2> <http://example.org/g> .
+<http://example.org/a> <http://example.org/s> <http://example.org/d> <http://example.org/g> .
+
+
+prefix : <http://example.org/> prefix : <http://example.org/> prefix nng: <http://nested-named-graph.org/>
+{ :x :y :z . } :p :o .
+
+<urn:dydra:default> <http://nested-named-graph.org/asserts> _:graph-asserted-76 <http://nested-named-graph.org/embeddings> .
+<http://example.org/x> <http://example.org/y> <http://example.org/z> _:graph-asserted-76 .
+_:graph-asserted-76 <http://example.org/p> <http://example.org/o> .
+
+
+prefix : <http://example.org/> prefix : <http://example.org/> prefix nng: <http://nested-named-graph.org/>
+{ { :n | :x :y :z . } :p :o . } .
+
+<urn:dydra:default> <http://nested-named-graph.org/asserts> <http://example.org/n> <http://nested-named-graph.org/embeddings> .
+<http://example.org/x> <http://example.org/y> <http://example.org/z> <http://example.org/n> .
+<http://example.org/n> <http://example.org/p> <http://example.org/o> .
+
+
+prefix : <http://example.org/> prefix : <http://example.org/> prefix nng: <http://nested-named-graph.org/>
+<< :n | :x :y :z . >> :p :o .
+
+<urn:dydra:default> <http://nested-named-graph.org/quotes> <http://example.org/n> <http://nested-named-graph.org/embeddings> .
+<http://example.org/x> <http://example.org/y> <http://example.org/z> <http://example.org/n> .
+<http://example.org/n> <http://example.org/p> <http://example.org/o> .
+
