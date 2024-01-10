@@ -14,12 +14,13 @@ truncate -s 0 $TRANSCRIPT_OUTPUT
 
 function curl_import () {
   tee -a $TRANSCRIPT_OUTPUT \
+  | tee $ECHO_OUTPUT \
   | curl_graph_store_update -H "Content-Type: application/trig" -w "%{http_code}\n" -o  ${ECHO_OUTPUT} \
   | test_post_success
 }
 
 function curl_query () {
-  tee -a $TRANSCRIPT_OUTPUT | cat > $QUERY_INPUT ;
+  tee -a $TRANSCRIPT_OUTPUT | tee $ECHO_OUTPUT | cat > $QUERY_INPUT ;
   echo >> $TRANSCRIPT_OUTPUT ;
   curl -s -X POST https://${STORE_HOST}/seg/test/sparql \
     -H "Content-Type: application/sparql-query" -H "Accept: application/sparql-query+sse" \
@@ -77,7 +78,7 @@ subject graph query
 '>> $TRANSCRIPT_OUTPUT
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -89,7 +90,7 @@ fgrep -q -i true $RESULT_OUTPUT
 echo >> $TRANSCRIPT_OUTPUT
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -103,7 +104,7 @@ embedded graph query
 '>> $TRANSCRIPT_OUTPUT
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -117,7 +118,7 @@ another embedded graph query
 '>> $TRANSCRIPT_OUTPUT
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -131,7 +132,7 @@ another embedded graph query
 '>> $TRANSCRIPT_OUTPUT
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 select ?g
 where {
@@ -145,7 +146,7 @@ sparql star term query
 '>> $TRANSCRIPT_OUTPUT
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -163,7 +164,7 @@ curl_import <<EOF
 @prefix : <http://example.org/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-[]{ :Linköping a :City ; :in :Sweden . } :source :nyt .
+ { :Linköping a :City ; :in :Sweden . } :source :nyt .
 EOF
 
 echo >> $TRANSCRIPT_OUTPUT
@@ -205,8 +206,8 @@ curl_import <<EOF
 @prefix : <http://example.org/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-[]{ :Linköping a :City . } :saidBy :john .
-[]{ :Linköping :in :Sweden . } :saidBy :john .
+ { :Linköping a :City . } :saidBy :john .
+ { :Linköping :in :Sweden . } :saidBy :john .
 EOF
 
 
@@ -219,10 +220,10 @@ where the identity is retained, the graphs are distinct.
 
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
-from included nng:NestedGraph
+from included nng:Assertion
 where {
   { :Linköping a :City ; :in :Sweden . }
 }
@@ -232,10 +233,10 @@ fgrep -q -i true $RESULT_OUTPUT
 
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
-from included nng:NestedGraph
+from included nng:Assertion
 where {
   { :Linköping a :City ; :in :Sweden . } :saidBy :john .
 }
@@ -245,7 +246,7 @@ fgrep -q -i false $RESULT_OUTPUT
 
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -321,7 +322,7 @@ echo '
 subject graph query' >> $TRANSCRIPT_OUTPUT
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -341,7 +342,7 @@ curl_import <<EOF
 @prefix : <http://example.org/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-[]{ :cat :is :alive , :dead . } :logicalStatus :inconsistent .
+{ :cat :is :alive , :dead . } :logicalStatus :inconsistent .
 EOF
 
 echo >> $TRANSCRIPT_OUTPUT
@@ -351,7 +352,7 @@ echo '
 nested = subject graph query' >> $TRANSCRIPT_OUTPUT
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -364,7 +365,7 @@ echo '
 overconstrained query' >> $TRANSCRIPT_OUTPUT
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -414,7 +415,7 @@ curl_graph_store_get >> $TRANSCRIPT_OUTPUT
 
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -425,7 +426,7 @@ fgrep -q -i true $RESULT_OUTPUT
 
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -436,7 +437,7 @@ fgrep -q -i true $RESULT_OUTPUT
 
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -449,7 +450,7 @@ fgrep -q -i true $RESULT_OUTPUT
 # kleene star formulation of "entailment" yields no result
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -461,7 +462,7 @@ fgrep -q -i true $RESULT_OUTPUT
 
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -474,7 +475,7 @@ fgrep -q -i false $RESULT_OUTPUT
 # although the formulation does match, it suppresses the actual graph
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 from <urn:dydra:all>
@@ -487,7 +488,7 @@ fgrep -q -i true $RESULT_OUTPUT
 
 curl_query <<EOF
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 select *
 where {

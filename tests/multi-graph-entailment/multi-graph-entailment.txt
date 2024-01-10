@@ -12,41 +12,41 @@ import subject graph dataset
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
  { :Linköping a :City ; :in :Sweden . } :source :nyt .
 
-<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:topgraph-22 <http://nested-named-graph.org/embeddings> .
-<http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City> _:topgraph-22 .
-<http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden> _:topgraph-22 .
-_:topgraph-22 <http://example.org/source> <http://example.org/nyt> .
+<http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City> _:graph-asserted-19 .
+<http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden> _:graph-asserted-19 .
+<urn:dydra:default> <http://nngraph.org/asserts> _:graph-asserted-19 <http://nngraph.org/embeddings> .
+_:graph-asserted-19 <http://example.org/source> <http://example.org/nyt> .
 
 subject graph query
 
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
   { :Linköping a :City . } :source :nyt .
 }
 
-(ask (bgp (triple _:nodeFORMULA-85
+(ask (bgp (triple _:nodeFORMULA-29
                   <http://example.org/source>
                   <http://example.org/nyt>)
-          (bgp (graph _:nodeFORMULA-85)
+          (bgp (graph _:nodeFORMULA-29)
                (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>))))
 
 { "head": {}, "boolean": true }
 
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
   { :Linköping a :City ; :in :Sweden . } :source :nyt .
 }
 
-(ask (bgp (triple _:nodeFORMULA-87
+(ask (bgp (triple _:nodeFORMULA-30
                   <http://example.org/source>
                   <http://example.org/nyt>)
-          (bgp (graph _:nodeFORMULA-87)
+          (bgp (graph _:nodeFORMULA-30)
                (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>)
                (triple <http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden>))))
 
@@ -55,7 +55,7 @@ where {
 embedded graph query
 
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -70,18 +70,18 @@ where {
 another embedded graph query
 
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
  []{ :Linköping a :City ; :in :Sweden . } .
 }
 
-(ask (bgp (graph _:node91)
-          (bgp (graph <http://nested-named-graph.org/embeddings>)
-               (triple _:nodeCONTEXT-GRAPH-93
-                       <http://nested-named-graph.org/transcludes>
-                       _:node91))
+(ask (bgp (graph _:node32)
+          (bgp (graph <http://nngraph.org/embeddings>)
+               (triple _:nodeCONTEXT-GRAPH-34
+                       <http://nngraph.org/asserts>
+                       _:node32))
           (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>)
           (triple <http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden>)))
 
@@ -90,7 +90,7 @@ where {
 another embedded graph query
 
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 select ?g
 where {
@@ -98,33 +98,31 @@ where {
 }
 
 (select ?g (bgp (graph ?g)
-     (bgp (graph <http://nested-named-graph.org/embeddings>)
-          (triple _:nodeCONTEXT-GRAPH-98
-                  <http://nested-named-graph.org/transcludes>
-                  ?g))
+     (bgp (graph <http://nngraph.org/embeddings>)
+          (triple _:nodeCONTEXT-GRAPH-36 <http://nngraph.org/asserts> ?g))
      (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>)
      (triple <http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden>)))
 
 { "head": { "vars": [ "g" ] },
    "results": {
    "bindings": [
- { "g": {"type":"bnode", "value":"topgraph-22"} } ] } }
+ { "g": {"type":"bnode", "value":"graph-asserted-19"} } ] } }
 
 
 sparql star term query
 
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
   << :Linköping a :City >> :source :nyt .
 }
 
-(ask (bgp (triple _:nodeGRAPH-101
+(ask (bgp (triple _:nodeGRAPH-37
                   <http://example.org/source>
                   <http://example.org/nyt>)
-          (bgp (graph _:nodeGRAPH-101)
+          (bgp (graph _:nodeGRAPH-37)
                (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>))))
 
 { "head": {}, "boolean": true }
@@ -135,16 +133,16 @@ import nested graph dataset - equivalent representation
 @prefix : <http://example.org/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-[]{ :Linköping a :City ; :in :Sweden . } :source :nyt .
+ { :Linköping a :City ; :in :Sweden . } :source :nyt .
 
-<http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City> _:b23 .
-<http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden> _:b23 .
-<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:b23 <http://nested-named-graph.org/embeddings> .
-<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:topgraph-22 <http://nested-named-graph.org/embeddings> .
-<http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City> _:topgraph-22 .
-<http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden> _:topgraph-22 .
-_:b23 <http://example.org/source> <http://example.org/nyt> .
-_:topgraph-22 <http://example.org/source> <http://example.org/nyt> .
+<http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City> _:graph-asserted-19 .
+<http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden> _:graph-asserted-19 .
+<urn:dydra:default> <http://nngraph.org/asserts> _:graph-asserted-19 <http://nngraph.org/embeddings> .
+<urn:dydra:default> <http://nngraph.org/asserts> _:graph-asserted-21 <http://nngraph.org/embeddings> .
+<http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City> _:graph-asserted-21 .
+<http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden> _:graph-asserted-21 .
+_:graph-asserted-19 <http://example.org/source> <http://example.org/nyt> .
+_:graph-asserted-21 <http://example.org/source> <http://example.org/nyt> .
 
 { :Linköping a :City . } :saidBy :john .
 { :Linköping :in :Sweden . } :saidBy :john .
@@ -157,8 +155,8 @@ two nested graphs, annotated
 @prefix : <http://example.org/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-[]{ :Linköping a :City . } :saidBy :john .
-[]{ :Linköping :in :Sweden . } :saidBy :john .
+ { :Linköping a :City . } :saidBy :john .
+ { :Linköping :in :Sweden . } :saidBy :john .
 
 "from included" merges the nested graphs related to the default graph,
 but as the graph identity if no longer present, thhere is no relation to ":saidBy john"
@@ -166,10 +164,10 @@ and without that a join with two graph instances fails as,
 where the identity is retained, the graphs are distinct.
 
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
-from included nng:NestedGraph
+from included nng:Assertion
 where {
   { :Linköping a :City ; :in :Sweden . }
 }
@@ -179,24 +177,24 @@ where {
 
 { "head": {}, "boolean": true }
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
-from included nng:NestedGraph
+from included nng:Assertion
 where {
   { :Linköping a :City ; :in :Sweden . } :saidBy :john .
 }
 
-(ask (bgp (triple _:nodeFORMULA-105
+(ask (bgp (triple _:nodeFORMULA-39
                   <http://example.org/saidBy>
                   <http://example.org/john>)
-          (bgp (graph _:nodeFORMULA-105)
+          (bgp (graph _:nodeFORMULA-39)
                (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>)
                (triple <http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden>))))
 
 { "head": {}, "boolean": false }
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -204,10 +202,8 @@ where {
 }
 
 (ask (bgp (graph ?g)
-          (bgp (graph <http://nested-named-graph.org/embeddings>)
-               (triple _:nodeCONTEXT-GRAPH-108
-                       <http://nested-named-graph.org/transcludes>
-                       ?g))
+          (bgp (graph <http://nngraph.org/embeddings>)
+               (triple _:nodeCONTEXT-GRAPH-41 <http://nngraph.org/asserts> ?g))
           (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>)
           (triple <http://example.org/Linköping> <http://example.org/in> <http://example.org/Sweden>)))
 
@@ -234,24 +230,24 @@ import subject graph dataset
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 { :cat :is :alive , :dead . } :logicalStatus :inconsistent .
 
-<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:topgraph-40 <http://nested-named-graph.org/embeddings> .
-<http://example.org/cat> <http://example.org/is> <http://example.org/alive> _:topgraph-40 .
-<http://example.org/cat> <http://example.org/is> <http://example.org/dead> _:topgraph-40 .
-_:topgraph-40 <http://example.org/logicalStatus> <http://example.org/inconsistent> .
+<urn:dydra:default> <http://nngraph.org/asserts> _:graph-asserted-10 <http://nngraph.org/embeddings> .
+<http://example.org/cat> <http://example.org/is> <http://example.org/alive> _:graph-asserted-10 .
+<http://example.org/cat> <http://example.org/is> <http://example.org/dead> _:graph-asserted-10 .
+_:graph-asserted-10 <http://example.org/logicalStatus> <http://example.org/inconsistent> .
 
 subject graph query
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
   { :cat :is :alive . } :logicalStatus :inconsistent .
 }
 
-(ask (bgp (triple _:nodeFORMULA-111
+(ask (bgp (triple _:nodeFORMULA-14
                   <http://example.org/logicalStatus>
                   <http://example.org/inconsistent>)
-          (bgp (graph _:nodeFORMULA-111)
+          (bgp (graph _:nodeFORMULA-14)
                (triple <http://example.org/cat> <http://example.org/is> <http://example.org/alive>))))
 
 { "head": {}, "boolean": true }
@@ -262,43 +258,43 @@ import nested graph dataset
 @prefix : <http://example.org/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-[]{ :cat :is :alive , :dead . } :logicalStatus :inconsistent .
+{ :cat :is :alive , :dead . } :logicalStatus :inconsistent .
 
-<http://example.org/cat> <http://example.org/is> <http://example.org/alive> _:b41 .
-<http://example.org/cat> <http://example.org/is> <http://example.org/dead> _:b41 .
-<urn:dydra:default> <http://nested-named-graph.org/transcludes> _:b41 <http://nested-named-graph.org/embeddings> .
-_:b41 <http://example.org/logicalStatus> <http://example.org/inconsistent> .
+<urn:dydra:default> <http://nngraph.org/asserts> _:graph-asserted-23 <http://nngraph.org/embeddings> .
+<http://example.org/cat> <http://example.org/is> <http://example.org/alive> _:graph-asserted-23 .
+<http://example.org/cat> <http://example.org/is> <http://example.org/dead> _:graph-asserted-23 .
+_:graph-asserted-23 <http://example.org/logicalStatus> <http://example.org/inconsistent> .
 
 nested = subject graph query
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
  { :cat :is :alive . } :logicalStatus :inconsistent .
 }
 
-(ask (bgp (triple _:nodeFORMULA-113
+(ask (bgp (triple _:nodeFORMULA-43
                   <http://example.org/logicalStatus>
                   <http://example.org/inconsistent>)
-          (bgp (graph _:nodeFORMULA-113)
+          (bgp (graph _:nodeFORMULA-43)
                (triple <http://example.org/cat> <http://example.org/is> <http://example.org/alive>))))
 
 { "head": {}, "boolean": true }
 
 overconstrained query
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
 { :cat :is :alive; :is :old . } :logicalStatus :inconsistent .
 }
 
-(ask (bgp (triple _:nodeFORMULA-115
+(ask (bgp (triple _:nodeFORMULA-44
                   <http://example.org/logicalStatus>
                   <http://example.org/inconsistent>)
-          (bgp (graph _:nodeFORMULA-115)
+          (bgp (graph _:nodeFORMULA-44)
                (triple <http://example.org/cat> <http://example.org/is> <http://example.org/alive>)
                (triple <http://example.org/cat> <http://example.org/is> <http://example.org/old>))))
 
@@ -317,8 +313,13 @@ import object graph dataset
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 :geography :truths { :Linköping a :City .
                      :City rdfs:subClassOf :Location . } .
+
+<urn:dydra:default> <http://nngraph.org/asserts> _:graph-asserted-12 <http://nngraph.org/embeddings> .
+<http://example.org/City> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/Location> _:graph-asserted-12 .
+<http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City> _:graph-asserted-12 .
+<http://example.org/geography> <http://example.org/truths> _:graph-asserted-12 .
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -327,14 +328,14 @@ where {
 
 (ask (bgp (triple <http://example.org/geography>
                   <http://example.org/truths>
-                  _:nodeFORMULA-117)
-          (bgp (graph _:nodeFORMULA-117)
+                  _:nodeFORMULA-17)
+          (bgp (graph _:nodeFORMULA-17)
                (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>)
                (triple <http://example.org/City> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/Location>))))
 
 { "head": {}, "boolean": true }
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -343,13 +344,13 @@ where {
 
 (ask (bgp (triple <http://example.org/geography>
                   <http://example.org/truths>
-                  _:nodeFORMULA-119)
-          (bgp (graph _:nodeFORMULA-119)
+                  _:nodeFORMULA-18)
+          (bgp (graph _:nodeFORMULA-18)
                (triple <http://example.org/Linköping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/City>))))
 
 { "head": {}, "boolean": true }
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -358,13 +359,13 @@ where {
 
 (ask (bgp (triple <http://example.org/geography>
                   <http://example.org/truths>
-                  _:nodeFORMULA-121)
-          (bgp (graph _:nodeFORMULA-121)
+                  _:nodeFORMULA-19)
+          (bgp (graph _:nodeFORMULA-19)
                (triple <http://example.org/City> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/Location>))))
 
 { "head": {}, "boolean": true }
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -373,15 +374,15 @@ where {
 
 (ask (bgp (triple <http://example.org/geography>
                   <http://example.org/truths>
-                  _:nodeFORMULA-123)
-          (bgp (graph _:nodeFORMULA-123)
+                  _:nodeFORMULA-20)
+          (bgp (graph _:nodeFORMULA-20)
                (triple <http://example.org/Linköping>
                        (<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>/<http://www.w3.org/2000/01/rdf-schema#subClassOf>)
                        <http://example.org/Location>))))
 
 { "head": {}, "boolean": true }
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 where {
@@ -390,15 +391,15 @@ where {
 
 (ask (bgp (triple <http://example.org/geography>
                   <http://example.org/truths>
-                  _:nodeFORMULA-126)
-          (bgp (graph _:nodeFORMULA-126)
+                  _:nodeFORMULA-21)
+          (bgp (graph _:nodeFORMULA-21)
                (triple <http://example.org/Linköping>
                        (<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>/<http://www.w3.org/2000/01/rdf-schema#subClassOf>*)
                        <http://example.org/Location>))))
 
 { "head": {}, "boolean": false }
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 ask
 from <urn:dydra:all>
@@ -412,7 +413,7 @@ where {
 
 { "head": {}, "boolean": true }
 prefix : <http://example.org/> 
-prefix nng: <http://nested-named-graph.org/>
+prefix nng: <http://nngraph.org/>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 select *
 where {
@@ -429,21 +430,3 @@ where {
    "bindings": [
  { "graph": {"type":"uri", "value":"urn:dydra:named"} } ] } }
 
-@base <http://dydra.com/> .
-@prefix : <http://example.org/> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-[]{ :Linköping a :City . } :saidBy :john .
-[]{ :Linköping :in :Sweden . } :saidBy :john .
-@base <http://dydra.com/> .
-@prefix : <http://example.org/> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-[]{ :Linköping a :City . } :saidBy :john .
-[]{ :Linköping :in :Sweden . } :saidBy :john .
-@base <http://dydra.com/> .
-@prefix : <http://example.org/> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-:geography :truths { :Linköping a :City .
-                     :City rdfs:subClassOf :Location . } .
