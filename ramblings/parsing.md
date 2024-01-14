@@ -73,7 +73,7 @@ parsing examples
 :a {                                        explicit graph as subject
                     
 :a @                                        explicit graph as predicate
-:a {                                        infix graph as predicate
+:a { @                                      infix graph as predicate
 
 :a :b {                                     infix|anon graph as object 
 :a {:s :p :o} :b {                          infix|anon graph as object
