@@ -70,19 +70,19 @@ parsing examples
 
 {                                           brace, so infix|anon graph as subject
 { :a                                        no @, so anon graph as subject
-:a {                                        explicit graph as subject
+:a {                                        prefix graph as subject
                     
-:a @                                        explicit graph as predicate
+:a @                                        prefix graph as predicate
 :a { @                                      infix graph as predicate
 
 :a :b {                                     infix|anon graph as object 
-:a {:s :p :o} :b {                          infix|anon graph as object
+:a {:s :p :o} :b {                          prefix graph as object
 :a {:s :p :o} {@:X :s :p :o} {              infix|anon graph as object
-:a {:s :p :o} :b :c {                       explicit graph as object
+:a {:s :p :o} :b :c {                       prefix graph as object
 
 {:s :p :o} :b {:s :p :o3} .                 anon graphs as subject and object
 {:s :p :o} { @[] :s :p :o2} {:s :p :o3} .   anon graphs as subject and object
-                                            and explicit graph as predicate
-{:s :p :o} @{ :s :p :o2} {:s :p :o3} .      dito
+                                            and infix graph as predicate
+{:s :p :o} @{ :s :p :o2} {:s :p :o3} .      dito, but prefix graph as predicate
 
 ```
