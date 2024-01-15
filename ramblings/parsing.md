@@ -64,9 +64,14 @@ graph semantics
     there is no syntactic connection between naming and declaration of semantics
         other than if both occur inside a graph, the name precedes the semantics
 
+
+
 parsing examples
+
         all starting from a new statement, 
         only showing the characters until the described decision is made
+
+        first without nesting of graphs
 
 {                                           brace, so infix|anon graph as subject
 { :a                                        no @, so anon graph as subject
@@ -84,5 +89,19 @@ parsing examples
 {:s :p :o} { @[] :s :p :o2} {:s :p :o3} .   anon graphs as subject and object
                                             and infix graph as predicate
 {:s :p :o} @{ :s :p :o2} {:s :p :o3} .      dito, but prefix graph as predicate
+
+
+        now subjects with nested graphs
+
+{                                           brace, so infix|anon graph as subject
+{{                                          a nested infix|anon graph as subject
+{ :a                                        no @, so anon graph as subject
+{{ :a                                       a nested anon graph as subject
+:a {                                        prefix graph as subject
+:a { :a {                                   nested prefix graph as subject
+                    
+        predicates are unambiguous because of required '@'
+        objects behave the same as subjects
+            because they start from clean slate as predicates are unambiguous
 
 ```
