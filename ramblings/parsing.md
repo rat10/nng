@@ -60,7 +60,7 @@ graph semantics
     multiple declarations are combined 
         (! not as presently defined the inner one overriding the outer one !)
                 e.g.    :G "{ ©:CWA :s :p :o }" :y :z .
-                        :G { ©:QUOTE ©:CWA :s :p :o } :y :z .
+                        :G {  :QUOTE ©:CWA :s :p :o } :y :z .
     there is no syntactic connection between naming and declaration of semantics
         other than if both occur inside a graph, the name precedes the semantics
 

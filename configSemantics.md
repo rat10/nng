@@ -14,11 +14,11 @@ Graph literals offer a chance to rectify this issue as they soundly discriminate
 ## Semantics Aspects
 
 Establishing the right set of semantic features is a task on its own, but some candidates seem pretty obvious:
-+ unasserted assertions, suppressing endorsement of contentious statements
++ unasserted assertions, suppressing endorsement of statements
 + closed world assumption, suppressing unpredictability
-+ unique name assumption, suppressing co-denotation
-+ referential opacity, suppressing entailments
-+ negation, suppressing unwanted statements
++ unique name assumption, suppressing ambiguity
++ referential opacity, suppressing co-denotation
++ negation, suppressing unwanted statements <!-- hmm -->
 
 The following vocabulary provides a term to introduce a semantics and offers a few possible applications.
 
