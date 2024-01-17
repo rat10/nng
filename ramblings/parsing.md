@@ -8,6 +8,12 @@ the only noteworthy constraints are that
 - graphs in predicate position MUST be named and
 - that name must be marked by an `@`
 
+caveat
+- most important feature:
+  prefix named graphs in subject *and* object position
+- first feature to drop if necessary:
+  graphs in predicate position
+
 ```turtle
 graph names
     graphs are always named

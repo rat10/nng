@@ -21,7 +21,7 @@ add
             Report
             Record
             Quote
-    maybe move it to citationsemantics.md
+    maybe move it to citationSemantics.md
     maybe add ´"asserts"
 
 -->
