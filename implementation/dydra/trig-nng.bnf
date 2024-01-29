@@ -2,48 +2,67 @@
 // https://www.w3.org/TR/rdf12-trig/
 // - adds formulae as alternative to quoted triples for subject and object
 // - adds referenced / transcluded graphs
+// - adds literal graph terms: subject and object
 
-[[1]]	trigDoc	::=	topLevelBlock *
-[[2]]	topLevelBlock	::=	directive | topLevelGraph | topLevelTriples
-[[2a]]	topLevelTriples	::=	( ( labelOrSubject | collection | quotedTriple ) predicateObjectList '.' ) | ( blankNodePropertyList  predicateObjectList? '.' )
-[[2b]]	topLevelGraph	::=	labelOrSubject? wrappedGraph ( predicateObjectList '.')?
-[[3]]	nestedBlocks	::=	( nestedGraph nestedBlocks?) | ( nestedGraphPol ( '.' nestedBlocks )?) | ( nestedTriples ( '.' nestedBlocks )?)
-[[3a]]	nestedTriples	::=	( ( labelOrSubject | collection | quotedTriple) predicateObjectList ) | (blankNodePropertyList predicateObjectList? )
-[[3b]]	nestedGraph	::=	labelOrSubject? wrappedGraph
-[[3c]]	nestedGraphPol	::=	labelOrSubject? wrappedGraph predicateObjectList
-[[5]]	wrappedGraph	::=	'{' nestedBlocks '}'
-[[7]]	labelOrSubject	::=	iri | BlankNode
+[[1]]	trigDoc		::=	trigElement *
+[[1a]]	trigElement	::=	directive | topLevelBlocks
+[[2]]	topLevelBlocks	::=	( topLevelTriples | topLevelGraph )  topLevelBlocks?
+[[2a]]	topLevelTriples	::=	( subject predicateObjectList '.' ) | ( blankNodePropertyList  predicateObjectList? '.' )
+[[2b]]	topLevelGraph	::=	label? graph '.'
+[[3]]	constituentBlocks	::=	( constituentTriples | constituentGraph ) constituentBlocks?
+[[3a]]	constituentTriples	::=	( subject predicateObjectList '.' ) | ( blankNodePropertyList predicateObjectList? '.' )
+[[3b]]	constituentGraph	::=	label? graph '.'
+
+[[5a]]	graph		::=	assertedGraph | quotedGraph | recordedGraph | reportedGraph | literalGraph
+[[5]]	termGraph	::=	assertedTermGraph | quotedTermGraph | recordedTermGraph | reportedTermGraph | literalTermGraph
+[[6a1]]	assertedGraph	::=	'{' constituentBlocks '}'
+[[6a2]]	assertedTermGraph	::=	'{' ( label '|' ) ? constituentBlocks '}'
+[[6b1]]	literalGraph	::=	String '^^' graphDatatype
+[[6b2]]	literalTermGraph	::=	String '^^' graphDatatype
+[[6b3]]	graphDatatype	::=	'<' GRAPH_DATATYPE_NAMESTRING '>'
+[[6c1]]	quotedGraph	::=	'<<' constituentBlocks '>>'
+[[6c2]]	quotedTermGraph	::=	'<<' ( label '|' ) ? constituentBlocks '>>'
+[[6d1]]	recordedGraph	::=     '{"' constituentBlocks '"}'
+[[6d2]]	recordedTermGraph	::=     '{"' ( label '|' ) ? constituentBlocks '"}' // fails to parse : | ( "{'" constituentBlocks "'}" )
+[[6e1]]	reportedGraph	::=     '"{' constituentBlocks '}"'
+[[6e2]]	reportedTermGraph	::=     '"{' ( label '|' ) ? constituentBlocks '}"' // fails to parse : | ( "'{" constituentBlocks "}'" )
+[[7]]	label		::=	iri | BlankNode | ('[' class ']' ) | ( '[' ( iri | BlankNode ) class ']' )
+[[7a]]	class		::=	iri
+
 [[8]]	directive	::=	prefixID | base | sparqlPrefix | sparqlBase
 [[9]]	prefixID	::=	'@prefix' PNAME_NS IRIREF '.'
-[[10]]	base	::=	'@base' IRIREF '.'
+[[10]]	base		::=	'@base' IRIREF '.'
 [[11]]	sparqlPrefix	::=	'PREFIX' PNAME_NS IRIREF
 [[12]]	sparqlBase	::=	'BASE' IRIREF
 [[14]]	predicateObjectList	::=	verb objectList (';' predicateObjectList)?
 [[15]]	objectList	::=	annotatedObject (',' annotatedObject)*
 [[15a]]	annotatedObject	::=	object annotation?
-[[16]]	verb	::=	predicate | 'a'
-[[17]]	subject	::=	iri | BlankNode | collection | quotedTriple | wrappedGraph
-[[18]]	predicate	::=	iri
-[[19]]	object	::=	iri | BlankNode | collection | blankNodePropertyList | literal | quotedTriple | wrappedGraph
-[[20]]	literal	::=	RDFLiteral | NumericLiteral | BooleanLiteral
+[[16]]	verb		::=	predicate | 'a'
+// no quotedTriple [[17]]	subject	::=	'THIS' | iri | BlankNode | collection | quotedTriple | termGraph // wrappedGraph | literalGraph
+[[17]]	subject		::=	'THIS' | iri | BlankNode | collection | termGraph // wrappedGraph | literalGraph
+[[18]]	predicate	::=	iri | termGraph
+// [[19]]	object	::=	iri | BlankNode | collection | blankNodePropertyList | literal | quotedTriple | termGraph // wrappedGraph | literalGraph
+[[19]]	object		::=	iri | BlankNode | collection | blankNodePropertyList | literal | termGraph // wrappedGraph | literalGraph
+[[20]]	literal		::=	RDFLiteral | NumericLiteral | BooleanLiteral
 [[21]]	blankNodePropertyList	::=	'[' predicateObjectList ']'
 [[22]]	collection	::=	'(' object* ')'
 [[23]]	NumericLiteral	::=	INTEGER | DECIMAL | DOUBLE
 [[24]]	RDFLiteral	::=	String (LANGTAG | ('^^' iri))?
 [[25]]	BooleanLiteral	::=	'true' | 'false'
-[[26]]	String	::=	STRING_LITERAL_QUOTE | STRING_LITERAL_SINGLE_QUOTE | STRING_LITERAL_LONG_SINGLE_QUOTE | STRING_LITERAL_LONG_QUOTE
-[[27]]	iri	::=	IRIREF | PrefixedName
+[[26]]	String		::=	STRING_LITERAL_QUOTE | STRING_LITERAL_SINGLE_QUOTE | STRING_LITERAL_LONG_SINGLE_QUOTE | STRING_LITERAL_LONG_QUOTE
+[[27]]	iri		::=	IRIREF | PrefixedName
 [[28]]	PrefixedName	::=	PNAME_LN | PNAME_NS
 // imported from sparql
 // [29]	BlankNode	::=	BLANK_NODE_LABEL | ANON
 [[29]]	BlankNode	::=	( '_:' BLANK_NODE_LABEL ) | ANON
-[[30]]	quotedTriple	::=	'<<' qtSubject predicate qtObject '>>'
-[[31]]	qtSubject	::=	iri | BlankNode | quotedTriple
-[[32]]	qtObject	::=	iri | BlankNode | literal | quotedTriple
+// superceded by quotedGraph
+// [[30]]	quotedTriple	::=	'<<' qtSubject predicate qtObject '>>'
+// [[31]]	qtSubject	::=	iri | BlankNode | quotedTriple
+// [[32]]	qtObject	::=	iri | BlankNode | literal | quotedTriple
 [[33]]	annotation	::=	'{|' predicateObjectList '|}'
 // imported from sparql
-// [35]	IRIREF	::=	'<' ([^#x00-#x20<>'{}|^`\] | UCHAR)* '>'
-[[35]]	IRIREF	::=	'<' IRI_NAMESTRING? '>'
+// [35]	IRIREF		::=	'<' ([^#x00-#x20<>'{}|^`\] | UCHAR)* '>'
+[[35]]	IRIREF		::=	'<' IRI_NAMESTRING? '>'
 // terminals imported from sparql
 // [36]	PNAME_NS	::=	PN_PREFIX? ':'
 // [37]	PNAME_LN	::=	PNAME_NS PN_LOCAL

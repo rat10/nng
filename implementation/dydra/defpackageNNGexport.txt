@@ -148,7 +148,7 @@ principal
 
 NEW >>
 
-(defpackage "http://nested-named-graph.org/"
+(defpackage "http://nngraph.org/"
  (:nicknames "nng" :nng)
  (:documentation "The strabon implementation home package")
  (:use )
@@ -161,7 +161,7 @@ NEW >>
 
           "transcludes"      ;; see transclusion.md
 
-          "GraphLiteral"     ;; see graphLiterals.md
+          "RDFLiteral"       ;; see graphLiterals.md
           "includes"
           
           "Record"           ;; see citationSemantics.md
@@ -201,6 +201,7 @@ NEW >>
           "Graph"            ;;     graph types
           "NamedGraph"
           "NestedGraph"
+          "Assertion"        ;;  -> move this to citationSemantics?
           "IdentGraph"
           "defaultGraphType" ;;     extension to sd 
           
