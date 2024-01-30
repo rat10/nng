@@ -25,9 +25,9 @@ prefix plm: <http://data.com/def/plm/>
                   <http://data.com/id/cesf/cesf41> {| plm:quantity 1 ; plm:role "b" |} .
 
         # alternative part numbers
-        << <http://data.com/id/salesItem/item003> <http://data.com/def/orderablePartNumber> "SL3S4021ETF" >>
+        << <http://data.com/id/salesItem/item003> <http://data.com/def/orderablePartNumber> "SL3S4021ETF" . >>
                 <http://data.com/def/release> "2022" .
-        << <http://data.com/id/salesItem/item003> <http://data.com/def/orderablePartNumber> "SL3S4021GVH" >>
+        << <http://data.com/id/salesItem/item003> <http://data.com/def/orderablePartNumber> "SL3S4021GVH" . >>
                 <http://data.com/def/release> "2024" .
  
     # sub-graphs
@@ -36,28 +36,28 @@ prefix plm: <http://data.com/def/plm/>
       plm:lineNumber 1 ;
       plm:markingLineType "alphanumeric" ;
       plm:value "BSS138" ;
-      plm:remark "type code"
+      plm:remark "type code" .
     } .
     []{ <http://data.com/id/salesItem/item003>
       a plm:MarkingLine ;
       plm:lineNumber 2 ;
       plm:markingLineType "alphanumeric" ;
       plm:value "YYww" ;
-      plm:remark "year and week number"
+      plm:remark "year and week number" .
     } .
     []{ <http://data.com/id/salesItem/item003>
       a plm:MarkingLine ;
       plm:lineNumber 3 ;
       plm:markingLineType "alphanumeric" ;
       plm:value "ZSDnnn" ;
-      plm:remark "batch code"
+      plm:remark "batch code" .
     } .
     []{ <http://data.com/id/salesItem/item003>
       a plm:MarkingLine ;
       plm:lineNumber 4 ;
       plm:markingLineType "binary" ;
       plm:value "nnnn" ;
-      plm:remark "checksum"
+      plm:remark "checksum" .
     } .
  
 } .

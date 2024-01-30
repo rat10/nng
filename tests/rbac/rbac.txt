@@ -1,0 +1,205 @@
+ 
+ - - -
+The initial dataset comprises just data graphs and an authroization graph. These are sufficient to limit user access to those data graphs for the authorization graph affords them read access.
+ - - -
+ 
+ - - -
+import simple dataset
+ - - -
+@base <http://dydra.com/> .
+@prefix : <http://example.org/> .
+@prefix user: <http://example.org/user/> .
+@prefix data: <http://example.org/data/> .
+@prefix acl: <http://www.w3.org/ns/auth/acl#> .
+# the access control graph
+:authorizations {
+  _:acl1 acl:accessTo data:graph1 ;
+    acl:mode acl:Read ;
+    acl:agent user:User1 .
+  _:acl2 acl:accessTo data:graph1 ;
+    acl:mode acl:Read ;
+    acl:agent user:User2 .
+  _:acl3 acl:accessTo data:graph1 ;
+    acl:mode acl:Write ;
+    acl:agent user:User2 .
+  _:acl4 acl:accessTo data:graph2 ;
+    acl:mode acl:Read ;
+    acl:agent user:User2 .
+} .
+
+data:graph1 {
+  :s1 :p1 'o1' .
+} .
+
+data:graph2 {
+  :s2 :p2 'o2' .
+} .
+ 
+ - - -
+dataset content
+ - - -
+<urn:dydra:default> <http://nngraph.org/asserts> <http://example.org/authorizations> <http://nngraph.org/embeddings> .
+<urn:dydra:default> <http://nngraph.org/asserts> <http://example.org/data/graph2> <http://nngraph.org/embeddings> .
+<urn:dydra:default> <http://nngraph.org/asserts> <http://example.org/data/graph1> <http://nngraph.org/embeddings> .
+_:acl1 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Read> <http://example.org/authorizations> .
+_:acl1 <http://www.w3.org/ns/auth/acl#accessTo> <http://example.org/data/graph1> <http://example.org/authorizations> .
+_:acl1 <http://www.w3.org/ns/auth/acl#agent> <http://example.org/user/User1> <http://example.org/authorizations> .
+_:acl4 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Read> <http://example.org/authorizations> .
+_:acl4 <http://www.w3.org/ns/auth/acl#accessTo> <http://example.org/data/graph2> <http://example.org/authorizations> .
+_:acl4 <http://www.w3.org/ns/auth/acl#agent> <http://example.org/user/User2> <http://example.org/authorizations> .
+_:acl3 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Write> <http://example.org/authorizations> .
+_:acl3 <http://www.w3.org/ns/auth/acl#accessTo> <http://example.org/data/graph1> <http://example.org/authorizations> .
+_:acl3 <http://www.w3.org/ns/auth/acl#agent> <http://example.org/user/User2> <http://example.org/authorizations> .
+_:acl2 <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Read> <http://example.org/authorizations> .
+_:acl2 <http://www.w3.org/ns/auth/acl#accessTo> <http://example.org/data/graph1> <http://example.org/authorizations> .
+_:acl2 <http://www.w3.org/ns/auth/acl#agent> <http://example.org/user/User2> <http://example.org/authorizations> .
+<http://example.org/s2> <http://example.org/p2> "o2"^^<http://www.w3.org/2001/XMLSchema#string> <http://example.org/data/graph2> .
+<http://example.org/s1> <http://example.org/p1> "o1" <http://example.org/data/graph1> .
+ 
+ - - -
+simple query for authorizations
+ - - -
+prefix : <http://example.org/>
+prefix user: <http://example.org/user/>
+prefix data: <http://example.org/data/>
+prefix acl: <http://www.w3.org/ns/auth/acl#>
+select ?who ?access ?what
+where { 
+  graph :authorizations { _:auth acl:accessTo ?what; acl:mode ?access; acl:agent ?who }
+}
+
+(select ?who ?access ?what (graph <http://example.org/authorizations>
+       (bgp (triple _:auth <http://www.w3.org/ns/auth/acl#accessTo> ?what)
+            (triple _:auth <http://www.w3.org/ns/auth/acl#mode> ?access)
+            (triple _:auth <http://www.w3.org/ns/auth/acl#agent> ?who))))
+
+who,access,what
+http://example.org/user/User2,http://www.w3.org/ns/auth/acl#Read,http://example.org/data/graph2
+http://example.org/user/User1,http://www.w3.org/ns/auth/acl#Read,http://example.org/data/graph1
+http://example.org/user/User2,http://www.w3.org/ns/auth/acl#Write,http://example.org/data/graph1
+http://example.org/user/User2,http://www.w3.org/ns/auth/acl#Read,http://example.org/data/graph1
+
+ 
+ - - -
+A simple query for data
+ - - -
+prefix : <http://example.org/>
+prefix user: <http://example.org/user/>
+prefix data: <http://example.org/data/>
+prefix acl: <http://www.w3.org/ns/auth/acl#>
+select ?data ?s ?p ?o
+FROM NAMED data:graph1
+FROM NAMED data:graph2
+where { 
+  graph ?data { ?s ?p ?o }
+}
+
+(select ?data ?s ?p ?o (graph ?data (bgp (triple ?s ?p ?o))))
+
+data,s,p,o
+http://example.org/data/graph1,http://example.org/s1,http://example.org/p1,"o1"
+http://example.org/data/graph2,http://example.org/s2,http://example.org/p2,"o2"
+
+ 
+ - - -
+An access-controlled query for data limits User1 to the content of only data:graph1
+ - - -
+prefix : <http://example.org/>
+prefix user: <http://example.org/user/>
+prefix data: <http://example.org/data/>
+prefix acl: <http://www.w3.org/ns/auth/acl#>
+select ?user ?data ?s ?p ?o
+FROM NAMED data:graph1
+FROM NAMED data:graph2
+FROM NAMED :authorizations
+where { 
+  graph :authorizations { _:auth acl:accessTo ?data ; acl:mode acl:Read ; acl:agent ?user }
+  graph ?data { ?s ?p ?o }
+}
+
+(select ?user ?data ?s ?p ?o (join (graph ?data (bgp (triple ?s ?p ?o)))
+      (graph <http://example.org/authorizations>
+             (bgp (triple _:auth
+                          <http://www.w3.org/ns/auth/acl#accessTo>
+                          ?data)
+                  (triple _:auth <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Read>)
+                  (triple _:auth <http://www.w3.org/ns/auth/acl#agent> ?user)))))
+
+user,data,s,p,o
+http://example.org/user/User1,http://example.org/data/graph1,http://example.org/s1,http://example.org/p1,"o1"
+
+ 
+ - - -
+import dataset with nested graphs
+ - - -
+@base <http://dydra.com/> .
+@prefix : <http://example.org/> .
+@prefix user: <http://example.org/user/> .
+@prefix data: <http://example.org/data/> .
+@prefix acl: <http://www.w3.org/ns/auth/acl#> .
+# the access control graph
+:authorizations {
+  _:acl1 acl:accessTo data:graph1 ;
+    acl:mode acl:Read ;
+    acl:agent user:User1 .
+  _:acl2 acl:accessTo data:graph1 ;
+    acl:mode acl:Read ;
+    acl:agent user:User2 .
+  _:acl3 acl:accessTo data:graph1 ;
+    acl:mode acl:Write ;
+    acl:agent user:User2 .
+  _:acl4 acl:accessTo data:graph2 ;
+    acl:mode acl:Read ;
+    acl:agent user:User2 .
+} .
+
+data:graph1 {
+  :s1 :p1 'o1' .
+  data:subgraph1 { :subs1 :subp1 'sub-o1' . } .
+} .
+
+data:graph2 {
+  :s2 :p2 'o2' .
+  data:subgraph2 { :subs2 :subp2 'sub-o2' . } .
+} .
+ 
+ - - -
+An access-controlled query for nested data adds paths to the access inference
+ - - -
+prefix : <http://example.org/>
+prefix user: <http://example.org/user/>
+prefix data: <http://example.org/data/>
+prefix acl: <http://www.w3.org/ns/auth/acl#>
+prefix nng: <http://nngraph.org/>
+select ?user ?data ?s ?p ?o
+FROM NAMED data:graph1
+FROM NAMED data:graph2
+FROM NAMED :authorizations
+FROM NAMED nng:embeddings
+where { 
+  graph :authorizations {
+    _:auth acl:accessTo ?dataRoot ; acl:mode acl:Read ; acl:agent ?user .
+    graph nng:embeddings { ?dataRoot nng:asserts* ?data . }
+  }
+  graph ?data { ?s ?p ?o }
+}
+
+(select ?user ?data ?s ?p ?o (join (graph ?data (bgp (triple ?s ?p ?o)))
+      (graph <http://example.org/authorizations>
+             (join (graph <http://nngraph.org/embeddings>
+                          (bgp (triple ?dataRoot
+                                       <http://nngraph.org/asserts>*
+                                       ?data)))
+                   (bgp (triple _:auth
+                                <http://www.w3.org/ns/auth/acl#accessTo>
+                                ?dataRoot)
+                        (triple _:auth <http://www.w3.org/ns/auth/acl#mode> <http://www.w3.org/ns/auth/acl#Read>)
+                        (triple _:auth
+                                <http://www.w3.org/ns/auth/acl#agent>
+                                ?user))))))
+
+user,data,s,p,o
+http://example.org/user/User1,http://example.org/data/graph1,http://example.org/s1,http://example.org/p1,"o1"
+http://example.org/user/User1,http://example.org/data/graph1,http://example.org/s1,http://example.org/p1,"o1"
+http://example.org/user/User1,http://example.org/data/subgraph1,http://example.org/subs1,http://example.org/subp1,"sub-o1"
+

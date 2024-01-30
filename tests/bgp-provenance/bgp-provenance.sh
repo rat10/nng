@@ -34,8 +34,6 @@ function curl_query () {
   echo "" >> $TRANSCRIPT_OUTPUT
 }
 
-#cat <<EOF2 > /dev/null
-
 curl_clear_repository_content ;
 
 echo '
@@ -56,9 +54,8 @@ curl_import <<EOF
        { :Sports1 | :Alice :plays :Tennis . } :subject [ :age 15 ] ; :predicate [ :level :Beginner ] .
    } :reason :Ambition.
 }.
-
 EOF
-#EOF2
+
 
 echo >> $TRANSCRIPT_OUTPUT
 curl_graph_store_get >> $TRANSCRIPT_OUTPUT
