@@ -1,0 +1,55 @@
+#
+prefix : <http://www.example.org/>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix plm: <http://data.com/def/plm/>
+
+# involves three statement reference alternatives
+# - a quoted triple (a report) is nested-asserted, which is not automatically available to entailment processes.
+# - an annotated triple is asserted as well as nested asserted as the annotation target.
+# - dependent graphs capture n-ary relations
+<http://data.com/graph/salesItem/item003> {
+	<http://data.com/id/salesItem/item003> <http://data.com/def/name> "9352 997 71003" ;
+		a <http://data.com/def/SalesItem> ;
+		<http://data.com/def/orderablePartNumber> "SL3S4021FUGZ";
+		<http://data.com/def/description> "SL3S4021FUG" ;
+		<http://data.com/def/state> "RFS" ;
+		<http://data.com/def/revision> "8"  ;
+		<http://data.com/def/startEffectivityDate> "2021-08-24T07:50:53Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+		<http://data.com/def/qualifiedRelation> <http://data.com/id/salesItem/item003/links/bom-outlinePacking-method296-nau000-16-d1717e117610> ;
+                # qualified bom relations
+		<http://data.com/def/bom>
+                  <http://data.com/id/outlinePacking/method296-nau000-16> ,
+                  <http://data.com/id/outlinePacking/method296-nau000-16> ,
+                  <http://data.com/id/cesf/cesf41> .
+ 
+} .
+
+<http://data.com/graph/outlinePacking/method296-nau000-16> {
+	<http://data.com/id/outlinePacking/method296-nau000-16> a <http://data.com/def/OutlinePacking> ;
+		<http://data.com/def/name> "3422 140 00296-NAU000-16" ;
+		<http://data.com/def/description> "PM 8INCH SINGLE WAFER ON FFC" ;
+		<http://data.com/def/state> "RFS" ;
+		<http://data.com/def/revision> "-" ;
+		<http://data.com/def/startEffectivityDate> "2010-07-14T11:10:22Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+		<http://data.com/def/bom> <http://data.com/id/packingMethod/method296> .
+} .
+
+<http://data.com/graph/cesf/cesf41> {
+	<http://data.com/id/cesf/cesf41> a <http://data.com/def/CESF> ;
+		<http://data.com/def/name> "3400 000 69841" ;
+		<http://data.com/def/description> "tSL3S4021UG/0C AF" ;
+		<http://data.com/def/state> "REL" ;
+		<http://data.com/def/revision> "4" ;
+		<http://data.com/def/startEffectivityDate> "2013-09-09T14:44:08Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+} .
+
+<http://data.com/graph/packingMethod/method296> {
+	<http://data.com/id/packingMethod/method296> a <http://data.com/def/PackingMethod> ;
+		<http://data.com/def/name> "3422 140 00296" ;
+		<http://data.com/def/description> "WAFER 200 003 FFC SAWN SGL" ;
+		<http://data.com/def/state> "RFS" ;
+		<http://data.com/def/revision> "8" ;
+		<http://data.com/def/startEffectivityDate> "2022-05-26T09:11:49Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+} .
