@@ -1,6 +1,6 @@
  
  - - -
-The initial dataset comprises just data graphs and an authroization graph. These are sufficient to limit user access to those data graphs for the authorization graph affords them read access.
+The initial dataset comprises just data graphs and an authorization graph. These are sufficient to limit user access to those data graphs for the authorization graph affords them read access.
  - - -
  
  - - -
