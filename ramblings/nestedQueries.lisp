@@ -160,8 +160,10 @@ where {
 
 ;; QUERY 2-B
 ;; PROBLEM
-;; why does this not return any results ?
+;; why does this not return any results? ah, of course...
 ;; sparql is hard!
+;; SOLUTION
+;; ignore this query
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
@@ -180,7 +182,7 @@ where {
 ;; QUERY 2-C
 ;; actually, nested graphs don't need a GRAPH keyword - great!
  
-}prefix : <http://example.org/> 
+prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
 select ?graph ?what ?age
 where { 
@@ -195,7 +197,7 @@ where {
 ] 
 
 ;; QUERY 2-D
-;; finally! a solution tforo the optional approach
+;; finally! a solution for the optional approach
 ;; PROBLEM
 ;; standalone graph not supported, "?b ?c" are superfluous.
 prefix : <http://example.org/> 
@@ -268,8 +270,6 @@ where {
 ;; she doesn't love the :Movie1
 ;; also :Movie1 is quoted
 ;; and therefore alone should not be part of the target graph at all
-;; SOLUTION
-;; there is no problem except it's not intuitive
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
