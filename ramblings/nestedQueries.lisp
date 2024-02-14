@@ -7,12 +7,12 @@
         { :Car1 | :Alice :buys :Car . } 
             :subject [ :age 22 ] ; 
             :object [ :age 12 ; 
-                    :type :Sedan ; 
-                    :reason :Ambition ] .
+                      :type :Sedan ; 
+                      :reason :Ambition ] .
         { :Car2 | :Alice :leases :Car . } 
             :subject [ :age 42 ] ; 
             :object [ :age 0 ; 
-                    :type :Coupe ] ; 
+                      :type :Coupe ] ; 
             :relation [ :reason :Fun ].
     } .
     { :Loving |
@@ -126,7 +126,7 @@ prefix nng: <http://nngraph.org/>
 select ?graph ?what ?age
 where { 
    graph ?graph { 
-       { :Alice :loves ?what .}                 ;; this is a nested graph!
+       { :Alice :loves ?what .}                 # this is a nested graph!
            ?prop [ :age ?age ]
     } 
 }
@@ -196,6 +196,12 @@ where {
     12
 ] 
 
+;; QUESTION
+;; how is it possible that the query engine knows which graph is asserted?
+;; isn't this link exploitable for quad pattern based matching as well?
+
+
+
 ;; QUERY 2-D
 ;; finally! a solution for the optional approach
 ;; PROBLEM
@@ -213,7 +219,6 @@ where {
     "http://example.org/SuzieQuattro",
     12
 ] 
-
 
 
 
@@ -266,10 +271,9 @@ where {
 ;; introducing a new variable ?graph2
 ;; inline use of optional
 ;; PROBLEM
-;; :Alice loves only :SuzieQuattro which is a Band
-;; she doesn't love the :Movie1
-;; also :Movie1 is quoted
-;; and therefore alone should not be part of the target graph at all
+;; the query is a bit misguided and teh results therefore a bit muddled
+;; however :Movie1 is quoted
+;; and therefore should not be part of the results at all
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
@@ -288,7 +292,7 @@ where {
         "http://example.org/Movie1",
         "http://example.org/SuzieQuattro",
         12,                                     ;; Alice' age when loving SuzieQuattro
-        17                                      ;; Alice' age when hyping Zendaya
+        17                                      ;; Alice' age when hyping Zendaya (:Movie1)
     ],
     [
         "http://example.org/Loving",
@@ -465,7 +469,7 @@ where {
 ;; at least it doesn't return the quoted movie
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does  ?age 
+select ?graph ?does ?age 
 where { 
     graph ?graph {  
         { ?graph2 | :Alice ?does ?what  .  } ?b ?c .
@@ -483,6 +487,31 @@ where {
     [ "http://example.org/Doing", "http://example.org/plays", 15 ],
     [ "http://example.org/Doing", "http://example.org/plays", 15 ]
 ] 
+
+;; QUERY 6-B
+;; as 6-A, but selecting all variables
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select ?graph ?graph2 ?does ?what ?age 
+where { 
+    graph ?graph {  
+        { ?graph2 | :Alice ?does ?what  .  } ?b ?c .
+        optional { ?graph2  :subject [ :age ?age ] }
+    } 
+}
+
+[
+  [ "graph", "graph2", "does", "what", "age" ],
+  [ "http://example.org/Buying", "http://example.org/Car2", "http://example.org/leases", "http://example.org/Car", 42],
+  [ "http://example.org/Buying", "http://example.org/Car2", "http://example.org/leases", "http://example.org/Car", 42 ],
+  [ "http://example.org/Buying", "http://example.org/Car2", "http://example.org/leases", "http://example.org/Car", 42 ],
+  [ "http://example.org/Buying", "http://example.org/Car1", "http://example.org/buys", "http://example.org/Car", 22 ],
+  [ "http://example.org/Buying", "http://example.org/Car1", "http://example.org/buys", "http://example.org/Car", 22 ],
+  [ "http://example.org/Loving", "http://example.org/Band1", "http://example.org/loves", "http://example.org/SuzieQuattro", 12 ],
+  [ "http://example.org/Doing", "http://example.org/Sports1", "http://example.org/plays", "http://example.org/Tennis", 15 ],
+  [ "http://example.org/Doing", "http://example.org/Sports1", "http://example.org/plays", "http://example.org/Tennis", 15 ]
+] 
+
 
 
 
@@ -805,6 +834,96 @@ where {
 
 
 
+;; QUERY 12   ALL ABOUT ALICE
+;; worth a try isn't it?!
+;; PROBLEM
+;; this still misses annotations on first level nested garphs
+
+select ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
+where { 
+    graph :Alice {
+        graph ?graph1 {
+            ?graph2 { :Alice ?does ?what }  
+            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+            OPTIONAL { ?graph  :relation [ ?rp ?rv ] .}
+            OPTIONAL { ?graph  :object   [ ?op ?ov ] .}
+        }
+    }
+}
+
+;; PROBLEM
+;; the following query doesn't work
+;; it's unclear to me at what point the GRAPH keyword is required
+;; i.e. how nested graphs are queried
+;; the following example doesn't work (but should!?)
+select ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
+where { 
+    GRAPH :Alice {
+        GRAPH ?graph1 {                                  # omitting GRAPH not allowed
+            { ?graph2 | :Alice ?does ?what }             # inline name not allowed
+                                                         # but omitting GRAPH as above 
+                                                         # would be okay! why?
+            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+            OPTIONAL { ?graph  :relation [ ?rp ?rv ] .}
+            OPTIONAL { ?graph  :object   [ ?op ?ov ] .}
+        }
+    }
+}
+
+;; SOLUTION PROBLEM
+;; this here works but returns way too many results
+;; i just have no idea how querying actually works
+select ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
+where { 
+    graph :Alice {
+        graph ?graph1 {
+            graph ?graph2 { :Alice ?does ?what }  
+            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+            OPTIONAL { ?graph  :relation [ ?rp ?rv ] .}
+            OPTIONAL { ?graph  :object   [ ?op ?ov ] .}
+        }
+    }
+}
 
 
+;; QUERY 13 WHEN TO USE THE graph KEYWORD
+;; using the GRAPH keyword on a nested graph
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  ?graph ?what ?pv ?sv
+where { 
+            graph ?graph { :Alice :hypes ?what }  
+            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+        
+}
+[
+    [
+        "http://example.org/Movie1",
+        "http://example.org/Zendaya",
+        null,
+        17
+    ]
+] 
 
+;; not using the GRAPH keyword
+;; returns an empty result set
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  ?graph ?what ?pv ?sv
+where { 
+            ?graph { :Alice :hypes ?what }  
+            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+        
+}
+
+;; using the inline notation throws an error
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  ?graph ?what ?pv ?sv
+where { 
+            { ?graph |  :Alice :hypes ?what }  
+            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+        
+}
+>> RuntimeError: queryResult could not be resolved
+>> queryResult = updateResult ? await postQuery(segQueryText) : ""
