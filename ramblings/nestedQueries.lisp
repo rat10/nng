@@ -892,9 +892,8 @@ prefix : <http://example.org/>
 prefix nng: <http://nngraph.org/>
 select  ?graph ?what ?pv ?sv
 where { 
-            graph ?graph { :Alice :hypes ?what }  
-            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
-        
+    graph ?graph { :Alice :hypes ?what }  
+    OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
 }
 [
     [
@@ -903,7 +902,11 @@ where {
         null,
         17
     ]
-] 
+]
+;; NOTE - now (18.02.2024) - returns an empty result set
+;; which is correct given that the above result stems from a quoted graph
+;; and should never have been returned
+
 
 ;; not using the GRAPH keyword
 ;; returns an empty result set
@@ -911,9 +914,8 @@ prefix : <http://example.org/>
 prefix nng: <http://nngraph.org/>
 select  ?graph ?what ?pv ?sv
 where { 
-            ?graph { :Alice :hypes ?what }  
-            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
-        
+    ?graph { :Alice :hypes ?what }  
+    OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
 }
 
 ;; using the inline notation throws an error
@@ -921,9 +923,40 @@ prefix : <http://example.org/>
 prefix nng: <http://nngraph.org/>
 select  ?graph ?what ?pv ?sv
 where { 
-            { ?graph |  :Alice :hypes ?what }  
-            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
-        
+    { ?graph |  :Alice :hypes ?what }  
+    OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
 }
 >> RuntimeError: queryResult could not be resolved
 >> queryResult = updateResult ? await postQuery(segQueryText) : ""
+
+
+;; QUERY 14
+;; not querying for ":hypes" because that only occurs in a quoted graph
+;; but insteda for ":plays" 
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  ?graph ?what ?pv ?sv
+where { 
+    graph ?graph { :Alice :plays ?what }  
+    OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+}
+;; returns an empty set 
+
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  ?graph ?what ?pv ?sv
+where { 
+    ?graph { :Alice :plays ?what }  
+    OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+}
+;; also returns an empty set 
+
+;; trying the nmost basic query 
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  ?graph ?what ?pv ?sv
+where { 
+    graph ?graph { :Alice :plays ?what }  
+}
+;; but even that returns an empty result set
+;; what am i doing wrong?
