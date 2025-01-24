@@ -1,0 +1,44 @@
+# January 3rd 
+# http://rdf.greggkellogg.net/distiller?command=serialize&output_format=nquads
+
+<http://rat.io/s> <http://rat.io/p> <http://rat.io/o> .
+<http://rat.io/s> <http://rdf.ng/onSub> _:s .
+<http://rat.io/s> <http://rdf.ng/onSub> <http://rat.io/ooo> .
+<http://rat.io/s> <http://rdf.ng/onPrd> _:p .
+<http://rat.io/s> <http://rdf.ng/onObj> _:o .
+_:s <http://rat.io/m> _:n .
+_:n <http://rat.io/mm> <http://rat.io/nn> .
+_:p <http://rat.io/u> <http://rat.io/v> .
+_:o <http://rat.io/w> <http://rat.io/x> .
+_:o <http://rat.io/y> <http://rat.io/z> .
+<http://rat.io/s2> <http://rat.io/p2> _:b2 .
+_:b2 <http://rat.io/p3> _:b3 .
+<http://rat.io/g> <http://rdf.ng/is> <http://rat.io/haunted> .
+<http://rat.io/g> <http://rat.io/gp> <http://rat.io/glossy> <http://rat.io/g> .
+<http://rat.io/g> <http://rat.io/gp2> <http://rat.io/green> <http://rat.io/g> .
+<http://rat.io/gs> <http://rat.io/gp> <http://rat.io/go> <http://rat.io/g> .
+<http://rat.io/gs> <http://rat.io/gp> <http://rat.io/go2> <http://rat.io/g> .
+<http://rat.io/gx> <http://rat.io/gy> <http://rat.io/gz> <http://rat.io/g> .
+<http://rat.io/g> <http://rdf.ng/in> <http://rat.io/h> <http://rat.io/h> .
+<http://rat.io/g> <http://rat.io/hp> <http://rat.io/h_gally> <http://rat.io/h> .
+<http://rat.io/hs> <http://rat.io/hp> <http://rat.io/ho> <http://rat.io/h> .
+<http://rat.io/hx> <http://rat.io/hy> <http://rat.io/hz> <http://rat.io/h> .
+<http://rat.io/h> <http://rdf.ng/in> <http://rat.io/i> <http://rat.io/i> .
+<http://rat.io/g> <http://rat.io/ip> <http://rat.io/i_giddy> <http://rat.io/i> .
+<http://rat.io/is> <http://rat.io/ip> <http://rat.io/io> <http://rat.io/i> .
+<http://rat.io/ix> <http://rat.io/iy> <http://rat.io/iz> <http://rat.io/i> .
+<http://rat.io/i> <http://rdf.ng/in> <http://rat.io/k> <http://rat.io/k> .
+<http://rat.io/g> <http://rat.io/kp> <http://rat.io/k_great> <http://rat.io/k> .
+<http://rat.io/k> <http://rat.io/kp> <http://rat.io/kaput> <http://rat.io/k> .
+<http://rat.io/ks> <http://rat.io/kp> <http://rat.io/ko> <http://rat.io/k> .
+<http://rat.io/kx> <http://rat.io/ky> <http://rat.io/kz> <http://rat.io/k> .
+<http://rat.io/k> <http://rdf.ng/in> <http://rat.io/l> <http://rat.io/l> .
+<http://rat.io/la> <http://rat.io/lb> <http://rat.io/lc> <http://rat.io/l> .
+<http://rat.io/g> <http://rat.io/mp> <http://rat.io/m_gold> <http://rat.io/m> .
+<http://rat.io/k> <http://rat.io/kmp> <http://rat.io/m_kursed> <http://rat.io/m> .
+<http://rat.io/m> <http://rat.io/mmp> <http://rat.io/morbid> <http://rat.io/m> .
+<http://rat.io/m> <http://rdf.ng/in> <http://rat.io/o> <http://rat.io/o> .
+<http://rat.io/o> <http://rat.io/op> <http://rat.io/oblique> <http://rat.io/o> .
+<http://rat.io/v> <http://rat.io/vp> <http://rat.io/o_verbose> <http://rat.io/o> .
+<http://rat.io/o> <http://rdf.ng/in> <http://rat.io/v> <http://rat.io/v> .
+<http://rat.io/vx> <http://rat.io/vy> <http://rat.io/vz> <http://rat.io/v> .

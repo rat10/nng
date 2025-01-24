@@ -1,0 +1,20 @@
+[
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "(base <http://example/base/>\n  (prefix ((: <http://rat.io/>)\n           (ng: <http://rdf.ng/>))\n    (distinct\n      (project (?g ?p ?o ?ngd ?ngx ?prv)\n        (order (?g ?ng ?ngd ?ngx ?prv ?p ?o)\n          (filter (= ?ngd :g)\n            (leftjoin\n              (leftjoin\n                (join\n                  (graph ?g\n                    (bgp (triple ?x ?y ?z)))\n                  (distinct\n                    (project (?ng ?gn ?ngn ?go ?ngo)\n                      (leftjoin\n                        (table unit)\n                        (extend ((?ngo ?ng))\n                          (extend ((?go ?g))\n                            (extend ((?ngn ?ng))\n                              (extend ((?gn ?g))\n                                (sequence\n                                  (path ?g (path* ng:in) ?path)\n                                  (path ?path (path+ ng:in) ?ng))))))))))\n                (extend ((?prv ng:direct))\n                  (extend ((?ngx ?g))\n                    (extend ((?ngd ?g))\n                      (graph ?g\n                        (bgp (triple ?g ?p ?o)))))))\n              (extend ((?prv ng:indirect))\n                (extend ((?ngx ?ngn))\n                  (extend ((?ngd ?gn))\n                    (graph ?ngn\n                      (bgp (triple ?gn ?p ?o))))))\n              (!= ?p ng:in))))))))",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "EXKURSUS \nhttps://stackoverflow.com/questions/25131365/sparql-optional-query",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX ab: <http://learningsparql.com/ns/addressbook#>\nSELECT ?first ?last\nWHERE\n{\n    ?s ab:lastName ?last .\n    OPTIONAL {?s ab:nick ?first. }.\n    OPTIONAL {?s ab:firstName ?first .}.\n}\n\n(base <http://example/base/>\n  (prefix ((ab: <http://learningsparql.com/ns/addressbook#>))\n    (project (?first ?last)\n\n      (leftjoin\n        (leftjoin\n          (bgp (triple ?s ab:lastName ?last))\n          (bgp (triple ?s ab:nick ?first))\n        )\n        (bgp (triple ?s ab:firstName ?first))\n      )\n    \n    )))\n\n    ------------------------\n    | first   | last       |\n    ========================\n    | \"Craig\" | \"Ellis\"    |\n    | \"Cindy\" | \"Marshall\" |\n    | \"Dick\"  | \"Mutt\"     |\n    ------------------------\n\n\n#===============================================================#\n\nPREFIX ab: <http://learningsparql.com/ns/addressbook#>\nSELECT ?first ?last\nWHERE\n{\n    OPTIONAL {?s ab:nick ?first. }.\n    OPTIONAL {?s ab:firstName ?first .}.\n    ?s ab:lastName ?last .\n}\n\n(base <http://example/base/>\n  (prefix ((ab: <http://learningsparql.com/ns/addressbook#>))\n    (project (?first ?last)\n\n      (join\n        (leftjoin\n          (leftjoin\n            (table unit)\n            (bgp (triple ?s ab:nick ?first)))\n          (bgp (triple ?s ab:firstName ?first))\n        )\n        (bgp (triple ?s ab:lastName ?last))\n      )\n      \n      )))\n\n      -------------------\n      | first  | last   |\n      ===================\n      | \"Dick\" | \"Mutt\" |\n      -------------------\n\n\n#===============================================================#\n\nPREFIX ab: <http://learningsparql.com/ns/addressbook#>\nSELECT ?first ?last  ?tel\nWHERE\n{\n    { ?s ab:lastName ?last .\n        ?s ab:workTel ?tel . }\n    OPTIONAL {?s ab:nick ?first. }.\n    OPTIONAL {?s ab:email ?first .}.\n    OPTIONAL {?s ab:firstName ?first .}.\n}\n\n(base <http://example/base/>\n  (prefix ((ab: <http://learningsparql.com/ns/addressbook#>))\n    (project (?first ?last ?tel)\n      (leftjoin\n        (leftjoin\n          (leftjoin\n            (bgp\n              (triple ?s ab:lastName ?last)\n              (triple ?s ab:workTel ?tel)\n            )\n            (bgp (triple ?s ab:nick ?first))\n          )\n          (bgp (triple ?s ab:email ?first))\n        )\n        (bgp (triple ?s ab:firstName ?first))\n      ))))",
+    "metadata": {}
+  }
+]

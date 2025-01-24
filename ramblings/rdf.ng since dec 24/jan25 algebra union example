@@ -1,0 +1,67 @@
+
+(distinct
+    (select
+        (order
+            (filter
+                (join
+                    (union
+                        (graph ?g (bgp {?g ?p ?o})  )
+                        (union
+                            (extend
+                                (graph ?nestingGraph (bgp {?g ?p ?o}) )
+                                ?ng ?nestingGraph
+                            )
+                            (union
+                                (filter
+                                    (graph ?og (bgp {?g ?p ?o})
+                                    )
+                                    ( !
+                                        (exists
+                                            (bgp {?g <http://rdf.ng/in>* ?og})
+                                        )
+                                    )
+                                )
+                                (union
+                                    (extend
+                                        (graph ?nestingGraph (bgp {?nestingGraph ?p ?o})
+                                        )
+                                        ?ig ?nestingGraph
+                                    )
+                                    (filter
+                                        (extend
+                                            (graph ?agx (bgp {?nestingGraph ?p ?o}))
+                                            ?ag ?nestingGraph
+                                        )
+                                        (!= ?nestingGraph ?agx)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    (join
+                        (distinct
+                            (select
+                                (order
+                                    (bgp
+                                        {?g <http://rdf.ng/in>* ?path}
+                                        {?path <http://rdf.ng/in>+ ?nestingGraph}
+                                    )
+                                    (?g ?nestingGraph))
+                                (?g ?nestingGraph)
+                            )
+                        )
+                        (
+                            graph ?g (bgp {?x ?y ?z})
+                        )
+                    )
+                )
+                (exprlist 
+                    (!= ?p <http://rdf.ng/in>) 
+                    (= ?g <http://rat.io/g>) 
+                )
+            )
+            (?g ?ng ?og ?ig ?ag ?p ?o)
+        )
+        (?g ?ng ?og ?ig ?ag ?agx ?p ?o)
+    )
+ )

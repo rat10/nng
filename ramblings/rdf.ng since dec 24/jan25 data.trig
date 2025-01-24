@@ -1,0 +1,85 @@
+@base         <http://ex.org/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix :     <http://rat.io/> .
+@prefix ng:   <http://rdf.ng/> .
+
+:s :p :o ;
+   ng:onSub _:s ,
+             :ooo ;
+   ng:onPrd _:p ;
+   ng:onObj _:o .
+_:s :m _:n .
+_:n :mm :nn .
+_:p :u :v .
+_:o :w :x ;
+    :y :z .
+:s2 :p2 _:b2 .
+_:b2 :p3 _:b3 .
+
+:g ng:is :haunted .       # haunted
+
+
+# the graph :g is our main focus of interest
+
+GRAPH :g {
+    :g :gp :glossy ;      # glossy
+       :gp2 :green .      # green
+    :gs :gp :go ,
+            :go2 .
+    :gx :gy :gz .
+}
+
+# :g is nested in :h, 
+# which again is nested in :i, 
+# and :i is nested in :k, and :k in :l.
+# :g is annotated directly in some of those graphs
+# and inherits annotations on those nesting graphs
+
+GRAPH :h {
+    :g ng:in :h ;
+       :hp :h_gally .     # h_gally 
+    :hs :hp :ho .
+    :hx :hy :hz .
+}
+
+GRAPH :i {
+    :h ng:in :i .
+    :g :ip :i_giddy .     # i_giddy 
+    :is :ip :io .
+    :ix :iy :iz .
+}
+
+GRAPH :k {
+    :i ng:in :k .
+    :g :kp :k_great .     # k_great 
+    :k :kp :kaput .       # kaput 
+    :ks :kp :ko .
+    :kx :ky :kz .
+}
+
+GRAPH :l {
+    :k ng:in :l .
+    :la :lb :lc .
+}
+
+# other graphs, some nesting - but not :g
+# yet, one of them (:m) directly annotates :g
+
+GRAPH :m {
+    :g :mp :m_gold .      # m_gold 
+    :k :kmp :m_kursed .   # m_kursed 
+    :m :mmp :morbid .     # morbid
+}
+
+GRAPH :o {
+    :m ng:in :o .
+    :o :op :oblique .     # oblique
+    :v :vp :o_verbose .   # o_verbose
+}
+
+GRAPH :v {
+    :o ng:in :v .
+    :vx :vy :vz .
+}

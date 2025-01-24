@@ -1,0 +1,188 @@
+[
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "# optionals and values and working subselect (at least that's the plan)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# and now with OPTIONAL instead of union\n# \n#       NOT YET WORKING\n# \n# WITHOUT GRAPH CLAUSES\n# correct results, but requiring a specific database setup:\n#   needs default graph to be configured as union of named graphs\n#   otherwise the subquery for ?ng won't work\n#   AllegroGraph is by default configured this way\n#   Oxigraph can be, but not from this notebook\n#   Stardog can be, via 'query.all.graphs' set to TRUE\n#   Dydra can be, but for unknown reasons provides incomplete results\n\n# now with less columns\n\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect distinct \n    ?g      # the graph in question \n#   ?ng     # as returned from the sub select\n            #   for testing only \n    ?p      # annotation property\n    ?o      # annotation value\n    ?ngd    # graph being directly annotated\n    ?ngx    # graph containing the annotation\n#   ?gn\n#   ?ngn\n#   ?go \n#   ?ngo\n    ?prv    # provenance of annotation, 5 possible values:\n            # ?g  ng:direct       in the same graph       e.g. :green, :glossy\n            # NG  ng:indirect     in a nesting graph      e.g. i_giddy\n            # OG  ng:exdirect     in a non-nesting graph  e.g. :m_gold\n            # IG  ng:inherited    on a nesting graph      e.g. :kaput\n            # AG  ng:exherited     on a nesting graph, from a non-nesting graph\n            #                                           e.g. :m_kursed\n            # yes, 'exdirect' and 'exherited' are strange and made up terms\n            #      the 'ex' stands for 'external to the nesting tree'\nwhere {\n    # for the sake of the example only return results for :g\n    filter ( ?ngd = :g )\n\n    # establish the graph-ness of ?g\n    # here  :g  :h  :i  :k  :l  :m  :o  :v\n    # but for now ignore the statements it contains\n    graph ?g { ?x ?y ?z }   \n\n    # establish the set of graphs nesting ?g, if any\n    # here for :g    :h  :i  :k  :l\n    #   modeled after https://stackoverflow.com/questions/5198889/\n    #   default graph configured as union of named graphs\n    { select distinct ?ng ?gn ?ngn ?go ?ngo where {\n        optional {\n            { ?g ng:in* ?path .\n              ?path ng:in+ ?ng . } \n            bind ( ?g AS ?gn )\n            bind ( ?ng AS ?ngn )\n            bind ( ?g AS ?go )\n            bind ( ?ng AS ?ngo )\n        }\n    } }\n\n    # G     annotations on that graph directly in the same graph\n    #       for :g  g:glossy  g:green  \n    #       non-:g  k:kaput  m:morbid  o:oblique\n    optional {                         \n        graph ?g { ?g ?p ?o }\n        bind ( ?g AS ?ngd )\n        bind ( ?g AS ?ngx )\n        bind ( ng:direct AS ?prv)\n    }\n \n    # NG    annotations on that graph directly in nesting graphs\n    #       for :g  h_gally  i_giddy  k_great\n    #       non-:g  o_verbose\n    #               which interestingly enough is an annotation \n    #               on a NESTING graph, i.e. upwards, not downwards\n    #               TODO  results from :ng being a set, not an ordered list\n    optional {\n        graph ?ngn { ?gn ?p ?o . }\n        bind ( ?gn AS ?ngd )\n        bind ( ?ngn AS ?ngx )\n        bind ( ng:indirect AS ?prv )\n        filter ( ?p != ng:in )\n    }\n    \n    # OG    direct annotations in other, non-nesting graphs\n    #       for :g  m_gold\n    #       non-:g  m_kursed  o_verbose\n#    optional {\n#        graph ?og { ?g ?p ?o . }\n#        filter not exists { ?g ng:in* ?og }\n#        bind ( ?g AS ?ngd )\n#        bind ( ?og AS ?ngx )\n#        bind ( ng:exdirect AS ?prv )\n#    }\n\n     # IG    annotations inherited from nesting graphs annotated in those same graphs\n     #       here: kaput\n#    optional {\n#        graph ?ng { ?ng ?p ?o }\n#        filter ( ?p != ng:in )\n#        bind ( ?ng AS ?ngd )\n#        bind ( ?ng AS ?ngx )\n#        bind ( ng:inherited AS ?prv )\n#    }\n\n     # AG    annotations inherited from nesting graphs annotated in elsewhere graphs\n     #       here: m_kursed\n#    optional {\n#        graph ?ngx { ?ng ?p ?o }\n#        filter ( ?ng != ?ngx )\n#        bind ( ?ng AS ?ngd )\n#        # bind ( ?ngx AS ?ngx )\n#        bind ( ng:exherited AS ?prv )\n#    }\n\n}\norder by ?g ?ng ?ngd ?ngx ?prv ?p ?o",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## re-binding variables is possible\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect ?g ?bg ?bbg where {\n    graph ?bg { ?u ?v :ko }\n    bind ( ?bg as ?bbg )\n    { select ?g ?bg where {\n        graph ?g { ?s ?p :kaput }\n        bind ( ?g as ?bg )\n    } }\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## variables from sub-queries **are** available in optional clauses",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect distinct ?inner ?outer ?extra where {\n    # insert into 'values' the graphs(s) to query for\n    values ?inner { :g }\n    \n    # construct the list of nesting graphs\n    { select ?inner ?outer where {\n        # replace by proper nesting query \n        ?inner ng:in ?outer .\n    } }\n\n    # find more\n    optional {\n        ?outer ?p ?extra .\n    }\n} order by ?inner ?outer ?extra\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## OG is giving me troubles",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect distinct \n    ?graph ?prop ?val ?provenance ?attribution \nwhere {\n    # INTRO         - insert into 'values' the graphs(s) to query for\n    # values ?graph { :g }\n    bind ( :g as ?graph ) .\n\n    # NESTING       - subquery constructs the list of nesting graphs\n    { select ?graph ?nesting where {\n        # see https://stackoverflow.com/questions/5198889/\n        # TODO must become a linked list, optionally branching out\n        { ?graph ng:in* ?path .\n          ?path  ng:in+ ?nesting . } \n    } }\n\n    # SG    annotations on that graph directly in the Same Graph\n    #       for :g  g:glossy  g:green  \n#   optional {\n#       graph ?graph { ?graph ?SGprop ?SGval . }\n#       bind ( ?SGprop as ?prop )\n#       bind ( ?SGval as ?val )\n#       bind ( ?graph as ?provenance )\n#       bind ( ng:direct AS ?attribution)\n#   }#\n    # NG    direct annotations on that graph in Nesting Graphs\n    #       for :g  h_gally  i_giddy  k_great\n#   optional {\n#       graph ?nesting { ?graph ?NGprop ?NGval . }\n#       bind ( ?NGprop as ?prop )\n#       bind ( ?NGval as ?val )\n#       bind ( ?nesting as ?provenance )\n#       bind ( ng:indirect AS ?attribution )\n#       filter ( ?prop != ng:in )\n#   }#\n    # OG    direct annotations on that graph in Other Graphs  \n    #       for :g  m_gold\n    optional {\n        graph ?OGprovenance { ?graph ?OGprop ?OGval . }\n        filter not exists {\n            filter ( ?OGprovenance = ?x )\n        }\n        bind ( ?OGprop as ?prop )\n        bind ( ?OGval as ?val )\n        bind ( ?OGprovenance as ?provenance )\n        bind ( ng:exdirect as ?attribution )\n        bind ( ?nesting as ?y )\n        filter ( ?provenance != ?graph )\n        filter ( ?prop != ng:in )\n    }\n\n    # WG    annotations inherited from and Within nesting Graphs\n    #       for :g  kaput\n\n    # EG    annotations inherited from and External to nesting Graphs\n    #       for :g  m_kursed\n\n    # bind ( <urn:nesting:default> AS ?attribution)\n} order by ?graph ?val ?nesting ?attribution ?provenance ?prop",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect distinct \n    ?graph ?prop ?val ?provenance ?attribution \nwhere {\n    bind ( :g as ?graph ) .\n\n    { select ?graph ?nesting where {\n        { ?graph ng:in* ?path .\n          ?path  ng:in+ ?nesting . } \n    } }\n    optional {\n        graph ?OGprovenance { ?graph ?OGprop ?OGval . }\n        bind ( ?OGprop as ?prop )\n        bind ( ?OGval as ?val )\n        bind ( ?OGprovenance as ?provenance )\n        bind ( ng:exdirect as ?attribution )\n        filter ( ?OGprovenance != ?nesting )\n        filter ( ?provenance != ?graph )\n        filter ( ?prop != ng:in )\n    }\n\n} order by ?graph ?nesting ?attribution ?provenance ?val ?prop",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?prop ?val ?provenance ?attribution \nWHERE {\n    BIND (:g AS ?graph) .\n\n    # Subquery to define ?nesting\n    {\n        SELECT ?graph ?nesting WHERE {\n            ?graph ng:in* ?path .\n            ?path  ng:in+ ?nesting .\n        }\n    }\n\n    OPTIONAL {\n        GRAPH ?OGprovenance {\n            ?graph ?OGprop ?OGval .\n        }\n        BIND (?OGprop AS ?prop)\n        BIND (?OGval AS ?val)\n        BIND (?OGprovenance AS ?provenance)\n        BIND (ng:exdirect AS ?attribution)\n\n        # Filters applied inside the OPTIONAL block\n        FILTER (?OGprovenance != ?nesting)\n        FILTER (?provenance != ?graph)\n        FILTER (?prop != ng:in)\n    }\n\n} ORDER BY ?graph ?nesting ?attribution ?provenance ?val ?prop\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?prop ?val ?provenance ?attribution ?subNesting\nWHERE {\n    BIND (:g AS ?graph) .\n\n    # Subquery to define ?nesting\n    {\n        SELECT ?graph ?nesting WHERE {\n            ?graph ng:in* ?path .\n            ?path  ng:in+ ?nesting .\n        }\n    }\n\n    # OPTIONAL block referencing ?nesting from the subquery\n    OPTIONAL {\n        GRAPH ?OGprovenance {\n            ?graph ?OGprop ?OGval .\n        }\n        BIND (?OGprop AS ?prop)\n        BIND (?OGval AS ?val)\n        BIND (?OGprovenance AS ?provenance)\n        BIND (ng:exdirect AS ?attribution)\n        {\n            SELECT ?subNesting WHERE {\n                ?graph ng:in* ?path .\n                ?path ng:in+ ?subNesting .\n            }\n        }\n        # Properly referencing ?nesting for filtering\n        FILTER (?OGprovenance IN (?subNesting))\n        FILTER (?provenance != ?graph)\n        FILTER (?prop != ng:in)\n    }\n\n} ORDER BY ?graph ?nesting ?attribution ?provenance ?val ?prop\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?nesting\nWHERE {\n    BIND (:g AS ?graph) .\n\n    ?graph ng:in* ?path .\n    ?path  ng:in+ ?nesting .\n}\nORDER BY ?graph ?nesting ?attribution ?provenance ?val ?prop",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## chatgpt to the rescue",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# THIS IS CHAT.GPTs SOLUTION \n# for AllegroGraph, but not Stardog or OxiGraph or Dydra\n\nPREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?prop ?val ?provenance ?attribution \nWHERE {\n    # Bind the target graph\n    BIND (:g AS ?graph) .\n\n    # Subquery to get the nesting graphs for ?graph\n    {\n        SELECT ?graph ?nesting WHERE {\n            ?graph ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n    }\n\n    # Integrate the subquery results into the main query\n    OPTIONAL {\n        GRAPH ?OGprovenance {\n            ?graph ?OGprop ?OGval .\n        }\n        BIND (?OGprop AS ?prop)\n        BIND (?OGval AS ?val)\n        BIND (?OGprovenance AS ?provenance)\n        BIND (ng:exdirect AS ?attribution)\n\n        # Exclude results where the provenance is part of the nesting hierarchy\n        FILTER NOT EXISTS {\n            ?OGprovenance ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n\n        # Additional filtering for valid properties\n        FILTER (?provenance != ?graph)   # Skip self-provenance\n        FILTER (?prop != ng:in)          # Skip 'ng:in' properties\n    }\n}\nORDER BY ?graph ?provenance ?attribution ?val ?prop\n\n# THIS IS CHAT.GPTs SOLUTION\n# for AllegroGraph, but not Stardog or OxiGraph or Dydra",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?prop ?val ?provenance ?attribution \nWHERE {\n    # Bind the target graph\n    BIND (:g AS ?graph) .\n\n    # Subquery to get the nesting graphs for ?graph\n    {\n        SELECT ?graph ?nesting WHERE {\n            ?graph ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n    }\n\n    # Integrate the subquery results into the main query\n    OPTIONAL {\n        GRAPH ?OGprovenance {\n            ?graph ?OGprop ?OGval .\n        }\n\n        # Exclude results where the provenance is part of the nesting hierarchy\n        FILTER NOT EXISTS {\n            ?OGprovenance ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n\n        # Filters applied inside the OPTIONAL block\n        # FILTER (?OGprovenance = ?nesting) # not good\n        FILTER (?OGprovenance != ?graph)    # not needed\n        FILTER (?OGprop != ng:in)           # only needed with dydra\n        \n        BIND (?OGprop AS ?prop)\n        BIND (?OGval AS ?val)\n        BIND (?OGprovenance AS ?provenance)\n        BIND (ng:exdirect AS ?attribution)\n    }\n}\nORDER BY ?graph ?provenance ?attribution ?val ?prop\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## works in allegrograph, stardog and oxigraph, but not dydra",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# works in allegrograph, stardog and oxigraph, but not dydra\n\nPREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?prop ?val ?provenance ?attribution \nWHERE {\n    # Bind the target graph\n    BIND (:g AS ?graph) .\n\n    # Subquery to get the nesting graphs for ?graph\n    {\n        SELECT ?graph ?nesting WHERE {\n            ?graph ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n    }\n\n    # Main query to get provenance data\n    OPTIONAL {\n        GRAPH ?OGprovenance {\n            ?graph ?OGprop ?OGval .\n        }\n\n        # Inline subquery to exclude unwanted provenance graphs\n        FILTER NOT EXISTS {\n            {\n                SELECT DISTINCT ?excludedProvenance WHERE {\n                    ?graph ng:in* ?path .\n                    ?path ng:in+ ?excludedProvenance .\n                }\n            }\n            FILTER (?OGprovenance = ?excludedProvenance)\n        }\n\n        # Additional filters for valid properties\n        FILTER (?OGprovenance != ?graph)   # Skip self-provenance\n        FILTER (?OGprop != ng:in)          # Skip 'ng:in' properties\n\n        BIND (?OGprop AS ?prop)\n        BIND (?OGval AS ?val)\n        BIND (?OGprovenance AS ?provenance)\n        BIND (ng:exdirect AS ?attribution)\n    }\n}\nORDER BY ?graph ?provenance ?attribution ?val ?prop\n\n# works in allegrograph, stardog and oxigraph, but not dydra",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "the following query works in \n    stardog\n    oxigraph\n    allegrograph\n    dydra\nbut it needs to execute the nesting subquery twice",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?prop ?val ?provenance ?attribution \n\nWHERE {\n    # Bind the target graph\n    BIND (:g AS ?graph) .\n\n#   # Subquery to get the nesting graphs for ?graph\n#   {\n#       SELECT ?graph ?nesting WHERE {\n#           ?graph ng:in* ?path .\n#           ?path ng:in+ ?nesting .\n#       }\n#   }\n\n    # Main query to get provenance data\n    OPTIONAL {\n        GRAPH ?OGprovenance {\n            ?graph ?OGprop ?OGval .\n        }\n        MINUS {\n            ?graph ng:in* ?path .\n            ?path ng:in+ ?OGprovenance .\n        }\n        \n        # Additional filters for valid properties\n        FILTER (?OGprovenance != ?graph)   # Skip self-provenance\n\n        BIND (?OGprop AS ?prop)\n        BIND (?OGval AS ?val)\n        BIND (?OGprovenance AS ?provenance)\n        BIND (ng:exdirect AS ?attribution)\n    }\n}\nORDER BY ?graph ?provenance ?attribution ?val ?prop\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## a simple solution for OG",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "no MINUS, just a simple path query - because OG is actually pretty simple\nthis works in \n    dydra\n    allegrograph\n    stardog\n    oxigraph",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?prop ?val ?provenance ?attribution \n\nWHERE {\n    # Bind the target graph\n    BIND (:g AS ?graph) .\n\n    # Subquery to get the nesting graphs for ?graph\n    {\n        SELECT ?graph ?nesting WHERE {\n            ?graph ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n    }\n\n    # Main query to get provenance data\n    OPTIONAL {\n        GRAPH ?OGprovenance {\n            ?graph ?OGprop ?OGval .\n        }\n#       MINUS {\n#           ?graph ng:in* ?path .\n#           ?path ng:in+ ?OGprovenance .\n#       }\n        FILTER NOT EXISTS { \n            ?graph ng:in* ?OGprovenance .\n        }\n        # Additional filters for valid properties\n        FILTER (?OGprovenance != ?graph)   # Skip self-provenance\n\n        BIND (?OGprop AS ?prop)\n        BIND (?OGval AS ?val)\n        BIND (?OGprovenance AS ?provenance)\n        BIND (ng:exdirect AS ?attribution)\n    }\n}\nORDER BY ?graph ?provenance ?attribution ?val ?prop\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "OKAY, so we have two versions for OG, the second one much tighter\n\n## now, let's try to go for the whole thing again",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\nSELECT DISTINCT \n    ?graph ?prop ?val ?provenance ?attribution \n\nWHERE {   \n    # GRAPH ?g { ?x ?y ?z } .\n    # VALUES ?graph { :g :m } . \n    BIND (:g AS ?graph) .\n\n    { SELECT ?graph ?nesting WHERE {\n        ?graph ng:in* ?path .\n        ?path ng:in+ ?nesting .\n    }}\n\n    # SG    annotations on that graph directly in the Same Graph\n    #       for :g  g:glossy  g:green  \n    #       non-:g  k:kaput  m:morbid  o:oblique\n    #       TODO    if this is active, no further results come in\n    OPTIONAL {\n        GRAPH ?SGgraph { ?SGgraph ?SGprop ?SGval . }\n        FILTER ( ?SGgraph = ?graph)\n        BIND ( ?SGprop AS ?prop )\n        BIND ( ?SGval AS ?val )\n        BIND ( ?SGgraph AS ?provenance )\n        BIND ( ng:direct AS ?attribution)\n    }\n    # NG    direct annotations on that graph in Nesting Graphs\n    #       for :g  h_gally  i_giddy  k_great\n    #       non-:g  o_verbose\n    #       TODO creates a row where only :g is bound\n    #            maybe from :l\n    OPTIONAL {\n        GRAPH ?nesting { ?graph ?NGprop ?NGval . }\n        FILTER ( ?prop != ng:in )\n        # FILTER EXISTS { ?graph ng:in* ?nesting . }   # probably not needed\n        BIND ( ?NGprop AS ?prop )\n        BIND ( ?NGval AS ?val )\n        BIND ( ?nesting AS ?provenance )\n        BIND ( ng:indirect AS ?attribution )\n    }\n\n    # OG    direct annotations on that graph in Other Graphs  \n    #       for :g  m_gold\n    #       non-:g  m_kursed  o_verbose\n    OPTIONAL {\n        GRAPH ?OGprovenance { ?graph ?OGprop ?OGval . }\n        FILTER NOT EXISTS { ?graph ng:in* ?OGprovenance . }\n        FILTER (?OGprovenance != ?graph)   # Skip self-provenance\n        BIND (?OGprop AS ?prop)\n        BIND (?OGval AS ?val)\n        BIND (?OGprovenance AS ?provenance)\n        BIND (ng:exdirect AS ?attribution)\n    }\n\n    # WG    annotations inherited from and Within nesting Graphs\n    #       for :g  kaput\n    OPTIONAL {\n        GRAPH ?WGgraph { ?WGgraph ?WGprop ?WGval }\n        FILTER ( ?WGgraph != ?graph)\n        FILTER EXISTS { ?WGgraph ng:in* ?nesting . }\n        FILTER ( ?WGprop != ng:in )\n        BIND ( ?WGprop AS ?prop )\n        BIND ( ?WGval AS ?val )\n        BIND ( ?WGgraph AS ?provenance )\n        BIND ( ng:inherited AS ?attribution )\n     }\n\n    # EG    annotations inherited from and External to nesting Graphs\n    #       for :g  m_kursed\n    OPTIONAL {\n        GRAPH ?EXgraph { ?nesting ?EGprop ?EGval }\n        MINUS {\n            ?EXgraph ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n        FILTER ( ?nesting != ?EXgraph )\n        FILTER ( ?EGprop != ng:in )\n        BIND ( ?EGprop AS ?prop )\n        BIND ( ?EGval AS ?val )\n        BIND ( ?nesting AS ?provenance )\n        BIND ( ng:exherited AS ?attribution )\n    }\n\n    # TODO  don't remember what this was meant to do\n    # BIND ( <urn:nesting:default> AS ?attribution)\n}\nORDER BY ?graph ?provenance ?attribution ?val ?prop",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## testing queries",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?nesting ?prop ?val ?fromNesting\n\n# FROM <urn:dydra:all>\n# FROM NAMED <urn:dydra:named>\n\nWHERE {   \n    # GRAPH ?g { ?x ?y ?z } .\n    # VALUES ?graph { :g :m } . \n    BIND (:g AS ?graph) .\n\n    { SELECT ?graph ?nesting WHERE {\n        ?graph ng:in* ?path .\n        ?path ng:in+ ?nesting .\n    }}\n\n    # test what the values of ?nesting are\n    # see variable ?nesting in SELECT \n\n    # test if ?nesting is visible inside this optional clause\n    # see variable ?fromNesting in SELECT\n    # should return ?val :h_gally, :i_giddy, :k_great from graphs :h, :i, :k resp.\n    OPTIONAL {\n        GRAPH ?nesting { ?graph ?prop ?val . }\n        FILTER ( ?prop != ng:in )\n        BIND ( ?nesting AS ?fromNesting )\n    }\n\n    # test if further optional values are added as new rows\n    #      or if they overwrite existing values\n    #      or if they are suppressed by preceding optionals \n    # should return ?val :kaput from graph :k\n    OPTIONAL {\n        GRAPH ?nesting { ?nesting ?prop ?val . }\n        FILTER ( ?prop != ng:in )\n        BIND ( ?nesting AS ?fromNesting )\n    }\n\n}\nORDER BY ?graph ?nesting ?prop ?val ?fromNesting\n\n#   EXPECTED RESULT\n#   ?graph  ?nesting    ?prop   ?val        ?fromNesting     \n#   :g      :h          :hp     :h_gally    :h              # from first optional\n#   :g      :i          :ip     :i_giddy    :i              # from first optional\n#   :g      :k          :kp     :k_great    :k              # from first optional\n#   :g      :k          :kp     :kaput      :k              # from second optional",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# as per chatgpt's suggestion with UNION\n\n# this works in stardog and oxigraph. \n# allegrograph ignore the any binding of ?graph to :g\n# dydra doesn't like it\n\nPREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?nesting ?prop ?val ?fromNesting\n\nWHERE {   \n    # Bind the target graph\n    # GRAPH ?g { ?x ?y ?z } .\n    # VALUES ?graph { :g :m } .\n    BIND (:g AS ?graph) .\n\n    # Subquery to get the nesting graphs for ?graph\n    {\n        SELECT ?graph ?nesting WHERE {\n            ?graph ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n    }\n\n    # First source of triples: ?graph triples in ?nesting\n    {\n        GRAPH ?nesting {\n            ?graph ?prop ?val .\n        }\n        FILTER (?prop != ng:in)\n        BIND (?nesting AS ?fromNesting)\n    }\n    UNION\n    # Second source of triples: ?nesting triples in ?nesting\n    {\n        GRAPH ?nesting {\n            ?nesting ?prop ?val .\n        }\n        FILTER (?prop != ng:in)\n        BIND (?nesting AS ?fromNesting)\n    }\n}\nORDER BY ?graph ?nesting ?prop ?val ?fromNesting\n\n#   EXPECTED RESULT\n#   ?graph  ?nesting    ?prop   ?val        ?fromNesting     \n#   :g      :h          :hp     :h_gally    :h              # from first optional\n#   :g      :i          :ip     :i_giddy    :i              # from first optional\n#   :g      :k          :kp     :k_great    :k              # from first optional\n#   :g      :k          :kp     :kaput      :k              # from second optional",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# this is as far as chatgpt got with OPTIONAL\n# nice BOUND filter to catch half empty rows\n# but even the COALESCE clause doesn't do the trick \n\nPREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT \n    ?graph ?nesting ?prop ?val ?fromNesting\n\nWHERE {   \n    # Bind the target graph\n    BIND (:g AS ?graph) .\n\n    # Subquery to get the nesting graphs for ?graph\n    {\n        SELECT ?graph ?nesting WHERE {\n            ?graph ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n    }\n\n    # OPTIONAL 1: Fetch data where ?graph is the subject\n    OPTIONAL {\n        GRAPH ?nesting {\n            ?graph ?prop1 ?val1 .\n        }\n        FILTER (?prop1 != ng:in)\n        BIND (?nesting AS ?fromNesting1)\n    }\n\n    # OPTIONAL 2: Fetch data where ?nesting is the subject\n    OPTIONAL {\n        GRAPH ?nesting {\n            ?nesting ?prop2 ?val2 .\n        }\n        FILTER (?prop2 != ng:in)\n        BIND (?nesting AS ?fromNesting2)\n    }\n\n    # Ensure results from both OPTIONALs are combined into final rows\n    BIND (COALESCE(?prop1, ?prop2) AS ?prop)\n    BIND (COALESCE(?val1, ?val2) AS ?val)\n    BIND (COALESCE(?fromNesting1, ?fromNesting2) AS ?fromNesting)\n    \n    # Filter to ensure meaningful rows\n    FILTER (BOUND(?prop))\n}\nORDER BY ?graph ?nesting ?prop ?val ?fromNesting\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## the final throws",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# back to the big one, now with support from chatgpt o1 - 20$ yeah yeah\n#\n# o1 is strongly advising against this approach\n# https://chatgpt.com/share/678ee9c4-37ec-800b-961f-27d8b16259a8\n#\n# SPARQL UNION is meant to produce multiple rows from different patterns but with the same variables.\n# OPTIONAL is meant to add extra columns to existing rows. If you keep re‐using the same variable names in multiple OPTIONALs, the first block that binds them typically “wins,” overshadowing the rest.\n# For your “one row per annotation” design, definitely use a UNION of blocks that each produce ( ?graph, ?prop, ?val, ?provenance, ?attribution ).\n# This is the cleanest and most standard solution. If Dydra is giving you trouble with UNION, that’s an oddity of Dydra — work around it or let them know.\n\n\n\nPREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\nSELECT DISTINCT \n    ?graph ?prop ?val ?provenance ?attribution \n\nWHERE {   \n    # GRAPH ?g { ?x ?y ?z } .\n    # VALUES ?graph { :g :m } . \n    BIND (:g AS ?graph) .\n\n    { SELECT ?graph ?nesting WHERE {\n        ?graph ng:in* ?path .\n        ?path ng:in+ ?nesting .\n    }}\n\n    # SG    annotations on that graph directly in the Same Graph\n    #       for :g  g:glossy  g:green  \n    #       non-:g  k:kaput  m:morbid  o:oblique\n    #       TODO    if this is active, no further results come in\n    OPTIONAL {\n        GRAPH ?SGgraph { ?SGgraph ?SGprop ?SGval . }\n        FILTER ( ?SGgraph = ?graph)\n        BIND ( ?SGprop AS ?prop )\n        BIND ( ?SGval AS ?val )\n        BIND ( ?SGgraph AS ?provenance )\n        BIND ( ng:direct AS ?attribution)\n    }\n\n     # NG    direct annotations on that graph in Nesting Graphs\n     #       for :g  h_gally  i_giddy  k_great\n     #       non-:g  o_verbose\n     #       TODO creates a row where only :g is bound\n     #            maybe from :l\n    OPTIONAL {\n        GRAPH ?nesting { ?graph ?NGprop ?NGval . }\n        FILTER ( ?NGprop != ng:in )\n        # FILTER EXISTS { ?graph ng:in* ?nesting . }   # probably not needed\n        BIND ( ?NGprop AS ?prop )\n        BIND ( ?NGval AS ?val )\n        BIND ( ?nesting AS ?provenance )\n        BIND ( ng:indirect AS ?attribution )\n    }\n  \n    # OG    direct annotations on that graph in Other Graphs  \n    #       for :g  m_gold\n    #       non-:g  m_kursed  o_verbose\n    OPTIONAL {\n        GRAPH ?OGprovenance { ?graph ?OGprop ?OGval . }\n        FILTER NOT EXISTS { ?graph ng:in* ?OGprovenance . }\n        FILTER (?OGprovenance != ?graph)   # Skip self-provenance\n        BIND (?OGprop AS ?prop)\n        BIND (?OGval AS ?val)\n        BIND (?OGprovenance AS ?provenance)\n        BIND (ng:exdirect AS ?attribution)\n    }\n\n    # WG    annotations inherited from and Within nesting Graphs\n    #       for :g  kaput\n    OPTIONAL {\n        GRAPH ?WGgraph { ?WGgraph ?WGprop ?WGval }\n        FILTER ( ?WGgraph != ?graph)\n        FILTER EXISTS { ?WGgraph ng:in* ?nesting . }\n        FILTER ( ?WGprop != ng:in )\n        BIND ( ?WGprop AS ?prop )\n        BIND ( ?WGval AS ?val )\n        BIND ( ?WGgraph AS ?provenance )\n        BIND ( ng:inherited AS ?attribution )\n    }\n\n    # EG    annotations inherited from and External to nesting Graphs\n    #       for :g  m_kursed\n    OPTIONAL {\n        GRAPH ?EXgraph { ?nesting ?EGprop ?EGval }\n        MINUS {\n            ?EXgraph ng:in* ?path .\n            ?path ng:in+ ?nesting .\n        }\n        FILTER ( ?nesting != ?EXgraph )\n        FILTER ( ?EGprop != ng:in )\n        BIND ( ?EGprop AS ?prop )\n        BIND ( ?EGval AS ?val )\n        BIND ( ?nesting AS ?provenance )\n        BIND ( ng:exherited AS ?attribution )\n    }\n\n    # TODO  don't remember what this was meant to do\n    # BIND ( <urn:nesting:default> AS ?attribution)\n}\nORDER BY ?graph ?provenance ?attribution ?val ?prop\n\n# graph\t    prop\t    val\t        provenance\tattribution\n# :g        :gp         :glossy     :g          ng:direct\n# :g        :gp2        :green      :g          ng:direct\n# :g        :hp         :h_gally    :h          ng:indirect   \n# :g        :ip         :i_giddy    :i          ng:indirect\n# :g        :kp         :k_great    :k          ng:indirect   \n# :g        :mp         :m_gold     :m          ng:exdirect\n# :g        :kp         :kaput      :k          ng:inherited\n# :g        :kmp        :m_kursed   :k          ng:exherited",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# o1 insists that i should drop the OPTIONAL approach\nPREFIX :  <http://rat.io/>\nPREFIX ng: <http://rdf.ng/>\n\nSELECT DISTINCT ?graph ?prop ?val ?provenance ?attribution\nWHERE {\n  # Possibly do your sub-select for nestings:\n  # (only if you need ?nesting in subsequent patterns)\n  {\n    SELECT ?graph ?nesting {\n      ?graph ng:in* ?path .\n      ?path  ng:in+ ?nesting .\n    }\n  }\n\n  # -- First branch: \"SG\" direct annotations in the same graph\n  {\n    GRAPH ?graph {\n      ?graph ?SGprop ?SGval .\n      FILTER (?SGprop != ng:in)\n    }\n    BIND(?SGprop AS ?prop)\n    BIND(?SGval  AS ?val)\n    BIND(?graph  AS ?provenance)\n    BIND(ng:direct AS ?attribution)\n  }\n  UNION\n  # -- Second branch: \"NG\" direct annotations in nesting graphs\n  {\n    GRAPH ?nesting {\n      ?graph ?NGprop ?NGval .\n      FILTER (?NGprop != ng:in)\n    }\n    BIND(?NGprop AS ?prop)\n    BIND(?NGval  AS ?val)\n    BIND(?nesting AS ?provenance)\n    BIND(ng:indirect AS ?attribution)\n  }\n  UNION\n  # -- Third branch: \"OG\" direct annotations in other graphs\n  {\n    GRAPH ?OGprov {\n      ?graph ?OGprop ?OGval .\n      FILTER NOT EXISTS { ?graph ng:in* ?OGprov }  \n      FILTER (?OGprov != ?graph)\n    }\n    BIND(?OGprop AS ?prop)\n    BIND(?OGval  AS ?val)\n    BIND(?OGprov AS ?provenance)\n    BIND(ng:exdirect AS ?attribution)\n  }\n  UNION\n  # -- Fourth branch: \"WG\" inherited from nesting graphs\n  {\n    GRAPH ?WGgraph {\n      ?WGgraph ?WGprop ?WGval .\n      FILTER (?WGgraph != ?graph)\n      FILTER EXISTS { ?WGgraph ng:in* ?nesting }\n      FILTER (?WGprop != ng:in)\n    }\n    BIND(?WGprop AS ?prop)\n    BIND(?WGval  AS ?val)\n    BIND(?WGgraph AS ?provenance)\n    BIND(ng:inherited AS ?attribution)\n  }\n  UNION\n  # -- Fifth branch: \"EG\" exherited from external\n  {\n    GRAPH ?EXgraph {\n      ?nesting ?EGprop ?EGval\n      FILTER (?EGprop != ng:in)\n    }\n    MINUS {\n      ?EXgraph ng:in* ?somePath .\n      ?somePath ng:in+ ?nesting .\n    }\n    FILTER (?nesting != ?EXgraph)\n    BIND(?EGprop AS ?prop)\n    BIND(?EGval  AS ?val)\n    BIND(?nesting AS ?provenance)\n    BIND(ng:exherited AS ?attribution)\n  }\n}\nORDER BY ?graph ?provenance ?attribution ?val ?prop\n",
+    "metadata": {}
+  }
+]

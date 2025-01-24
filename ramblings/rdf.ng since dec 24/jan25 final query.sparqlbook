@@ -1,0 +1,44 @@
+[
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "# TBD\n\n    the final query  \n    that combines the results of all experiments so far\n    first nesting\n    then fragments\n    then everything combined\n\n    prerequisite: \n    the default graph must be configured as union of all named graphs\n\n    tested on oxigraph being available at \n    http://localhost:7878/query\n    run as a docker image with\n\n    docker run --rm -v $PWD/data:/data -p 7878:7878 ghcr.io/oxigraph/oxigraph serve --location /data --bind 0.0.0.0:7878 --union-default-graph",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## nesting",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX   :   <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT DISTINCT\n    ?graph      # the graph annotated\n    ?prop       # property\n    ?val        # value\n    ?target     # the graph annotated directly\n    ?source     # the graph in which the annotation takes place\n    ?means      # the kind of access to the annotated graph\n\nWHERE {\n\n    # bind ?graph for testing\n    # GRAPH ?g { ?x ?y ?z } .       # bricolage\n    # VALUES ?graph { :g :m } .     # good for multiple graphs\n    BIND ( :g AS ?graph ) .         # most elegant\n\n    # subquery to collect the graphs nesting ?graph\n    #       see https://stackoverflow.com/questions/5198889/\n    # TODO  must become a linked list, optionally branching out\n    { SELECT ?graph ?nesting WHERE {\n        { ?graph ng:in* ?path .\n          ?path  ng:in+ ?nesting . } \n    } }\n\n    # a graph can be annotated directly or via inheritance \n    # Direct                    directly, the graph as subject\n    #       Self        DS      in the graph itself\n    #       Nesting     DN      in a nesting graph\n    #       External    DX      in any other graph\n    # Inherit                   inherited, a nesting graph as subject\n    #       Self        IS      in the nesting graph itself\n    #       Nesting     IN      in an outer nesting graph\n    #       External    IX      in any other graph\n\n    # DS    directly, the graph as subject, in the graph itself\n    #       for :g  g:glossy  g:green  \n    #       non-:g  k:kaput  m:morbid  o:oblique\n    {\n\n    #   GRAPH ?SGgraph { ?SGgraph ?SGprop ?SGval . }\n    #   FILTER ( ?SGgraph = ?graph)\n    #   BIND ( ?SGprop AS ?prop )\n    #   BIND ( ?SGval AS ?val )\n    #   BIND ( ?SGgraph AS ?provenance )\n\n        BIND ( ng:DirectSelf AS ?means )\n    }\n\n    UNION\n\n    # DN    directly, the graph as subject, in a nesting graph\n    #       for :g  h_gally  i_giddy  k_great\n    #       non-:g  o_verbose\n    {\n\n    #   GRAPH ?nesting { ?graph ?NGprop ?NGval . }\n    #   FILTER ( ?NGprop != ng:in )\n    #   # FILTER EXISTS { ?graph ng:in* ?nesting . }   # probably not needed\n    #   BIND ( ?NGprop AS ?prop )\n    #   BIND ( ?NGval AS ?val )\n    #   BIND ( ?nesting AS ?provenance )\n\n        BIND ( ng:DirectNesting AS ?means )\n    }\n\n    UNION\n\n    # DX    directly, the graph as subject, in any other graph\n    #       for :g  m_gold\n    #       non-:g  m_kursed  o_verbose\n    {\n\n    #   GRAPH ?OGprovenance { ?graph ?OGprop ?OGval . }\n    #   FILTER NOT EXISTS { ?graph ng:in* ?OGprovenance . }\n    #   FILTER (?OGprovenance != ?graph)   # Skip self-provenance\n    #   BIND (?OGprop AS ?prop)\n    #   BIND (?OGval AS ?val)\n    #   BIND (?OGprovenance AS ?provenance)\n\n        BIND ( ng:DirectExternal AS ?means )\n    }\n\n    UNION\n\n    # IS    inherited, a nesting graph as subject, in that graph itself\n    #       for :g  kaput\n    {\n\n    #   GRAPH ?WGgraph { ?WGgraph ?WGprop ?WGval }\n    #   FILTER ( ?WGgraph != ?graph)\n    #   FILTER EXISTS { ?WGgraph ng:in* ?nesting . }\n    #   FILTER ( ?WGprop != ng:in )\n    #   BIND ( ?WGprop AS ?prop )\n    #   BIND ( ?WGval AS ?val )\n    #   BIND ( ?WGgraph AS ?provenance )\n\n\n        BIND ( ng:InheritSelf AS ?means )\n    }\n\n    UNION\n    \n    # IN    inherited, a nesting graph as subject, in an outer graph\n    #       for :g  \n    {\n        BIND ( ng:InheritNesting AS ?means )\n    }\n\n    UNION\n\n    # IX    inherited, a nesting graph as subject, in any other graph\n    #       for :g  m_kursed\n    {\n\n\n    #   GRAPH ?EXgraph { ?nesting ?EGprop ?EGval }\n    #   MINUS {\n    #       ?EXgraph ng:in* ?path .\n    #       ?path ng:in+ ?nesting .\n    #   }\n    #   FILTER ( ?nesting != ?EXgraph )\n    #   FILTER ( ?EGprop != ng:in )\n    #   BIND ( ?EGprop AS ?prop )\n    #   BIND ( ?EGval AS ?val )\n    #   BIND ( ?nesting AS ?provenance )\n\n        BIND ( ng:InheritExternal AS ?means )\n    }\n\n\n    # riff raff\n\n    # filtering out empty rows\n    # FILTER (BOUND(?prop))\n\n} ORDER BY\n    ?graph ?means ?target ?source ?prop ?val \n\n# graph\t    prop    val\t        target  source  means\n# :g        :gp     :glossy     :g      :g      ng:DirectSelf\n# :g        :gp2    :green      :g      :g      ng:DirectSame\n# :g        :hp     :h_gally    :h              ng:DirectNesting   \n# :g        :ip     :i_giddy    :i              ng:DirectNesting\n# :g        :kp     :k_great    :k              ng:DirectNesting   \n# :g        :mp     :m_gold     :m              ng:DirectExternal\n# :g        :kp     :kaput      :k              ng:InheritSelf\n# TODO                                          ng:InheritNesting\n# :g        :kmp    :m_kursed   :k              ng:InheritExternal",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## fragments",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# the example data is still in the default graph\n# it needs to be moved to a named graph\n# and the query needs to be updated accordingly\n\n# Test [endpoint=./jan25 data.trig]\n\nPREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT ?s ?pAlias ?o ?b ?c ?mm ?nn WHERE {\n\n    # search for triples\n    ?s ?p ?o\n\n    # do not show term annotations\n    # FILTER ( ?p NOT IN ( ng:onSub, ng:onPrd, ng:onObj ) )\n\n    # do follow object bnodes 2 levels deep\n    OPTIONAL {                  # only follow if object is blank\n        FILTER (isBlank(?o))    # use || or && to add patterns\n        ?o ?b ?c\n        OPTIONAL {              # add one level of indirection\n            FILTER (isBlank(?c))\n            ?c ?mm ?nn\n        }\n    }\n    \n    # don't list level-2 triples independently\n    FILTER ( !isBlank(?s) )     \n\n    # define aliases for some properties\n    BIND (  IF ( ?p=ng:onSub, \"onSubject\" ,\n            IF ( ?p=ng:onPrd, \"onPredicate\" ,\n            IF ( ?p=ng:onObj, \"onObject\" , \n            STR(?p) ) ) ) AS ?pAlias )\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## all together now",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "",
+    "metadata": {}
+  }
+]

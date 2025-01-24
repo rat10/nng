@@ -1,0 +1,108 @@
+sparql's default dataset configuration is
+
+	a query for 
+		{ ?s ?p ?o } 
+		only ranges over the default graph
+		
+	a query for 
+		GRAPH ?g { ?s ?p ?o } 
+		only ranges over named graphs, one by one
+		
+	queries on default and named graphs can be combined
+		{ ?s ?p ?o } 
+		UNION
+		GRAPH ?g { ?s ?p ?o } 
+		ranging over default and all named graphs 
+
+	named graphs are queried in isolation		
+		when a query iterates over all named graphs
+		it doesn't create a common context for variables
+		a pattern inside a graph clause can match at most one graph at-a-time
+		a common context can be established explicitly
+
+			SELECT ?prize 
+			WHERE {
+				GRAPH ?g1 { ?prize :winner ?winner1 . ?winner1 :country :France . }
+				GRAPH ?g2 { ?prize :winner ?winner2 . ?winner2 :country :Spain . }
+			}
+		
+		
+
+dataset construction
+
+	the above arrangement can be modified via
+		FROM
+		FROM NAMED 
+	clauses
+
+	FROM specifies the graph(s) to be the new default graph
+		the original default graph can't be part of that new default
+		(it has no name and therefore is not accessible in standard sparql)
+	FROM NAMED specifies the graph(s) to iterate over with GRAPH clauses	
+	
+	a query that needs to access the default graph 
+		can't use FROM or FROM NAMED at all
+		but it can iterate over named graphs with GRAPH clauses
+
+
+
+non-standard behaviors and extensions
+
+	default graph
+		Jena			default graph										("exclusive")
+		RDF4J			union (or merge?) of default and all named graphs  	("inclusive")
+
+	many sparql engines offer a virtual default graph 
+		that is the union or merge of the default and all named graphs
+		and where a query without a GRAPH clause will access all triples in a dataset 
+		
+		
+		
+	https://blog.metaphacts.com/the-default-graph-demystified
+		triple store	virtual graph name											FROM DEFAULT
+		Amazon Neptune 	http://aws.amazon.com/neptune/vocab/v01/DefaultNamedGraph 	no
+		Blazegraph 		http://www.bigdata.com/rdf#nullGraph 						no
+		Eclipse RDF4J 	http://rdf4j.org/schema/rdf4j#nil>							yes
+		GraphDB 		http://rdf4j.org/schema/rdf4j#nil						 	yes
+		Stardog 		tag:stardog:api:context:default|named|virtual|local|all		no
+						<https://docs.stardog.com/query-stardog/#special-named-graphs>
+		
+		Virtuoso
+		Communica
+		OxiGraph	
+		AllegroGraph
+		Corese
+		Oracle
+		dydra 			urn:dydra:default|named|all|none							no
+		
+see also discussions in the SPARQL 1.2 CG
+	The union graph should have a standard name				https://github.com/w3c/sparql-dev/issues/59
+	The unnamed/default graph should have a standard name	https://github.com/w3c/sparql-dev/issues/43
+	Working with named graphs gets complicated fast			https://github.com/w3c/sparql-dev/issues/45
+
+
+chatgpt o1
+
+	Stardog has configuration properties such as query.all.graphs = true. 
+		When enabled, it allows queries against the default graph to include all named graphs as well.
+
+	Virtuoso can be configured so that queries without explicit FROM effectively see the union of all graphs. This is often done at the SPARQL endpoint level by setting the parameter 			
+				default-graph-uri 
+			to something like 
+				* 
+			or leaving it blank so it unifies everything. 
+		Another approach is using FROM <virt:ALL> (an older convention) to query across all named graphs.
+
+	Jena has a configuration option 
+				unionDefaultGraph=true 
+			that can be set on a dataset, but only for TDB and TDB2, not for the in memory store
+		When enabled, the “default graph” in queries is actually the union of all named graphs plus the genuine default graph.
+
+	AllegroGraph does not treat the default graph as the union of all contexts 
+			unless you explicitly specify something like FROM <http://franz.com/all>.
+		AllegroGraph does offer special graph URIs such as <http://franz.com/all> or <!ALL> 
+				to reference all contexts at once.
+
+	Blazegraph by default, in quads mode, queries to the default graph do not automatically see the union of all named graphs.
+		You can simulate a union by using FROM NAMED or referencing specific named graphs or using GRAPH ?g.
+		Some setups might use a special graph IRI (like <urn:AllGraphs>) or a custom query rewriting approach, but that’s not out-of-the-box behavior.

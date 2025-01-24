@@ -1,7 +1,14 @@
 {
     "cSpell.words": [
+        "allegrograph",
+        "exdirect",
+        "Ggraph",
+        "Gprop",
+        "Gprovenance",
+        "Gval",
         "includ",
         "Ioannes",
+        "kursed",
         "Linköping",
         "losslessly",
         "Orphanotrophos",
@@ -9,9 +16,13 @@
         "Pininfarina",
         "Quattro",
         "Souri's",
+        "stackoverflow",
+        "subselect",
         "Suzie",
         "termgraph",
         "topgraph",
-        "unstar"
-    ]
+        "unstar",
+        "xherited"
+    ],
+    "sparqlbook.useNamespaces": true
 }

@@ -8,7 +8,7 @@ The following examples demonstrate querying paths in nested graphs. This investi
         :X { 
             :Dog :eats :Fish .
             THIS :says :Alice ;
-                 nng:domain [ :name "Dodger" ]
+                 nng:domain [ :name "Dodger" ] .
         } :says :Bob ;
           :believes :Ben .
         :Goat :has :Ideas .
@@ -17,7 +17,7 @@ The following examples demonstrate querying paths in nested graphs. This investi
     } :says :Carol ;
       :believes :Curt ;
       nng:tree :Example .
-} :says :Zarathustra  ,
+} :says :Zarathustra  ;
   :source :Source_1 .
 ```
 <!--
@@ -26,19 +26,39 @@ The following examples demonstrate querying paths in nested graphs. This investi
         :X { 
             :Dog :eats :Fish .
             THIS :says :Alice ;
-                 nng:domain [ :name "Dodger"]
+                 nng:domain [ :name "Dodger"] .
         } :says :Bob ;
           :believes :Ben .
 >       :W {
 >           :Dog :eats :Fish .
->           THIS nng:domain [ :name "Daisy"]
+>           THIS nng:domain [ :name "Daisy"] .
 >       } :says :Bart .
         :Goat :has :Ideas .
         :Beatrice :claims [] "{:Jake :knows :Larry . :Larry a :Star .}" .
     } :says :Carol ;
       :believes :Curt ;
       nng:tree :Example .
-} :says :Zarathustra  ,
+} :says :Zarathustra  ;
+  :source :Source_1 .
+-->
+<!-- new version Feb 24
+@base <http://dydra.com/> .
+@prefix : <http://example.org/> .
+@prefix nng: <http://nngraph.org/> .
+{ :Z | 
+    { :Y |
+         { :X | :Dog :eats :Fish .
+                THIS :says :Alice ;
+                     nng:domain [ :name "Dodger" ] .
+        } :says :Bob ;
+          :believes :Ben .
+        :Goat :has :Ideas .
+        :Beatrice :claims << :BS | :Jake :knows :Larry . 
+                                   :Larry a :Star . >> .
+    } :says :Carol ;
+      :believes :Curt ;
+      nng:tree :Example .
+} :says :Zarathustra  ;
   :source :Source_1 .
 -->
 <!--

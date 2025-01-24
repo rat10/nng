@@ -1,0 +1,164 @@
+[
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "WHENEVER \n# Test [endpoint=./december24.trig]\nIS SPECIFIED THIS NOTEBOOK USES THE OXIGRAPH TRIPLE STORE\nHOWEVER, IT'S NOT POSSIBLE TO CONFIGURE THAT TRIPLE STORE AND WE CAN'T TEST OUR APPROACH TO GRAPH INHERITANCE BECAUSE IN OXIGRAPH THE DEFAULT GRAPH IN A DATASET IS NOT CONFIGURED TO BE THE UNION OF ALL GRAPHS - AS WE WOULD NEED FOR OUR APPROACH TO WORK\nTHEREFORE, EXAMPLES CONCERNING NESTED GRAPHS USE THE EXTERNAL AllegroGraph INSTALLATION (IN DOCKER), CONFIGURED IN THE CONNECTORS PANE ON THE LEFT",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "# checking for term qualifications",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Test [endpoint=./december24.trig]\nPREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nSELECT ?s ?p_alias ?o ?b ?c ?mm ?nn WHERE {\n\n    # search for triples\n    ?s ?p ?o\n\n    # do not show term annotations\n    # FILTER ( ?p NOT IN ( ng:onSub, ng:onPrd, ng:onObj ) )\n\n    # do follow object bnodes 2 levels deep\n    OPTIONAL {                  # only follow if object is blank\n        FILTER (isBlank(?o))    # use || or && to add patterns\n        ?o ?b ?c\n        OPTIONAL {              # add one level of indirection\n            FILTER (isBlank(?c))\n            ?c ?mm ?nn\n        }\n    }\n    \n    # don't list level-2 triples independently\n    FILTER ( !isBlank(?s) )     \n\n    # define aliases for some properties\n    BIND (\n       IF ( ?p=ng:onSub, \"onSubject\" ,\n          IF ( ?p=ng:onPrd, \"onPredicate\" ,\n              IF ( ?p=ng:onObj, \"onObject\" , \n                    STR(?p) \n              )\n          )                     # strange nesting construct\n       ) AS ?p_alias \n    )\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Test [endpoint=./december24.trig]\nPREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\nSELECT ?s ?p ?o ?g ?ga ?gb WHERE  {\n    ?s ?p ?o \n    OPTIONAL { \n        GRAPH ?g { ?s ?p ?o } \n        OPTIONAL { ?g ?ga ?gb }\n    }\n}\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Test [endpoint=./december24.trig]\nPREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n# PREFIX union-default-graph\n\nSELECT * WHERE  {\n    { ?s ?p ?o }\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Test [endpoint=./december24.trig]\nPREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\nSELECT * WHERE  {\n    { ?s ?p ?o }\n    union \n    { GRAPH ?g { ?x ?y ?z } }\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Test [endpoint=./december24.trig]\nPREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\nSELECT   ?s ?p ?o\n            ?g ?a ?b\n            ?sa ?sb\n            ?pa ?pb\n            ?oa ?ob \n            ?ng ?na ?nb\nWHERE {\n    GRAPH  ?g { ?s ?p ?o .\n            OPTIONAL {        # graph & term annotations inside the graph\n                { ?g ?a ?b } \n                UNION \n                { ?g ng:onSubject [ ?sa ?sb ] } \n                UNION \n                { ?g ng:onPredicate [ ?pa ?pb ] } \n                UNION \n                { ?g ng:onObject [ ?oa ?ob ] } \n            }\n    }\n    OPTIONAL {\n        ?g ng:in+ ?ng .    # a path of one or more\n        ?ng ?na ?nb .      # no term annotations outside the graph\n    }\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "# checking for nesting annotations",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## using AllegroGraph to query over default and named graphs",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# uses the AGraph sparql connector\n# this catches all triples from default *and* named graphs\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\nselect ?s ?p ?o  where { ?s ?p ?o }",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# uses the AGraph sparql connector\n# This PREFIX causes the default graph of the dataset to include\n# only triples that are not in a named graph.\n# Otherwise, the default graph will include every triple.\nPREFIX franzOption_defaultDatasetBehavior: <franz:rdf>\n\n# View quads\nSELECT ?s ?p ?o ?g {\n  # default graph\n  { ?s ?p ?o . }\n  UNION\n  # named graphs\n  { GRAPH ?g { ?s ?p ?o . }  }\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# uses the AGraph sparql connector\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\n# https://stackoverflow.com/questions/5198889/calculate-length-of-path-between-nodes\nselect ?super ?sub (count(?mid) as ?distance) { \n  ?super ng:in* ?mid .\n  ?mid ng:in+ ?sub .\n}\ngroup by ?super ?sub \norder by ?super ?sub",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect distinct ?nesting where { \n  { ?inner ng:in+ ?nesting .\n    ?nesting ng:in* ?outer . } \n  union                            # `*` and `+` reversed, to catch `:g` as well\n  { ?inner ng:in* ?nesting .       \n    ?nesting ng:in+ ?outer . }\n}\norder by ?nesting",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect distinct (?outer AS ?nesting)\nwhere { \n  graph ?g { ?g ng:in+ ?outer . }\n}\norder by ?outer",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect distinct ?g ?outer ?p ?o\nwhere { \n  graph ?g { ?g ng:in* ?outer . }\n  graph ?outer { ?g ?p ?o . }\n  filter ( ?p != ng:in )\n  # filter ( ?g = :g )\n}\norder by ?g ?outer",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## giving up on the default graph and using oxigraph from file again",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Test [endpoint=./december24.trig]\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect distinct \n       ?og                      # outermost nesting graph \n       ?g                       # annotated graph\n       ?p ?o                    # annotations\nwhere {\n  graph ?g  { ?x  ?y  ?z  }     # some graph\n  graph ?og { ?g  ?p ?o }       # that gets annotated (nested or not)\n\n  filter ( ?p != ng:in )        # but no nestings\n}\norder by ?og ?g ",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "now lets try to keep \n    `:m_kursed` from nesting graph `:m`, \nbut get rid of:\n    `:morbid`, \n    `:oblique` and \n    `:o_verbose`annotations\nwhich don't refer to `:g`: \n    neither in `:g` itself \n    nor in a nesting graph\n    nor indirectly as annotations on a nesting graph\n    nor directly but from a non-nesting graph",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "we have direct annotations in the same graph\n            green\n            glossy\n            (eventually also term-qualifications)\n        direct annotations in nesting graphs\n            h_gally\n            i_giddy\n            k_great\n        direct annotations in non-nesting graphs\n            m_gold\n        inherited annotations in nesting graphs\n            kaput\n        inherited annotations in non-nesting graphs\n            m_kursed",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "try again with joshua taylor's solution\nhttps://stackoverflow.com/questions/5198889/calculate-length-of-path-between-nodes\n\n    select ?super ?sub (count(?mid) as ?distance) { \n        ?super :hasSuborganization* ?mid .\n        ?mid :hasSuborganization+ ?sub .\n    }\n    group by ?super ?sub \n    order by ?super ?sub\n\nbut stuff it into a subquery\ncollect the super plus all sub as distinct ?graph\nand use that in the main query to gather all annotations\n\nnot that this is only needed if *inherited* annotations are of interest\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Test [endpoint=./december24.trig]\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\nselect distinct \n       ?og                      # outermost nesting graph \n       ?g                       # annotated graph\n       ?ig                      # innermost nested graph, i.e. either :g, :o or :v\n       ?p ?o                    # annotations\n       ?ng \n       ?ngp ?ngo\nwhere {\n  # some graph\n  graph ?g { ?x ?y ?z }\n\n  # that gets annotated directly \n  {\n    graph ?g { ?g ?p ?o }\n  }\n    optional {\n      graph ?ng { ?g ng:in* ?ng .\n                  ?g ?ngp ?ngo . }\n    }\n\n # graph ?ig {                  # the innermost nested graph\n #   ?g ^ng:in* ?ig .\n # }\n\n # filter ( ?p != ng:in )        # but no nestings\n # filter ( ?ngp != ng:in )      # but no nestings\n}\norder by ?ig ?g ?og ",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "maybe try some entailment\n\n    ng:in rdfs:subPropertyOf rdfs:subClassOf .\n    ng:in rdfs:domain ng:Graph ;\n          rdfs:range ng:Graph .\n    ng:Graph rdfs:subClassOf rdfs:Class .\n\nthat way nested graphs inherit all properties of nesting graphs.",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "maybe check the literature for path extensions to sparql\n    ideally with prototype implementations\n    there you go:\n    Farias 2024 PathFinder- A unified approach for handling paths in graph query languages",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "\n  union\n  # whose nesting graphs get annotated\n  {\n    graph ?ng { ?g ng:in* ?ng } # a graph is nested\n    graph ?ag { ?ng ?ngp ?ngo } # the nesting graph is annotated (anywhere)\n  }\n  union \n  # what else ?\n  {\n    \n  }\n\n\n\nselect distinct ?nesting where { \n  { ?innermost ng:in+ ?nesting .\n    ?nesting ng:in* ?outermost . } \n  union                            # `*` and `+` reversed, to catch `:g` as well\n  { ?innermost ng:in* ?nesting .       \n    ?nesting ng:in+ ?outermost . }\n}\norder by ?nesting                  # returns :g :h :i :k\n\n\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Test [endpoint=./december24.trig]\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\n# piecing it all together...\nselect distinct \n#      ?g             # the annotated graph\n#      ?p ?o          # its annotations\n#      ?ng            # graphs nesting ?g          \n#      ?np ?no        # annotations on ?g there\n#      ?nga           # annotations on those nesting graphs\n       ?nng           # graphs not nesting ?g\n       ?nnp ?nno      # annotations on ?g there\n       ?ing           # graphs nesting ?g\n       ?inp ?ino      # inherited annotations on those\n#       ?ng\n       ?ngp ?ngo\nwhere {\n\n  # establish the graph-ness of ?g\n  graph ?g { ?x ?y ?z }\n  \n  # establishes the set of graphs nesting ?g\n  {\n    select distinct ?ng\n    where { \n      graph ?g2 { ?g ng:in+ ?ng . }\n    }\n  }\n{\n  # direct annotations in the same graph\n  #    glossy\n  #    green\n  #    (eventually also term-qualifications)\n    graph ?g { ?g ?p ?o }\n    filter ( ?p != ng:in )        # but no nestings\n  \n  # direct annotations in nesting graphs\n  #    h_gally\n  #    i_giddy\n  #    k_great\n  optional\n  {\n    graph ?ng { ?g ?np ?no }\n    filter ( ?np != ng:in )       # but no nestings\n  }\n\n  # direct annotations in non-nesting graphs\n  #   m_gold\n  optional\n  {\n    graph ?nng { ?g ?nnp ?nno }\n    filter ( ?nnp != ng:in )      # but no nestings\n  }\n\n  # ^^ so far so good ^^ \n\n}\n\n  # inherited annotations on nesting graphs in those graphs\n  #   kaput\n  union {\n    graph ?ng { ?ng ?ngp ?ngo }\n    filter ( ?ngp != ng:in )      # but no nestings \n  }\n\n\n  # inherited annotations on nesting graphs in other graphs\n  #   m_kursed\n  union {\n    graph ?ing { ?ng ?inp ?ino }\n    filter ( ?ing != ?ng )\n    filter ( ?inp != ng:in )      # but no nestings \n  }\n\n\n  # for the sake of this example\n  # we're only interested in graph :g\n  filter ( ?g = :g )\n\n}\n\norder by ?nng ?nnp ?nno ?ing ?ng ?inp ?ino",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "^    that sort of works\n|\n|\n|\nv    but let's do better",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# Test [endpoint=./december24.trig]\nPREFIX :     <http://rat.io/>\nPREFIX ng:   <http://rdf.ng/>\n\n# piecing it all together...\nselect distinct \n       ?g\n#      ?g ?p ?o       # the annotated graph + its annotations\n#      ?ng ?np ?no    # graphs nesting ?g + annotations on ?g there\n#      ?nga           # annotations on those nesting graphs\n       ?nng           # graphs not nesting ?g\n       ?nnp ?nno      # annotations on ?g there\n       ?ing           # graphs nesting ?g\n       ?inp ?ino      # inherited annotations on those\n       ?ngp ?ngo\n\n# TODO\n# g   the originating graph (always :g, because of the filter in the last line)\n# gs  onSubject\n# gp  onPredicate           \n# go  onObject\n# gt  onTriple\n# ig  nesting graph from which the annotation is inherited\n# ng  nesting graph in which the annotation occurs\n# ag  another graph in which the annotation occurs\n# p   annotation property\n# o   annotation value\n\n\n\nwhere {\n    # establish the graph-ness of ?g\n    graph ?g { ?x ?y ?z }\n    # establishes the set of graphs nesting ?g\n    { select distinct ?ng where { graph ?g2 { ?g ng:in+ ?ng . } } }\n    # TODO maybe establish the set of graphs in which annotations occur ? \n    \n    # direct annotations in the same graph\n    #    glossy  green  \n    #    TODO  term-qualifications\n#   {\n#       graph ?g { ?g ?p ?o }\n#       filter ( ?p != ng:in )        # but no nestings\n#   }\n    # direct annotations in nesting graphs\n    #    h_gally  i_giddy  k_great\n#   union\n#   {\n#       graph ?ng { ?g ?np ?no }\n#       filter ( ?np != ng:in )       # but no nestings\n#   }\n    # direct annotations in non-nesting graphs\n    #   m_gold\n#   union\n    {\n        graph ?nng { ?g ?nnp ?nno }\n        filter ( ?nnp != ng:in )      # but no nestings\n    }\n    # inherited annotations on nesting graphs in those graphs\n    #   kaput\n    union \n    {\n        graph ?ng { ?ng ?ngp ?ngo }\n        filter ( ?ngp != ng:in )      # but no nestings \n    }\n    # inherited annotations on nesting graphs in other graphs\n    #   m_kursed\n    union \n    {\n        graph ?ing { ?ng ?inp ?ino }\n        filter ( ?ing != ?ng )\n        filter ( ?inp != ng:in )      # but no nestings \n    }\n    # for the sake of this example let's focus on graph :g\n    filter ( ?g = :g )\n}\norder by ?g ?nng ?nnp ?nno ?ing ?inp ?ino",
+    "metadata": {}
+  }
+]

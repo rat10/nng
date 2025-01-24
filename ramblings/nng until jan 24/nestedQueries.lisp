@@ -28,7 +28,6 @@
     } :reason { :Right | :Ambition :is :King . } .
 }.
 
-
 ;; N-QUADS
 ;; nested graph in object position and quoted graph are paresd correctly
 
@@ -82,7 +81,8 @@ _:o-91 <http://example.org/age> "15"^^<http://www.w3.org/2001/XMLSchema#integer>
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?who ?action ?does ?what ?age ?type
+select 
+    ?who ?action ?does ?what ?age ?type
 where { 
     graph ?who { 
         ?action { 
@@ -123,7 +123,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?age
+select 
+    ?graph ?what ?age
 where { 
    graph ?graph { 
        { :Alice :loves ?what .}                 # this is a nested graph!
@@ -146,7 +147,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?age
+select 
+    ?graph ?what ?age
 where { 
     graph ?graph { :Alice :loves ?what .} 
     ?graph ?prop [ :age ?age ] .
@@ -167,7 +169,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?age
+select 
+    ?graph ?what ?age
 where { 
    graph ?graph { 
         :Alice :loves ?what .
@@ -184,7 +187,8 @@ where {
  
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?age
+select 
+    ?graph ?what ?age
 where { 
        { ?graph | :Alice :loves ?what .} 
            ?prop [ :age ?age ]
@@ -208,7 +212,8 @@ where {
 ;; standalone graph not supported, "?b ?c" are superfluous.
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?age
+select 
+    ?graph ?what ?age
 where { 
     { ?graph | :Alice :loves ?what .} ?b ?c .
     optional { ?graph ?prop [ :age ?age ] }
@@ -229,7 +234,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?age
+select 
+    ?graph ?what ?age
 where { 
     graph ?graph {  :Alice :loves ?what } 
     optional { ?graph ?prop [ :age ?age ]}
@@ -251,7 +257,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?age ?age2
+select 
+    ?graph ?what ?age ?age2
 where { 
    graph ?graph { 
        { :Alice :loves ?what .} 
@@ -277,7 +284,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?graph2 ?what ?age ?age2
+select 
+    ?graph ?graph2 ?what ?age ?age2
 where { 
    graph ?graph { 
        { :Alice :loves ?what  .} 
@@ -314,7 +322,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?graph2 ?what ?age ?age2
+select 
+    ?graph ?graph2 ?what ?age ?age2
 where { 
    graph ?graph { 
        { :Alice :loves ?what  .} 
@@ -341,7 +350,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?prop ?age
+select 
+    ?graph ?what ?prop ?age
 where { 
    graph ?graph { :Alice :loves ?what } 
    optional { ?graph ?prop [ :age ?age ]}
@@ -362,7 +372,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?outerGraph ?innerGraph ?what ?prop ?age
+select 
+    ?outerGraph ?innerGraph ?what ?prop ?age
 where { 
     graph ?outerGraph { 
         { ?innerGraph | :Alice :loves ?what . } 
@@ -385,7 +396,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?outerGraph ?innerGraph ?what ?prop ?age
+select 
+    ?outerGraph ?innerGraph ?what ?prop ?age
 where { 
     graph ?outerGraph { 
         { ?innerGraph | :Alice :loves ?what . }  ?b ?c .
@@ -412,7 +424,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does ?age 
+select 
+    ?graph ?does ?age 
 where { 
    graph ?graph { :Alice ?does ?what } 
    optional { ?graph  ?prop [ :age ?age ] .}
@@ -441,7 +454,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does  ?age 
+select 
+    ?graph ?does  ?age 
 where { 
     graph ?graph {  
         :Alice ?does ?what  .   
@@ -469,7 +483,8 @@ where {
 ;; at least it doesn't return the quoted movie
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does ?age 
+select 
+    ?graph ?does ?age 
 where { 
     graph ?graph {  
         { ?graph2 | :Alice ?does ?what  .  } ?b ?c .
@@ -492,7 +507,8 @@ where {
 ;; as 6-A, but selecting all variables
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?graph2 ?does ?what ?age 
+select 
+    ?graph ?graph2 ?does ?what ?age 
 where { 
     graph ?graph {  
         { ?graph2 | :Alice ?does ?what  .  } ?b ?c .
@@ -533,7 +549,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does  ?age 
+select 
+    ?graph ?does  ?age 
 from :Alice
 where { 
    graph ?graph { :Alice ?does ?what } 
@@ -547,7 +564,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does  ?age 
+select 
+    ?graph ?does  ?age 
 from named :Alice
 where { 
    graph ?graph { :Alice ?does ?what } 
@@ -568,7 +586,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does  ?age 
+select 
+    ?graph ?does  ?age 
 from named :Buying
 where { 
    graph ?graph { :Alice ?does ?what } 
@@ -593,7 +612,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does  ?age 
+select 
+    ?graph ?does  ?age 
 where { 
    graph :Buying { :Alice ?does ?what } 
    OPTIONAL { ?graph  ?prop [ :age ?age ] .}
@@ -625,7 +645,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?age
+select 
+    ?graph ?what ?age
 where { 
     graph :Buying { :Alice :buys ?what } 
     optional { ?graph ?prop [ :age ?age ]}      ;; maybe ?graph is the problem
@@ -648,7 +669,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?what ?age
+select 
+    ?graph ?what ?age
 where { 
    graph :Buying { 
        :Alice :buys ?what 
@@ -667,7 +689,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph2 ?does ?age 
+select 
+    ?graph2 ?does ?age 
 where { 
    graph :Buying { 
         { ?graph2 | :Alice ?does ?what . } .
@@ -680,7 +703,8 @@ where {
 ;; same for 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph2 ?does ?age 
+select 
+    ?graph2 ?does ?age 
 where { 
    graph :Buying { 
         { ?graph2 | :Alice ?does ?what . } .
@@ -693,7 +717,8 @@ where {
 ;; on a related note this one parses (but returns no results)
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph2 ?does ?age 
+select 
+    ?graph2 ?does ?age 
 where { 
     graph :Buying { 
         { ?graph2 | :Alice ?does ?what . } 
@@ -706,7 +731,8 @@ where {
 ;; (same for "_:a _:b" instead of [][]"")
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph2 ?does ?age 
+select 
+    ?graph2 ?does ?age 
 where { 
     graph :Buying { 
         { ?graph2 | :Alice ?does ?what . } 
@@ -719,7 +745,8 @@ where {
 ;; produces a rather ridiculous result
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does ?age 
+select 
+    ?graph ?does ?age 
 where { 
     graph :Buying {
         { ?graph | :Alice ?does ?what } 
@@ -752,7 +779,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does ?age 
+select 
+    ?graph ?does ?age 
 where { 
    graph :Buying {
          { :Alice ?does ?what } 
@@ -774,7 +802,8 @@ where {
 
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select ?graph ?does ?age 
+select 
+    ?graph ?does ?age 
 where { 
    graph :Buying {
          { :Alice ?does ?what } 
@@ -793,7 +822,7 @@ where {
     [ "http://example.org/Car2", "http://example.org/buys", 0 ]
 ] 
 
-;; but with an udate to the data
+;; but with an update to the data
 ;; removing all mentions of :age from :Car1
 ;; the results are missing :Car1 completely
 ;; (and unsurprisingly still double down on the predicates)
@@ -835,62 +864,228 @@ where {
 
 
 ;; QUERY 12   ALL ABOUT ALICE
-;; worth a try isn't it?!
-;; PROBLEM
-;; this still misses annotations on first level nested garphs
+;; trying to catch all annotations
 
-select ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
+;; this one catches everything
+;; including the first level :Alice graph, all second level graphs,
+;; the quoted graph :Movie1 and the embeddings
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select 
+    ?graph ?who ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
+where { 
+   graph ?graph { ?who ?does ?what } 
+   OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+   OPTIONAL { ?graph  :relation [ ?rp ?rv ] .}
+   OPTIONAL { ?graph  :object   [ ?op ?ov ] .}
+}
+[
+  [ "http://example.org/Alice", "http://example.org/Loving", "http://example.org/reason", "http://example.org/Fun", null, null, null, null, null, null ],
+  [ "http://example.org/Alice", "http://example.org/Doing", "http://example.org/reason", "http://example.org/Right", null, null, null, null, null, null ],
+  [ "http://example.org/Car2", "http://example.org/Alice", "http://example.org/leases", "http://example.org/Car", "http://example.org/age", 42, "http://example.org/reason", "http://example.org/Fun", "http://example.org/age", 0 ],
+  [ "http://example.org/Car2", "http://example.org/Alice", "http://example.org/leases", "http://example.org/Car", "http://example.org/age", 42, "http://example.org/reason", "http://example.org/Fun", "http://example.org/type", "http://example.org/Coupe" ],
+  [ "http://example.org/Car1", "http://example.org/Alice", "http://example.org/buys", "http://example.org/Car", "http://example.org/age", 22, null, null, "http://example.org/reason", "http://example.org/Ambition" ],
+  [ "http://example.org/Car1", "http://example.org/Alice", "http://example.org/buys", "http://example.org/Car", "http://example.org/age", 22, null, null, "http://example.org/age", 12 ],
+  [ "http://example.org/Car1", "http://example.org/Alice", "http://example.org/buys", "http://example.org/Car", "http://example.org/age", 22, null, null, "http://example.org/type", "http://example.org/Sedan" ],
+  [ "http://nngraph.org/embeddings", "urn:dydra:default", "http://nngraph.org/asserts", "http://example.org/Alice", null, null, null, null, null, null ],
+  [ "http://nngraph.org/embeddings", "http://example.org/Alice", "http://nngraph.org/asserts", "http://example.org/Buying", null, null, null, null, null, null ],
+  [ "http://nngraph.org/embeddings", "http://example.org/Alice", "http://nngraph.org/asserts", "http://example.org/Loving", null, null, null, null, null, null ],
+  [ "http://nngraph.org/embeddings", "http://example.org/Alice", "http://nngraph.org/asserts", "http://example.org/Doing", null, null, null, null, null, null ],
+  [ "http://nngraph.org/embeddings", "http://example.org/Alice", "http://nngraph.org/asserts", "http://example.org/Right", null, null, null, null, null, null ],
+  [ "http://nngraph.org/embeddings", "http://example.org/Buying", "http://nngraph.org/asserts", "http://example.org/Car2", null, null, null, null, null, null ],
+  [ "http://nngraph.org/embeddings", "http://example.org/Buying", "http://nngraph.org/asserts", "http://example.org/Car1", null, null, null, null, null, null ],
+  [ "http://nngraph.org/embeddings", "http://example.org/Loving", "http://nngraph.org/quotes", "http://example.org/Movie1", null, null, null, null, null, null ],
+  [ "http://nngraph.org/embeddings", "http://example.org/Loving", "http://nngraph.org/asserts", "http://example.org/Band1", null, null, null, null, null, null ],
+  [ "http://nngraph.org/embeddings", "http://example.org/Doing", "http://nngraph.org/asserts", "http://example.org/Sports1", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-2", "http://example.org/age", 22, null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-3", "http://example.org/type", "http://example.org/Sedan", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-3", "http://example.org/age", 12, null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-3", "http://example.org/reason", "http://example.org/Ambition", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-4", "http://example.org/age", 42, null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car2", "http://example.org/subject", ":o-4", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car2", "http://example.org/object", ":o-5", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car2", "http://example.org/relation", ":o-6", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car1", "http://example.org/subject", ":o-2", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car1", "http://example.org/object", ":o-3", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-5", "http://example.org/type", "http://example.org/Coupe", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-5", "http://example.org/age", 0, null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-6", "http://example.org/reason", "http://example.org/Fun", null, null, null, null, null, null ],
+  [ "http://example.org/Loving", ":o-9", "http://example.org/age", 12, null, null, null, null, null, null ],
+  [ "http://example.org/Loving", ":o-10", "http://example.org/age", 17, null, null, null, null, null, null ],
+  [ "http://example.org/Loving", "http://example.org/Band1", "http://example.org/subject", ":o-9", null, null, null, null, null, null ],
+  [ "http://example.org/Loving", "http://example.org/Movie1", "http://example.org/subject", ":o-10", null, null, null, null, null, null ],
+  [ "http://example.org/Band1", "http://example.org/Alice", "http://example.org/loves", "http://example.org/SuzieQuattro", "http://example.org/age", 12, null, null, null, null ],
+  [ "http://example.org/Doing", ":o-11", "http://example.org/age", 15, null, null, null, null, null, null ],
+  [ "http://example.org/Doing", ":o-12", "http://example.org/level", "http://example.org/Beginner", null, null, null, null, null, null ],
+  [ "http://example.org/Doing", "http://example.org/Sports1", "http://example.org/subject", ":o-11", null, null, null, null, null, null ],
+  [ "http://example.org/Doing", "http://example.org/Sports1", "http://example.org/predicate", "_:o-12", null, null, null, null, null, null ],
+  [ "http://example.org/Sports1", "http://example.org/Alice", "http://example.org/plays", "http://example.org/Tennis", "http://example.org/age", 15, null, null, null, null ],
+  [ "http://example.org/Right", "http://example.org/Ambition", "http://example.org/is", "http://example.org/King", null, null, null, null, null, null ],
+  [ "http://example.org/Movie1", "http://example.org/Alice", "http://example.org/hypes", "http://example.org/Zendaya", "http://example.org/age", 17, null, null, null, null ]
+] 
+
+;; the same, but without GRAPH keyword
+;; as expected catches everthing except embeddings and the quoted graph
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select 
+    ?graph ?who ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
+where { 
+   ?graph { ?who ?does ?what } 
+   OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+   OPTIONAL { ?graph  :relation [ ?rp ?rv ] .}
+   OPTIONAL { ?graph  :object   [ ?op ?ov ] .}
+}
+[
+  [ "graph", "who", "does", "what", "sp", "sv", "rp", "rv", "op", "ov" ],
+  [ "http://example.org/Alice", "http://example.org/Loving", "http://example.org/reason", "http://example.org/Fun", null, null, null, null, null, null ],
+  [ "http://example.org/Alice", "http://example.org/Doing", "http://example.org/reason", "http://example.org/Right", null, null, null, null, null, null ],
+  [ "http://example.org/Car2", "http://example.org/Alice", "http://example.org/leases", "http://example.org/Car", "http://example.org/age", 42, "http://example.org/reason", "http://example.org/Fun", "http://example.org/age", 0 ],
+  [ "http://example.org/Car2", "http://example.org/Alice", "http://example.org/leases", "http://example.org/Car", "http://example.org/age", 42, "http://example.org/reason", "http://example.org/Fun", "http://example.org/type", "http://example.org/Coupe" ],
+  [ "http://example.org/Car1", "http://example.org/Alice", "http://example.org/buys", "http://example.org/Car", "http://example.org/age", 22, null, null, "http://example.org/reason", "http://example.org/Ambition" ],
+  [ "http://example.org/Car1", "http://example.org/Alice", "http://example.org/buys", "http://example.org/Car", "http://example.org/age", 22, null, null, "http://example.org/age", 12 ],
+  [ "http://example.org/Car1", "http://example.org/Alice", "http://example.org/buys", "http://example.org/Car", "http://example.org/age", 22, null, null, "http://example.org/type", "http://example.org/Sedan" ],
+  [ "http://example.org/Buying", ":o-2", "http://example.org/age", 22, null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-3", "http://example.org/type", "http://example.org/Sedan", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-3", "http://example.org/age", 12, null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-3", "http://example.org/reason", "http://example.org/Ambition", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-4", "http://example.org/age", 42, null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car2", "http://example.org/subject", ":o-4", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car2", "http://example.org/object", ":o-5", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car2", "http://example.org/relation", ":o-6", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car1", "http://example.org/subject", ":o-2", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", "http://example.org/Car1", "http://example.org/object", ":o-3", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-5", "http://example.org/type", "http://example.org/Coupe", null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-5", "http://example.org/age", 0, null, null, null, null, null, null ],
+  [ "http://example.org/Buying", ":o-6", "http://example.org/reason", "http://example.org/Fun", null, null, null, null, null, null ],
+  [ "http://example.org/Loving", ":o-9", "http://example.org/age", 12, null, null, null, null, null, null ],
+  [ "http://example.org/Loving", ":o-10", "http://example.org/age", 17, null, null, null, null, null, null ],
+  [ "http://example.org/Loving", "http://example.org/Band1", "http://example.org/subject", ":o-9", null, null, null, null, null, null ],
+  [ "http://example.org/Loving", "http://example.org/Movie1", "http://example.org/subject", ":o-10", null, null, null, null, null, null ],
+  [ "http://example.org/Band1", "http://example.org/Alice", "http://example.org/loves", "http://example.org/SuzieQuattro", "http://example.org/age", 12, null, null, null, null ],
+  [ "http://example.org/Doing", ":o-11", "http://example.org/age", 15, null, null, null, null, null, null ],
+  [ "http://example.org/Doing", ":o-12", "http://example.org/level", "http://example.org/Beginner", null, null, null, null, null, null ],
+  [ "http://example.org/Doing", "http://example.org/Sports1", "http://example.org/subject", ":o-11", null, null, null, null, null, null ],
+  [ "http://example.org/Doing", "http://example.org/Sports1", "http://example.org/predicate", "_:o-12", null, null, null, null, null, null ],
+  [ "http://example.org/Sports1", "http://example.org/Alice", "http://example.org/plays", "http://example.org/Tennis", "http://example.org/age", 15, null, null, null, null ],
+  [ "http://example.org/Right", "http://example.org/Ambition", "http://example.org/is", "http://example.org/King", null, null, null, null, null, null ]
+] 
+
+
+;; PROBLEM 
+;; this one crashes (no GRAPH keyword in front of ?graph1)
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select 
+    ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
 where { 
     graph :Alice {
-        graph ?graph1 {
-            ?graph2 { :Alice ?does ?what }  
-            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
-            OPTIONAL { ?graph  :relation [ ?rp ?rv ] .}
-            OPTIONAL { ?graph  :object   [ ?op ?ov ] .}
+       ?graph1 {                                        # no GRAPH keyword
+            graph ?graph2 { :Alice :loves ?what }  
+            OPTIONAL { ?graph2  :subject  [ ?sp ?sv ] .}
+            OPTIONAL { ?graph2 :relation [ ?rp ?rv ] .}
+            OPTIONAL { ?graph2  :object   [ ?op ?ov ] .}
         }
     }
 }
+
+;; this doesn't return results from the quoted graph :Movie1
+;; as was expected because it doesn't use the GRAPH keyword on ?graph2
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select 
+    ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
+where { 
+    graph :Alice {
+       graph ?graph1 {
+            ?graph2 { :Alice :loves ?what }  
+            OPTIONAL { ?graph2  :subject  [ ?sp ?sv ] .}
+            OPTIONAL { ?graph2 :relation [ ?rp ?rv ] .}
+            OPTIONAL { ?graph2  :object   [ ?op ?ov ] .}
+        }
+    }
+}
+
+[
+    [
+        "http://example.org/Loving",
+        "http://example.org/Band1",
+        null,
+        "http://example.org/SuzieQuattro",
+        "http://example.org/age",
+        12,
+        null,
+        null,
+        null,
+        null
+    ]
+] 
+
+;; PROBLEM
+;; this also doesn't return results from the quoted graph :Movie1
+;; but it should as it uses the GRAPH keyword
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select 
+    ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
+where { 
+    graph :Alice {
+       graph ?graph1 {
+            ?graph2 { :Alice :loves ?what }  
+            OPTIONAL { ?graph2  :subject  [ ?sp ?sv ] .}
+            OPTIONAL { ?graph2 :relation [ ?rp ?rv ] .}
+            OPTIONAL { ?graph2  :object   [ ?op ?ov ] .}
+        }
+    }
+}
+[
+    [
+        "http://example.org/Loving",
+        "http://example.org/Band1",
+        null,
+        "http://example.org/SuzieQuattro",
+        "http://example.org/age",
+        12,
+        null,
+        null,
+        null,
+        null
+    ]
+] 
+
 
 ;; PROBLEM
 ;; the following query doesn't work
 ;; it's unclear to me at what point the GRAPH keyword is required
 ;; i.e. how nested graphs are queried
 ;; the following example doesn't work (but should!?)
-select ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select 
+    ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
 where { 
     GRAPH :Alice {
         GRAPH ?graph1 {                                  # omitting GRAPH not allowed
             { ?graph2 | :Alice ?does ?what }             # inline name not allowed
                                                          # but omitting GRAPH as above 
                                                          # would be okay! why?
-            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
-            OPTIONAL { ?graph  :relation [ ?rp ?rv ] .}
-            OPTIONAL { ?graph  :object   [ ?op ?ov ] .}
+            OPTIONAL { ?graph2  :subject  [ ?sp ?sv ] .}
+            OPTIONAL { ?graph2  :relation [ ?rp ?rv ] .}
+            OPTIONAL { ?graph2  :object   [ ?op ?ov ] .}
         }
     }
 }
 
-;; SOLUTION PROBLEM
-;; this here works but returns way too many results
-;; i just have no idea how querying actually works
-select ?graph1 ?graph2 ?does ?what ?sp ?sv ?rp ?rv ?op ?ov
-where { 
-    graph :Alice {
-        graph ?graph1 {
-            graph ?graph2 { :Alice ?does ?what }  
-            OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
-            OPTIONAL { ?graph  :relation [ ?rp ?rv ] .}
-            OPTIONAL { ?graph  :object   [ ?op ?ov ] .}
-        }
-    }
-}
+
+
 
 
 ;; QUERY 13 WHEN TO USE THE graph KEYWORD
 ;; using the GRAPH keyword on a nested graph
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select  ?graph ?what ?pv ?sv
+select  
+    ?graph ?what ?pv ?sv
 where { 
     graph ?graph { :Alice :hypes ?what }  
     OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
@@ -903,16 +1098,15 @@ where {
         17
     ]
 ]
-;; NOTE - now (18.02.2024) - returns an empty result set
-;; which is correct given that the above result stems from a quoted graph
-;; and should never have been returned
 
 
 ;; not using the GRAPH keyword
 ;; returns an empty result set
+;; because :hypes is conatiend in a quoted graph
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select  ?graph ?what ?pv ?sv
+select  
+    ?graph ?what ?pv ?sv
 where { 
     ?graph { :Alice :hypes ?what }  
     OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
@@ -921,7 +1115,8 @@ where {
 ;; using the inline notation throws an error
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select  ?graph ?what ?pv ?sv
+select  
+    ?graph ?what ?pv ?sv
 where { 
     { ?graph |  :Alice :hypes ?what }  
     OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
@@ -930,33 +1125,363 @@ where {
 >> queryResult = updateResult ? await postQuery(segQueryText) : ""
 
 
-;; QUERY 14
-;; not querying for ":hypes" because that only occurs in a quoted graph
-;; but insteda for ":plays" 
-prefix : <http://example.org/> 
-prefix nng: <http://nngraph.org/>
-select  ?graph ?what ?pv ?sv
-where { 
-    graph ?graph { :Alice :plays ?what }  
-    OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
-}
-;; returns an empty set 
 
+
+;; QUERY 14
+;; the nmost basic query 
+;; without the GRAPH keyword
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select  ?graph ?what ?pv ?sv
+select  
+    ?graph ?does ?what
+where { 
+    ?graph { :Alice ?does ?what }  # no GRAPH
+}
+
+[
+    [ "http://example.org/Car1", "http://example.org/buys", "http://example.org/Car" ],
+    [ "http://example.org/Band1", "http://example.org/loves", "http://example.org/SuzieQuattro" ],
+    [ "http://example.org/Sports1", "http://example.org/plays", "http://example.org/Tennis" ],
+    [ "http://example.org/Car2", "http://example.org/leases", "http://example.org/Car" ]
+] 
+
+;; now with GRAPH keyword
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  
+    ?graph ?does ?what
+where { 
+    GRAPH ?graph { :Alice ?does ?what }
+}
+;; additionally returns 
+;; all embedding information and
+;; the quoted graph :Movie1
+[
+    [ "http://example.org/Car1", "http://example.org/buys", "http://example.org/Car" ],
+    [ "http://example.org/Band1", "http://example.org/loves", "http://example.org/SuzieQuattro" ],
+    [ "http://example.org/Sports1", "http://example.org/plays", "http://example.org/Tennis" ],
+    [ "http://example.org/Movie1", "http://example.org/hypes", "http://example.org/Zendaya" ],
+    [ "http://example.org/Car2", "http://example.org/leases", "http://example.org/Car" ],
+    [ "http://nngraph.org/embeddings", "http://nngraph.org/asserts", "http://example.org/Buying" ],
+    [ "http://nngraph.org/embeddings", "http://nngraph.org/asserts", "http://example.org/Loving" ],
+    [ "http://nngraph.org/embeddings", "http://nngraph.org/asserts", "http://example.org/Doing" ],
+    [ "http://nngraph.org/embeddings", "http://nngraph.org/asserts", "http://example.org/Right" ]
+] 
+
+
+;; QUERY 15
+;; querying for ":hypes" because that only occurs in a quoted graph
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  
+    ?graph ?what ?pv ?sv
+where { 
+    graph ?graph { :Alice :hypes ?what }  
+    OPTIONAL { ?graph  :subject  [ ?pv ?sv ] .}
+}
+;; returns :Movie1, because the GRAPH keyword overrides NNG semantics
+[
+  [
+    "http://example.org/Movie1",
+    "http://example.org/Zendaya",
+    "http://example.org/age",
+    17
+  ]
+] 
+
+;; omitting the GRAPH keyword
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  
+    ?graph ?what ?pv ?sv
+where { 
+    ?graph { :Alice :hypes ?what }  
+    OPTIONAL { ?graph  :subject  [ ?pv ?sv ] .}
+}
+;; empty result, because :hypes is in a quoted graph
+
+;; again without the GRAPH keyword, but this time with :plays
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select  
+    ?graph ?what ?pv ?sv
 where { 
     ?graph { :Alice :plays ?what }  
-    OPTIONAL { ?graph  :subject  [ ?sp ?sv ] .}
+    OPTIONAL { ?graph  :subject  [ ?pv ?sv ] .}
 }
-;; also returns an empty set 
+;; returns :Sports1, which is asserted
+[
+  [
+    "http://example.org/Sports1",
+    "http://example.org/Tennis",
+    "http://example.org/age",
+    15
+  ]
+] 
 
-;; trying the nmost basic query 
+
+
+;; QUERY 16 - SYNTAX ISSUES
+;; going back to another example
+;; it turns out that here :Z and :Y have to be written inline
+;; otherwise it won't parse
+;; however, in the initial example at the top of this page 
+;; it's the other way round: it won't parse if :Alice and :Buying aren't prepended
+;; this parser is so buggy...
+;; in addition to the parser not giving any useful feedback
+;; this is opretty unbearable
+;; and that's before a query can even be issued.
+@base <http://dydra.com/> .
+@prefix : <http://example.org/> .
+@prefix nng: <http://nngraph.org/> .
+{ :Z | 
+    { :Y |
+         { :X | :Dog :eats :Fish .
+                THIS :says :Alice ;
+                     nng:domain [ :name "Dodger" ] .
+        } :says :Bob ;
+          :believes :Ben .
+        :Goat :has :Ideas .
+        :Beatrice :claims << :BS | :Jake :knows :Larry . 
+                                   :Larry a :Star . >> .
+    } :says :Carol ;
+      :believes :Curt ;
+      nng:tree :Example .
+} :says :Zarathustra  ;
+  :source :Source_1 .
+
+
+;; QUERY 17 - QUOTES
+;; using the example from query 16 
+
+;; first attempt
+;; doesn't return the expected results from the quoted graph :BS
+;; but just the outermost graph :Z and its annotations
 prefix : <http://example.org/> 
 prefix nng: <http://nngraph.org/>
-select  ?graph ?what ?pv ?sv
-where { 
-    graph ?graph { :Alice :plays ?what }  
+select 
+    ?s ?p ?o
+from included nng:Quote
+where {
+    ?s ?p ?o.
 }
-;; but even that returns an empty result set
-;; what am i doing wrong?
+[
+  [
+    "http://example.org/Z",
+    "http://example.org/source",
+    "http://example.org/Source_1"
+  ],
+  [
+    "http://example.org/Z",
+    "http://example.org/says",
+    "http://example.org/Zarathustra"
+  ]
+] 
+
+;; removing the 'from included nng:Quote' constraint
+;; returns everything except the quoted graph
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select 
+    ?s ?p ?o
+where {
+    ?s ?p ?o.
+}
+[
+  [ "http://example.org/X", "http://example.org/says", "http://example.org/Alice" ],
+  [ "http://example.org/X", "http://nngraph.org/domain", ":o-7" ],
+  [ "http://example.org/Dog", "http://example.org/eats", "http://example.org/Fish" ],
+  [ ":o-7", "http://example.org/name", "Dodger" ],
+  [ "http://example.org/X", "http://example.org/says", "http://example.org/Bob" ],
+  [ "http://example.org/X", "http://example.org/believes", "http://example.org/Ben" ],
+  [ "http://example.org/Beatrice", "http://example.org/claims", "http://example.org/BS" ],
+  [ "http://example.org/Goat", "http://example.org/has", "http://example.org/Ideas" ],
+  [ "http://example.org/Y", "http://example.org/says", "http://example.org/Carol" ],
+  [ "http://example.org/Y", "http://example.org/believes", "http://example.org/Curt" ],
+  [ "http://example.org/Y", "http://nngraph.org/tree", "http://example.org/Example" ],
+  [ "http://example.org/Z", "http://example.org/source", "http://example.org/Source_1" ],
+  [ "http://example.org/Z", "http://example.org/says", "http://example.org/Zarathustra" ]
+] 
+
+
+
+
+;; when adding a simple ?g variable
+;; and keeping the 'from included nng:Quote' constraint
+;; still no results from the quoted graph
+;; but also annotations on :Z are missing
+;; why?
+;; TODO check FROM NAMED ALL
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select
+    ?g ?s ?p ?o
+from included nng:Quote
+where {
+    ?g { ?s ?p ?o. }
+}
+[  
+    [ "http://example.org/X",  "http://example.org/X",  "http://example.org/says",  "http://example.org/Alice"  ],
+    [ "http://example.org/X",  "http://example.org/X",  "http://nngraph.org/domain",  ":o-40"  ],
+    [ "http://example.org/X",  "http://example.org/Dog",  "http://example.org/eats",  "http://example.org/Fish"  ],
+    [ "http://example.org/X",  ":o-40",  "http://example.org/name",  "Dodger"  ], 
+    [ "http://example.org/Z",  "http://example.org/Y",  "http://example.org/says",  "http://example.org/Carol"  ],
+    [ "http://example.org/Z",  "http://example.org/Y",  "http://example.org/believes",  "http://example.org/Curt"  ],
+    [ "http://example.org/Z",  "http://example.org/Y",  "http://nngraph.org/tree",  "http://example.org/Example"  ],
+    [ "http://example.org/Y",  "http://example.org/X",  "http://example.org/says",  "http://example.org/Bob"  ],
+    [ "http://example.org/Y",  "http://example.org/X",  "http://example.org/believes",  "http://example.org/Ben"  ],
+    [ "http://example.org/Y",  "http://example.org/Beatrice",  "http://example.org/claims",  "http://example.org/BS"  ],
+    [ "http://example.org/Y",  "http://example.org/Goat",  "http://example.org/has",  "http://example.org/Ideas"  ]
+] 
+
+;; when also removing the quote constraint
+;; the same results are returned
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select
+    ?g ?s ?p ?o
+where {
+    ?g { ?s ?p ?o. }
+}
+[
+  [ "http://example.org/X", "http://example.org/X", "http://example.org/says", "http://example.org/Alice" ],
+  [ "http://example.org/X", "http://example.org/X", "http://nngraph.org/domain", ":o-7" ],
+  [ "http://example.org/X", "http://example.org/Dog", "http://example.org/eats", "http://example.org/Fish" ],
+  [ "http://example.org/X", ":o-7", "http://example.org/name", "Dodger" ],
+  [ "http://example.org/Z", "http://example.org/Y", "http://example.org/says", "http://example.org/Carol" ],
+  [ "http://example.org/Z", "http://example.org/Y", "http://example.org/believes", "http://example.org/Curt" ],
+  [ "http://example.org/Z", "http://example.org/Y", "http://nngraph.org/tree", "http://example.org/Example" ],
+  [ "http://example.org/Y", "http://example.org/X", "http://example.org/says", "http://example.org/Bob" ],
+  [ "http://example.org/Y", "http://example.org/X", "http://example.org/believes", "http://example.org/Ben" ],
+  [ "http://example.org/Y", "http://example.org/Beatrice", "http://example.org/claims", "http://example.org/BS" ],
+  [ "http://example.org/Y", "http://example.org/Goat", "http://example.org/has", "http://example.org/Ideas" ]
+] 
+
+
+;; this one
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select 
+    ?who
+from included nng:Quote
+where {
+  { :Jake :knows ?who .}.
+}
+;; doesn't return any results
+;; but should return :Larry
+
+
+
+;; QUERY 18 - PATHS
+;; now checking the path expression syntax
+;; see tests/queryingPaths.sh
+;; again the shorter example from query 16 and 17
+;; which is taken from tests/queryingPaths.sh
+;; but slightly modified to follow the current syntax
+@prefix : <http://example.org/> .
+@prefix nng: <http://nngraph.org/> .
+{ :Z | 
+    { :Y |
+         { :X | :Dog :eats :Fish .
+                THIS :says :Alice ;
+                     nng:domain [ :name "Dodger" ] .
+        } :says :Bob ;
+          :believes :Ben .
+        :Goat :has :Ideas .
+        :Beatrice :claims << :BS | :Jake :knows :Larry . 
+                                   :Larry a :Star . >> .
+    } :says :Carol ;
+      :believes :Curt ;
+      nng:tree :Example .
+} :says :Zarathustra  ;
+  :source :Source_1 .
+;; the following returns no results
+;; but i don't know what the correct idnetifier to 
+;; explicitly query all asserted graphs would be
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select ?who
+from included nng:NestedGraph    # correct identifier?
+where {
+  { :Dog :eats :Fish . } :says ?who .
+}
+;; removing the FROM INCLUDED clause
+;; returns the expected results
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select ?who
+where {
+  { :Dog :eats :Fish . } :says ?who .
+}
+[
+  [ "http://example.org/Alice" ],
+  [ "http://example.org/Bob" ]
+] 
+;; again no results
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select ?who
+from included nng:Quote
+where {
+  { :Jake :knows ?who . }
+}
+;; but using the chevron syntax helps
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select ?who
+from included nng:Quote
+where {
+  << :Jake :knows ?who . >>
+}
+[
+  [ "http://example.org/Larry" ]
+] 
+;; and it turns out that the FROM INCLUDED clause is irrelevant!
+;; which is news to me, and slightly concerning
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select ?who
+where {
+  << :Jake :knows ?who . >>
+}
+[
+  [ "http://example.org/Larry" ]
+] 
+;; TODO check prior examples if this technique helps
+
+;; now back to the path issue
+prefix : <http://example.org/> 
+prefix nng: <http://nngraph.org/>
+select ?what ?root
+from named all
+where {
+  { graph ?what { :Dog :eats :Fish . } }
+  { graph nng:embeddings { ?root nng:transcludes* ?what . } }
+}
+[
+  [
+    "http://example.org/X", "http://example.org/X"
+  ]
+] 
+;; it misses all nestings
+;; according to tests/queryingPaths.sh it should return
+http://example.org/X,http://example.org/X
+http://example.org/X,http://example.org/Y
+http://example.org/X,urn:dydra:default
+http://example.org/X,http://example.org/Z
+
+;; same for the other queries in tests/queryingPaths.sh
+;; so the 
+;;    { graph nng:embeddings { ?root nng:transcludes* ?what . } }
+;; method doesn't work anymore
+
+@prefix : <http://example.org/> . 
+
+:X { 
+    :s :p :o .
+#    { :Y | :a :b :c } :d :e  .
+#    :f :g { :Z | :h :i :k . } .
+
+#     :Y  { :a :b :c } :d :e  .
+ #  :f :g { :Z | :h :i :k . } .
+} .
