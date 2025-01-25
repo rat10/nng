@@ -61,6 +61,7 @@ GRAPH :k {
 
 GRAPH :l {
     :k ng:in :l .
+    :i :li :l_idiot .     # l_idiot
     :la :lb :lc .
 }
 
