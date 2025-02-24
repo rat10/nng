@@ -1,0 +1,34 @@
+<http://rat.io/A> <http://rat.io/pA> <http://rdf.ng/DS> <http://rat.io/A> .
+<http://rat.io/A> <http://rdf.ng/in> <http://rat.io/B> <http://rat.io/B> .
+<http://rat.io/A> <http://rat.io/pB> <http://rdf.ng/DN> <http://rat.io/B> .
+<http://rat.io/B> <http://rdf.ng/in> <http://rat.io/C> <http://rat.io/C> .
+<http://rat.io/B> <http://rat.io/pC> <http://rdf.ng/IN> <http://rat.io/C> .
+<http://rat.io/C> <http://rdf.ng/in> <http://rat.io/D> <http://rat.io/D> .
+<http://rat.io/A> <http://rat.io/pD> <http://rdf.ng/DN> <http://rat.io/D> .
+<http://rat.io/D> <http://rat.io/pD> <http://rdf.ng/IS> <http://rat.io/D> .
+<http://rat.io/sE> <http://rat.io/pE> <http://rat.io/oE> <http://rat.io/E> .
+<http://rat.io/E> <http://rdf.ng/in> <http://rat.io/F> <http://rat.io/F> .
+<http://rat.io/F> <http://rdf.ng/in> <http://rat.io/G> <http://rat.io/G> .
+<http://rat.io/F> <http://rdf.ng/in> <http://rat.io/H> <http://rat.io/H> .
+<http://rat.io/A> <http://rat.io/pH> <http://rdf.ng/DX> <http://rat.io/H> .
+<http://rat.io/B> <http://rat.io/pH> <http://rdf.ng/IX> <http://rat.io/H> .
+<http://rat.io/H> <http://rdf.ng/in> <http://rat.io/I> <http://rat.io/I> .
+<http://rat.io/sK> <http://rat.io/pK> <http://rat.io/oK> <http://rat.io/K> .
+<http://rat.io/K> <http://rat.io/pK> <http://rdf.ng/DS> <http://rat.io/K> .
+<http://rat.io/A> <http://rat.io/pK> <http://rdf.ng/DX> <http://rat.io/K> .
+<http://rat.io/B> <http://rat.io/pK> <http://rdf.ng/IX> <http://rat.io/K> .
+<http://rat.io/sL> <http://rat.io/pL> <http://rat.io/oL> <http://rat.io/L> .
+<http://rat.io/sL> <http://rdf.ng/onSub> _:sL <http://rat.io/L> .
+<http://rat.io/sL> <http://rdf.ng/onSub> <http://rat.io/sLooo> <http://rat.io/L> .
+<http://rat.io/sL> <http://rdf.ng/onPrd> _:pL <http://rat.io/L> .
+<http://rat.io/sL> <http://rdf.ng/onObj> _:oL <http://rat.io/L> .
+_:sL <http://rat.io/sLp> _:sLo <http://rat.io/L> .
+_:sLo <http://rat.io/sLop> <http://rat.io/sLoo> <http://rat.io/L> .
+_:pL <http://rat.io/pLp> <http://rat.io/pLo> <http://rat.io/L> .
+_:oL <http://rat.io/oLp> <http://rat.io/oLo> <http://rat.io/L> .
+_:oL <http://rat.io/oLp2> <http://rat.io/oLo2> <http://rat.io/L> .
+<http://rat.io/sL2> <http://rat.io/pL2> _:oL2 <http://rat.io/L> .
+_:oL2 <http://rat.io/pL3> _:oL3 <http://rat.io/L> .
+<http://rat.io/sDefault> <http://rat.io/pDefault> <http://rat.io/oDefault> .
+<http://rat.io/H> <http://rat.io/pDefault> <http://rat.io/haunted> .
+<http://rat.io/sM> <http://rat.io/pM> <http://rat.io/oM> <http://rat.io/M> .

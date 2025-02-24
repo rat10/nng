@@ -74,6 +74,7 @@ non-standard behaviors and extensions
 		Corese
 		Oracle
 		dydra 			urn:dydra:default|named|all|none							no
+		qlever			ql:default-graph (defaults to union graph as the default graph)
 		
 see also discussions in the SPARQL 1.2 CG
 	The union graph should have a standard name				https://github.com/w3c/sparql-dev/issues/59

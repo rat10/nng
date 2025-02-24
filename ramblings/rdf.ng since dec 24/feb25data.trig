@@ -1,0 +1,114 @@
+@base         <http://ex.org/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix :     <http://rat.io/> .
+@prefix ng:   <http://rdf.ng/> .
+
+
+# propertties are always named ':p' + <graph name>
+#   to disambiguate graph provenance
+
+# direct annotations
+#   ng:DS   on a graph in that graph
+#   ng:DN   on a graph in a nesting graph
+#   ng:DX   on a graph in a non-nesting graph
+# inherited annotations
+#   ng:IS   on a nesting graph in that graph
+#   ng:IN   on a nesting graph in a nesting graph (further "outside")
+#   ng:IX   on a nesting graph in a non-nesting graph
+
+# the categorization is below applied to graph :A
+# other graphs fall into different categories
+# see feb25query.sparqlbook for more detail
+
+
+# LINE - a stack of nestings, 4 levels deep
+#       A > B > C > D
+
+GRAPH :A {
+    :A :pA ng:DS .      # Direct Self-contained
+}
+
+GRAPH :B {
+    :A ng:in :B .
+    :A :pB ng:DN .      # Direct Nesting
+}
+
+GRAPH :C {
+    :B ng:in :C .
+    :B :pC ng:IN .      # Inheited Nesting
+}
+
+GRAPH :D {
+    :C ng:in :D .
+    :A :pD ng:DN .      # Direct Nesting
+    :D :pD ng:IS .      # Inherited Self
+}
+
+
+# FORK - a Y-shaped nesting, up to 4 levels deep
+#       E > F > G
+#             > H > I
+
+GRAPH :E {
+    :sE :pE :oE .
+}
+
+GRAPH :F {
+    :E ng:in :F .
+}
+
+GRAPH :G {
+    :F ng:in :G .
+}
+
+GRAPH :H {
+    :F ng:in :H .
+    :A :pH ng:DX .      # Direct External 
+    :B :pH ng:IX .      # Inherited External 
+}
+
+GRAPH :I {
+    :H ng:in :I .
+}
+
+# NO NESTING INVOLVED
+
+GRAPH :K {
+    :sK :pK :oK .
+    :K :pK ng:DS .      # Direct Self-contained
+    :A :pK ng:DX .      # Direct External
+    :B :pK ng:IX .      # Inherited External 
+}
+
+
+
+# FRAG - annoattions on individual nodes
+
+GRAPH :L {
+    :sL :pL :oL ;
+        ng:onSub _:sL ,
+                 :sLooo ;
+        ng:onPrd _:pL ;
+        ng:onObj _:oL .
+    _:sL :sLp _:sLo .
+    _:sLo :sLop :sLoo .
+    _:pL :pLp :pLo .
+    _:oL :oLp :oLo ;
+        :oLp2 :oLo2 .
+    :sL2 :pL2 _:oL2 .
+    _:oL2 :pL3 _:oL3 .
+}
+
+
+# NOGO - these should not appear in results
+
+:sDefault :pDefault :oDefault .
+:H :pDefault :haunted .         # graph annotation in default graph
+
+GRAPH :M {                      # un-annotated graph
+    :sM :pM :oM .
+}
+
+

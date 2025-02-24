@@ -50,7 +50,7 @@ Best Practices for Resolving Ambiguities
                     }
                 }
             }
-        Effect: Guarantees that the FILTER is only applied within the subquery and doesn’t affect the main query’s bindings.
+        Effect: Guarantees that the FILTER is only applied within the subquery and doesn't affect the main query's bindings.
     
     Be Explicit About Logical Conditions
         Combine multiple conditions in the FILTER carefully, ensuring each variable's state is accounted for.
