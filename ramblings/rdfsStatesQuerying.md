@@ -1,6 +1,6 @@
 #### Does having both `rdf:reifies` and `rdfs:states` increase querying complexity?
 
-Assuming we have two properties, `rdf:reifies`and `rdfs:states` instead of only `rdf:reifies`, does querying get more complicated? `rdf:reifies`, as per the current semantics, refers to propositions, i.e. hypothetical statements, and takes strictly no stance w.r.t. those propositions actually occurring as triples in a graph or not. `rdfs:states` on the other hand implies the existence of the annotated triple, and takes care to ensure that existence by syntactic sugar and appropriate mappings, just short of proper entailment (and its meaning in the absence of the "entailed" triple is undefined, just like an incomplete rdf:List construct has no defined meaning). 
+Assuming we have two properties, `rdf:reifies`and `rdfs:states` instead of only `rdf:reifies`. Does then querying get more complicated? `rdf:reifies`, as per the current semantics, refers to propositions, i.e. hypothetical statements, and takes strictly no stance w.r.t. those propositions actually occurring as triples in a graph or not. `rdfs:states` on the other hand implies the existence of the annotated triple, and takes care to ensure that existence by syntactic sugar and appropriate mappings, just short of proper entailment (and its meaning in the absence of the "entailed" triple is undefined, just like an incomplete rdf:List construct has no defined meaning). 
 
 For example, Alice, suffering from a long commute, was faced with the decision to either buy a car or resettle closer to her work place. She did the former:
 ```ttl
@@ -21,9 +21,9 @@ Querying for facts and eventual (i.e. optional) annotations on both propositions
 SELECT ?o ?ap ?ao WHERE {
     :Alice :buys ?o .
   OPTIONAL
-    { :Alice :buys ?o {| ?ap ?ao |} }
+    { :Alice :buys ?o {| ?ap ?ao |} . }
   OPTIONAL
-    { << :Alice :buys ?o >> ?ap ?ao }
+    { << :Alice :buys ?o >> ?ap ?ao . }
 }
 ```
 
@@ -37,16 +37,21 @@ SELECT ?o ?ap ?ao WHERE {
     }
 }
 ```
-Interestingly, this IMHO looks less involved then the syntactic sugar in the preceding query.
 
-Or if it's not important if the annotated proposition is asserted in a graph:
+Or, when the interest is focused on triples that are asserted in a graph and optionally their annotations:
 ```ttl
 SELECT ?o ?ap ?ao WHERE {
+    :Alice :buys ?o .
+  OPTIONAL {
+     :Alice :buys ?o .
     _:r rdf:reifies <<( :Alice :buys ?o )>> ;
         ?ap ?ao .
+    }
 }
 ```
-The last aspect is the easiest to compare to a more elaborate design with both `rdf:reifies` and `rdfs:states`, but the more involved ones are instructive: it may not come cheap to capture all nuances of a statement that may be asserted or not, and may have annotations or not. However, I may have gotten the queries wrong - please correct my use of OPTIONAL clauses if necessary.
+
+The last aspect seems to be the easiest to compare to a more elaborate design with both `rdf:reifies` and `rdfs:states`.
+The more involved ones are instructive: it may not come cheap to capture all nuances of a statement that may be asserted or not, and may have annotations or not. However, I may have gotten the queries wrong - please correct my use of OPTIONAL clauses if necessary.
 
 
 Now let's compare this to a design that offers both `rdf:reifies` and `rdfs:states`, as described in the introduction to this comment (and in the opening comment of this topic). In the example the syntactic sugar version remains unchanged, but the N-Triples representation differs:
@@ -63,7 +68,7 @@ _:r rdf:reifies <<( :Alice :buys :House )>> .
 _:r :reason :ShortCommute .
 ``` 
 
-Again, let's start with querying for facts and annotations on both propositions and facts with annotation syntax:
+Again, let's start with querying for facts and annotations on both propositions and facts, and lets use annotation syntax:
 ```ttl
 SELECT ?o ?ap ?ao WHERE {
     :Alice :buys ?o .
@@ -73,7 +78,7 @@ SELECT ?o ?ap ?ao WHERE {
     { << :Alice :buys ?o >> ?ap ?ao }
 }
 ```
-There is no difference, and it would have been very surprising if there was.
+There is no difference, and that's by design: the annotation syntax remains unchanged.
 
 Alternatively, if one is aware of the underlying N-Triples structure:
 ```ttl
@@ -87,30 +92,29 @@ SELECT ?o ?ap ?ao WHERE {
 ```
 As can be seen it is very easy to query for both `rdf:reifies` and `rdfs:states`, or any other relation for that matter. Instead of the blank node `_:rs` one could also use a path expression `rdf:reifies|rdfs:states` if more properties than `rdf:reifies` and `rdfs:states` are expected to refer to triple terms and are to be excluded from the result.
 
-The most interesting question is probably if the simplest query from above gets more complicated, namely the query written under the assumption that it's not important if the annotated proposition is asserted in a graph:
+The most interesting question is probably if the last query from above gets more complicated, namely the query written under the assumption that only facts and optionally their annotations should be returned, but mere annotated proposition should not:
 ```ttl
 SELECT ?o ?ap ?ao WHERE {
-    _:r _ .rs  <<( :Alice :buys ?o )>> ;
+    :Alice :buys ?o .
+  OPTIONAL {
+    _:r rdfs:states  <<( :Alice :buys ?o )>> ;
         ?ap ?ao .
 }
 ```
+This is actually a tad easier than the with a design that doesn't provide `rdfs:states`. This was actually surprising to me at first, but after a little thinking it seems natural.
 
-Or, when the result should include if (or how) the annotation refers to a triple or a proposition:
+One might also use a variable in place of `rdf:reifies` and `rdfs:states`to return if the annotation refers to a triple or a proposition:
 ```ttl
 SELECT ?o ?stated ?ap ?ao WHERE {
+    :Alice :buys ?o .
+  OPTIONAL {
     _:r  ?stated <<( :Alice :buys ?o )>> ;
         ?ap ?ao .
 }
 ```
-IMO this is really only minimally more involved than the current proposal, but much more expressive. 
-
-The current proposal would certainly require more effort to disambiguate annotations on propositions from those on triples.
-TODO investigate/prove
-
-
-
 I'm not the master SPARQLer, and I'm happy to get corrections. 
-However, so far I can see no noteworthy added complexity in formulation nor execution of queries from adding `rdfs:states` and mapping the annotation syntax to it. However, the expressiveness of a solution with both properties is much higher, and it ensures the clear separation between propositions and triples that we already have in theory and that the annotation syntax and the illustrations for 1.2 Primer and Concepts drafts suggest. IMO we have a clear winner.
+
+However, so far I can see no noteworthy added complexity in formulation nor execution of queries from adding `rdfs:states` and mapping the annotation syntax to it, rather to the contrary. IMO we have a clear winner.
 
 
 
